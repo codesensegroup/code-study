@@ -2,7 +2,7 @@ import theme from '@nuxt/content-theme-docs'
 import pkg from './package.json';
 
 const routerBase = process.env.DEPLOY_ENV === 'GH_PAGES'
-  ? '/code-study/' : '/'
+  ? '/test/' : '/'
 
 export default theme({
   router: {
