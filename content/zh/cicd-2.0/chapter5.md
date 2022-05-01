@@ -169,9 +169,9 @@ AWS在2011年，其生產環境的部署頻率已經非常高。工作日的部�
 
 > 巨石架構通常是一個完整的包，例如: 一個Jar、Exe或一個完整的目錄結構，只要有這個包，則所有功能皆有了。
 
-<div class="flex justify-center">
-![005](images/cicd-2.0/05/005.png)
-</div>
+<p align="center">
+  <img src="images/cicd-2.0/05/005.png" width="50%" /> 
+</p>
 
 ✅ 優點
 
