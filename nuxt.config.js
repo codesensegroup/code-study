@@ -12,7 +12,7 @@ export default theme({
     primaryColor: '#00CD81'
   },
   generate: {
-    dir: 'public'
+    dir: 'dist'
   },
   i18n: {
     locales: () => [
