@@ -10,7 +10,7 @@
       <IconExternalLink class="w-4 h-4 ml-1" />
     </a>
     <span class="text-gray-600 dark:text-gray-400 text-sm font-medium flex items-center">
-      {{ $t("article.updatedAt") }} {{ new Date(document.updatedAt).toLocaleDateString(undefined, {
+      {{ $t("article.updatedAt") }} {{ new Date(document.updatedAt).toLocaleDateString('zh-TW', {
               year: "numeric",
               month: "long",
               day: "numeric",
