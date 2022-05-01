@@ -1,0 +1,31 @@
+diff --git a/node_modules/@nuxt/content-theme-docs/src/components/app/AppSearch.vue b/node_modules/@nuxt/content-theme-docs/src/components/app/AppSearch.vue
+index 31ce990..6028a9e 100644
+--- a/node_modules/@nuxt/content-theme-docs/src/components/app/AppSearch.vue
++++ b/node_modules/@nuxt/content-theme-docs/src/components/app/AppSearch.vue
+@@ -31,7 +31,7 @@
+       :class="{ 'rounded-t-none': focus && (searching || results.length) }"
+       style="margin-top: 37px;"
+     >
+-      <li v-if="searching && !results.length" class="px-4 py-2">Searching...</li>
++      <li v-if="searching && !results.length" class="px-4 py-2">查詢中...</li>
+       <li
+         v-for="(result, index) of results"
+         :key="result.slug"
+diff --git a/node_modules/@nuxt/content-theme-docs/src/i18n/zh-TW.js b/node_modules/@nuxt/content-theme-docs/src/i18n/zh-TW.js
+new file mode 100644
+index 0000000..1ee87e6
+--- /dev/null
++++ b/node_modules/@nuxt/content-theme-docs/src/i18n/zh-TW.js
+@@ -0,0 +1,12 @@
++export default {
++    search: {
++        placeholder: '搜尋文件(按"/" 查詢)'
++    },
++    toc: {
++        title: '文件目錄'
++    },
++    article: {
++        github: '在GitHub上在編輯此頁面',
++        updatedAt: '更新時間：'
++    }
++}
