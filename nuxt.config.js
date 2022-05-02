@@ -35,5 +35,10 @@ export default theme({
   },
   publicRuntimeConfig: {
     clientVersion: pkg.version,
+  },
+  pwa: {
+    manifest: {
+      name: 'CodeSense Document'
+    }
   }
 })
