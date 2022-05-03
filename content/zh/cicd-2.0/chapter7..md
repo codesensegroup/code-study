@@ -1,9 +1,9 @@
 ---
-title: Chapter 07
+title: 'Chapter 07 部屬流水線原則與工具設計'
 description: 'Chapter 07 部屬流水線原則與工具設計'
 position: 101
 category: 持續交付2.0：實務導向的DevOps
-
+menuTitle: 'Chapter 05'
 ---
 ## 前言
 Deployment Pipeline為CI的核心，能完整呈現軟體交付的整個過程。從程式碼完成後的提交、建構、部屬與測試到正式的發布，除了可以清楚知道整個歷程外，也可即時得知提交進度。
