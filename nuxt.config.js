@@ -38,7 +38,8 @@ export default theme({
   },
   pwa: {
     manifest: {
-      name: 'CodeSense Document'
+      name: 'CodeSense Document',
+      short_name: 'CodeSense Document'       
     }
   }
 })
