@@ -23,9 +23,7 @@ Deployment Pipeline為CI的核心，能完整呈現軟體交付的整個過程�
 
 GoCD算典型的持續整合代理伺服器架構，其架構如下，GoCD Server提供使用者UI及Pipeline腳本控制及指派工作，讓Agent去執行Pipeline過程中需要執行的Command(此處簡單帶過)。另外一提，他使用的版控工具為Mercurial不是一般主流的Git。
 
-<div class="flex justify-between">
-  <img src="images/cicd-2.0/07/001.png" width="100%" />
-</div>
+![001](images/cicd-2.0/07/001.png)
 
 維護此產品的團隊人數約為12人，產品的交付其中與迭帶週期為一周。在這麼快速的迭帶週期，團隊也使用CICD，在每個迭帶結束後，用新版本替換掉目前團隊在使用的舊版本，並在每兩個迭帶後將試用版本部屬到公司內部的公用伺服器，若公司內部試用版本使用到一個品質檢測標準，一周後再將版本交給企業試用。其週期如下圖所示，
 
