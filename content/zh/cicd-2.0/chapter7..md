@@ -34,3 +34,18 @@ GoCD算典型的持續整合代理伺服器架構，其架構如下，GoCD Serve
 </div>
 
 ### 7.1.2 初始Pipeline設計
+
+GoCD的Piepline設計是Base on六步提交法理論，哪六步?
+
+ - 第一步: Clone成功版本至本地端 
+ - 第二步: 修改程式碼
+ - 第三步: 本地端Build && Test
+ - 第四步: Merge其他人程式碼再跑一次Build && Test
+ - 第五步: 提交
+ - 第六步: 進Pipeline
+
+<p align="center">
+  <img src="images/cicd-2.0/07/003.png" width="50%" /> 
+</p>
+
+
