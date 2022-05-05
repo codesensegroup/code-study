@@ -1,5 +1,6 @@
 import theme from '@nuxt/content-theme-docs'
 import pkg from './package.json';
+import rt from 'reading-time';
 
 const routerBase = process.env.DEPLOY_ENV === 'GH_PAGES'
   ? '/code-study/' : '/'
@@ -39,7 +40,15 @@ export default theme({
   pwa: {
     manifest: {
       name: 'CodeSense Document',
-      short_name: 'CodeSense Document'       
+      short_name: 'CodeSense Document'
     }
-  }
+  },
+  hooks: {
+    'content:file:beforeInsert': (document) => {
+      if (document.extension === '.md') {
+        const stats = rt(document.text);
+        document.readingStats = stats;
+      }
+    },
+  },
 })

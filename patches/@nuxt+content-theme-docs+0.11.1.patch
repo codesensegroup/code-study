@@ -11,6 +11,30 @@ index 31ce990..6028a9e 100644
        <li
          v-for="(result, index) of results"
          :key="result.slug"
+diff --git a/node_modules/@nuxt/content-theme-docs/src/components/app/AppSubtitle.vue b/node_modules/@nuxt/content-theme-docs/src/components/app/AppSubtitle.vue
+new file mode 100644
+index 0000000..f92baf2
+--- /dev/null
++++ b/node_modules/@nuxt/content-theme-docs/src/components/app/AppSubtitle.vue
+@@ -0,0 +1,18 @@
++<template>
++  <div>
++    <div v-if="document.subtitle">
++      <p class="text-gray-600 dark:text-gray-400">{{ document.subtitle }}</p>
++    </div>
++  </div>
++</template>
++
++<script>
++export default {
++  props: {
++    document: {
++      type: Object,
++      required: true,
++    },
++  },
++};
++</script>
 diff --git a/node_modules/@nuxt/content-theme-docs/src/i18n/zh-TW.js b/node_modules/@nuxt/content-theme-docs/src/i18n/zh-TW.js
 new file mode 100644
 index 0000000..1ee87e6
@@ -29,3 +53,18 @@ index 0000000..1ee87e6
 +        updatedAt: '更新時間：'
 +    }
 +}
+diff --git a/node_modules/@nuxt/content-theme-docs/src/pages/_.vue b/node_modules/@nuxt/content-theme-docs/src/pages/_.vue
+index d67127b..749cf88 100644
+--- a/node_modules/@nuxt/content-theme-docs/src/pages/_.vue
++++ b/node_modules/@nuxt/content-theme-docs/src/pages/_.vue
+@@ -17,9 +17,7 @@
+           {{ document.title }}
+           <Badge v-if="document.badge">{{ document.badge }}</Badge>
+         </h1>         
+-        <div v-if="document.subtitle" class="-mt-4">
+-          <p class="text-gray-600 dark:text-gray-400">{{ document.subtitle }}</p>
+-        </div>
++        <AppSubtitle :document="document" class="-mt-4" />
+ 
+         <NuxtContent :document="document" />
+       </article>
