@@ -1,3 +1,11 @@
+---
+title: 'Chapter 07 部署流水線原則與工具設計 (7-5 ~ 7-7)'
+description: 'Chapter 07 部署流水線原則與工具設計'
+position: 101
+category: 持續交付2.0：實務導向的DevOps
+menuTitle: 'Chapter 07'
+---
+
 ## 第7章. 部署流水線原則與工具設計 (7-5 ~ 7-7)
 
 <hr></hr>
