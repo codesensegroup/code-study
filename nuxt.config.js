@@ -6,6 +6,9 @@ const routerBase = process.env.DEPLOY_ENV === 'GH_PAGES'
   ? '/code-study/' : '/'
 
 export default theme({
+  head: {
+    meta: [{ name: 'referrer', content: 'no-referrer-when-downgrade' }],
+  },
   router: {
     base: routerBase
   },
