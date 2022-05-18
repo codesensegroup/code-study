@@ -1,3 +1,11 @@
+---
+title: 'Chapter 08-3 分支模式的演化 ~ 08-5'
+description: 'Chapter 08-3 分支模式的演化 ~ 08-5'
+position: 103
+category: 持續交付2.0：實務導向的DevOps
+menuTitle: 'Chapter 08-B'
+---
+
 # 分支策略
 
 # 8.3 分支模式的演化
@@ -97,7 +105,7 @@ Cons:
 
 </aside>
 
-![geton](images/cicd-2.0/08/geton.png)
+![geton](images/cicd-2.0/08/geton.jpg)
 
 為了能夠準時發布，要求所有參與到該版本的開發團隊必須對齊該版本的每個開發階段。這種嚴格的時間一致性要求是因為如果該產品線的時間變更會引起其他產品線的時間變更，而這些更改也可能會影響到共享的集成測試環境的分配。
 
