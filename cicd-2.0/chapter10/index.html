@@ -1,0 +1,649 @@
+<!doctype html>
+<html data-n-head-ssr lang="zh-TW" data-n-head="%7B%22lang%22:%7B%22ssr%22:%22zh-TW%22%7D%7D">
+  <head>
+    <title>Chapter 10 自動化測試策略與方法 - 摳Sense讀書會筆記</title><meta data-n-head="ssr" charset="utf-8"><meta data-n-head="ssr" name="viewport" content="width=device-width,initial-scale=1"><meta data-n-head="ssr" name="referrer" content="no-referrer-when-downgrade"><meta data-n-head="ssr" data-hid="charset" charset="utf-8"><meta data-n-head="ssr" data-hid="mobile-web-app-capable" name="mobile-web-app-capable" content="yes"><meta data-n-head="ssr" data-hid="apple-mobile-web-app-title" name="apple-mobile-web-app-title" content="CodeSense Document"><meta data-n-head="ssr" data-hid="theme-color" name="theme-color" content="#00CD81"><meta data-n-head="ssr" data-hid="i18n-og" property="og:locale" content="zh_TW"><meta data-n-head="ssr" data-hid="og:site_name" property="og:site_name" content="摳Sense讀書會筆記"><meta data-n-head="ssr" data-hid="og:type" property="og:type" content="website"><meta data-n-head="ssr" data-hid="og:url" property="og:url" content="https://codesensegroup.github.io/code-study/"><meta data-n-head="ssr" data-hid="og:image" property="og:image" content="https://codesensegroup.github.io/code-study/preview.png"><meta data-n-head="ssr" data-hid="twitter:card" name="twitter:card" content="summary_large_image"><meta data-n-head="ssr" data-hid="twitter:site" name="twitter:site" content="undefined"><meta data-n-head="ssr" data-hid="twitter:image" name="twitter:image" content="https://codesensegroup.github.io/code-study/preview.png"><meta data-n-head="ssr" data-hid="twitter:image:alt" name="twitter:image:alt" content="摳Sense讀書會筆記"><meta data-n-head="ssr" data-hid="description" name="description" content="Chapter 10 自動化測試策略與方法"><meta data-n-head="ssr" data-hid="og:title" property="og:title" content="Chapter 10 自動化測試策略與方法"><meta data-n-head="ssr" data-hid="og:description" property="og:description" content="Chapter 10 自動化測試策略與方法"><meta data-n-head="ssr" data-hid="twitter:title" name="twitter:title" content="Chapter 10 自動化測試策略與方法"><meta data-n-head="ssr" data-hid="twitter:description" name="twitter:description" content="Chapter 10 自動化測試策略與方法"><base href="/code-study/"><link data-n-head="ssr" data-hid="gf-prefetch" rel="dns-prefetch" href="https://fonts.gstatic.com/"><link data-n-head="ssr" data-hid="gf-preconnect" rel="preconnect" href="https://fonts.gstatic.com/" crossorigin=""><link data-n-head="ssr" data-hid="gf-preload" rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=DM+Sans&family=DM+Mono"><link data-n-head="ssr" data-hid="shortcut-icon" rel="shortcut icon" href="/code-study/_nuxt/icons/icon_64x64.ee134d.png"><link data-n-head="ssr" data-hid="apple-touch-icon" rel="apple-touch-icon" href="/code-study/_nuxt/icons/icon_512x512.ee134d.png" sizes="512x512"><link data-n-head="ssr" rel="manifest" href="/code-study/_nuxt/manifest.ca2e86d2.json" data-hid="manifest"><link data-n-head="ssr" data-hid="i18n-alt-zh" rel="alternate" href="/cicd-2.0/chapter10" hreflang="zh"><link data-n-head="ssr" data-hid="i18n-alt-zh-TW" rel="alternate" href="/cicd-2.0/chapter10" hreflang="zh-TW"><link data-n-head="ssr" data-hid="i18n-xd" rel="alternate" href="/cicd-2.0/chapter10" hreflang="x-default"><link data-n-head="ssr" data-hid="i18n-can" rel="canonical" href="/cicd-2.0/chapter10"><script data-n-head="ssr" data-hid="gf-script">!function(){var e=document.createElement("link");e.rel="stylesheet",e.href="https://fonts.googleapis.com/css2?family=DM+Sans&family=DM+Mono",document.querySelector("head").appendChild(e)}()</script><noscript data-n-head="ssr" data-hid="gf-noscript"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans&family=DM+Mono"></noscript><link rel="preload" href="/code-study/_nuxt/8e7c416.js" as="script"><link rel="preload" href="/code-study/_nuxt/dcf5049.js" as="script"><link rel="preload" href="/code-study/_nuxt/808d0a5.js" as="script"><link rel="preload" href="/code-study/_nuxt/ca16d2b.js" as="script"><link rel="preload" href="/code-study/_nuxt/a094b91.js" as="script"><link rel="preload" href="/code-study/_nuxt/1366841.js" as="script"><link rel="preload" href="/code-study/_nuxt/2a29f01.js" as="script"><link rel="preload" href="/code-study/_nuxt/18f4d55.js" as="script"><style data-vue-ssr-id="0211d3d2:0 06946318:0 f52d43e0:0 0623093e:0 fa7ff0ca:0 4c5ed5c5:0 6feb581e:0">/*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}main{display:block}h1{font-size:2em;margin:.67em 0}hr{box-sizing:content-box;height:0;overflow:visible}pre{font-family:monospace,monospace;font-size:1em}a{background-color:transparent}abbr[title]{border-bottom:none;text-decoration:underline;-webkit-text-decoration:underline dotted;text-decoration:underline dotted}b,strong{font-weight:bolder}code,kbd,samp{font-family:monospace,monospace;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}img{border-style:none}button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}[type=button],[type=reset],button{-webkit-appearance:button}[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,button::-moz-focus-inner{border-style:none;padding:0}[type=button]:-moz-focusring,[type=reset]:-moz-focusring,button:-moz-focusring{outline:1px dotted ButtonText}fieldset{padding:.35em .75em .625em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{vertical-align:baseline}textarea{overflow:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-decoration{-webkit-appearance:none}details{display:block}summary{display:list-item}[hidden],template{display:none}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}button{background-color:transparent;background-image:none}button:focus{outline:1px dotted;outline:5px auto -webkit-focus-ring-color}fieldset,ol,ul{margin:0;padding:0}ol,ul{list-style:none}html{font-family:DM Sans,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,"Noto Sans","Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";line-height:1.5}*,:after,:before{box-sizing:border-box;border:0 solid #e2e8f0}hr{border-top-width:1px}img{border-style:solid}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{color:#a0aec0}input:-ms-input-placeholder,textarea:-ms-input-placeholder{color:#a0aec0}input::placeholder,textarea::placeholder{color:#a0aec0}button{cursor:pointer}table{border-collapse:collapse}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}button,input,optgroup,select,textarea{padding:0;line-height:inherit;color:inherit}code,kbd,pre,samp{font-family:DM Mono,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}.container{width:100%}@media (min-width:640px){.container{max-width:640px}}@media (min-width:768px){.container{max-width:768px}}@media (min-width:1024px){.container{max-width:1024px}}@media (min-width:1280px){.container{max-width:1280px}}.prose{color:#4a5568;max-width:65ch}.prose [class~=lead]{color:#4a5568;font-size:1.25em;line-height:1.6;margin-top:1.2em;margin-bottom:1.2em}.prose a{color:#00cd81;text-decoration:underline}.prose strong{color:#1a202c;font-weight:600}.prose ol{counter-reset:list-counter;margin-top:1.25em;margin-bottom:1.25em}.prose ol>li{position:relative;counter-increment:list-counter;padding-left:1.75em}.prose ol>li:before{content:counter(list-counter) ".";position:absolute;font-weight:400;color:#718096}.prose ul>li{position:relative;padding-left:1.75em}.prose ul>li:before{content:"";position:absolute;background-color:#cbd5e0;border-radius:50%;width:.375em;height:.375em;top:.6875em;left:.25em}.prose hr{border-color:#e2e8f0;border-top-width:1px;margin-top:3em;margin-bottom:3em}.prose blockquote{font-weight:400;font-style:normal;color:#718096;border-left-width:.25rem;border-left-color:#e2e8f0;quotes:"\201C""\201D""\2018""\2019";margin-top:1.6em;margin-bottom:1.6em;padding-left:1em}.prose h1{color:#1a202c;font-weight:800;font-size:2.25em;margin-top:0;margin-bottom:.8888889em;line-height:1.1111111}.prose h2{font-weight:700;font-size:1.5em;margin-top:2em;margin-bottom:1em;line-height:1.3333333}.prose h2,.prose h3{color:#1a202c;padding-bottom:.5rem;border-bottom-width:1px;border-bottom-color:#edf2f7}.prose h3{font-weight:600;font-size:1.25em;margin-top:1.6em;margin-bottom:.6em;line-height:1.6}.prose h4{color:#1a202c;font-weight:600;margin-top:1.5em;margin-bottom:.5em;line-height:1.5}.prose figure figcaption{color:#718096;font-size:.875em;line-height:1.4285714;margin-top:.8571429em}.prose code{color:#1a202c;font-weight:400;font-size:.875em;background-color:#f7fafc;padding:.25rem;border-width:1px;border-color:#edf2f7;border-radius:.25rem}.prose pre{color:#e2e8f0;background-color:#2d3748;overflow-x:auto;font-size:.875em;line-height:1.7142857;margin-top:1.7142857em;margin-bottom:1.7142857em;border-radius:.375rem;padding:.8571429em 1.1428571em}.prose pre code{background-color:transparent;border-width:0;border-radius:0;padding:0;font-weight:400;color:inherit;font-size:inherit;font-family:DM Mono;line-height:inherit}.prose pre code:after,.prose pre code:before{content:""}.prose table{width:100%;table-layout:auto;text-align:left;margin-top:2em;margin-bottom:2em;font-size:.875em;line-height:1.7142857}.prose thead{color:#1a202c;font-weight:600;border-bottom-width:1px;border-bottom-color:#cbd5e0}.prose thead th{vertical-align:bottom;padding-right:.5714286em;padding-bottom:.5714286em;padding-left:.5714286em}.prose tbody tr{border-bottom-width:1px;border-bottom-color:#e2e8f0}.prose tbody tr:last-child{border-bottom-width:0}.prose tbody td{vertical-align:top;padding:.5714286em}.prose{font-size:1rem;line-height:1.75}.prose p{margin-top:1.25em;margin-bottom:1.25em}.prose figure,.prose img,.prose video{margin-top:2em;margin-bottom:2em}.prose figure>*{margin-top:0;margin-bottom:0}.prose h2 code{font-size:.875em}.prose h3 code{font-size:.9em;font-weight:600}.prose ul{margin-top:1.25em;margin-bottom:1.25em}.prose li{margin-top:.5em;margin-bottom:.5em}.prose ol>li:before{left:0}.prose>ul>li p{margin-top:.75em;margin-bottom:.75em}.prose>ul>li>:first-child{margin-top:1.25em}.prose>ul>li>:last-child{margin-bottom:1.25em}.prose>ol>li>:first-child{margin-top:1.25em}.prose>ol>li>:last-child{margin-bottom:1.25em}.prose ol ol,.prose ol ul,.prose ul ol,.prose ul ul{margin-top:.75em;margin-bottom:.75em}.prose h2+*,.prose h3+*,.prose h4+*,.prose hr+*{margin-top:0}.prose thead th:first-child{padding-left:0}.prose thead th:last-child{padding-right:0}.prose tbody td:first-child{padding-left:0}.prose tbody td:last-child{padding-right:0}.prose>:first-child{margin-top:0}.prose>:last-child{margin-bottom:0}.prose a code{color:#00cd81}.dark-mode .dark\:prose-dark,.dark-mode .dark\:prose-dark [class~=lead]{color:#e2e8f0}.dark-mode .dark\:prose-dark a{color:#00cd81}.dark-mode .dark\:prose-dark strong{color:#f7fafc}.dark-mode .dark\:prose-dark ol>li:before{color:#cbd5e0}.dark-mode .dark\:prose-dark ul>li:before{background-color:#718096}.dark-mode .dark\:prose-dark hr{border-color:#4a5568}.dark-mode .dark\:prose-dark blockquote{color:#cbd5e0;border-left-color:#4a5568}.dark-mode .dark\:prose-dark h1{color:#f7fafc}.dark-mode .dark\:prose-dark h2,.dark-mode .dark\:prose-dark h3{color:#f7fafc;border-bottom-color:#2d3748}.dark-mode .dark\:prose-dark h4{color:#f7fafc}.dark-mode .dark\:prose-dark figure figcaption{color:#cbd5e0}.dark-mode .dark\:prose-dark code{color:#f7fafc;background-color:#2d3748;border-width:0}.dark-mode .dark\:prose-dark a code{color:#00cd81}.dark-mode .dark\:prose-dark thead{color:#f7fafc;border-bottom-color:#718096}.dark-mode .dark\:prose-dark tbody tr{border-bottom-color:#4a5568}:root{--color-transparent:transparent;--color-current:currentColor;--color-black:#000;--color-white:#fff;--color-gray-100:#f7fafc;--color-gray-200:#edf2f7;--color-gray-300:#e2e8f0;--color-gray-400:#cbd5e0;--color-gray-500:#a0aec0;--color-gray-600:#718096;--color-gray-700:#4a5568;--color-gray-800:#2d3748;--color-gray-900:#1a202c;--color-red-100:#fff5f5;--color-red-200:#fed7d7;--color-red-300:#feb2b2;--color-red-400:#fc8181;--color-red-500:#f56565;--color-red-600:#e53e3e;--color-red-700:#c53030;--color-red-800:#9b2c2c;--color-red-900:#742a2a;--color-orange-100:#fffaf0;--color-orange-200:#feebc8;--color-orange-300:#fbd38d;--color-orange-400:#f6ad55;--color-orange-500:#ed8936;--color-orange-600:#dd6b20;--color-orange-700:#c05621;--color-orange-800:#9c4221;--color-orange-900:#7b341e;--color-yellow-100:ivory;--color-yellow-200:#fefcbf;--color-yellow-300:#faf089;--color-yellow-400:#f6e05e;--color-yellow-500:#ecc94b;--color-yellow-600:#d69e2e;--color-yellow-700:#b7791f;--color-yellow-800:#975a16;--color-yellow-900:#744210;--color-green-100:#f0fff4;--color-green-200:#c6f6d5;--color-green-300:#9ae6b4;--color-green-400:#68d391;--color-green-500:#48bb78;--color-green-600:#38a169;--color-green-700:#2f855a;--color-green-800:#276749;--color-green-900:#22543d;--color-teal-100:#e6fffa;--color-teal-200:#b2f5ea;--color-teal-300:#81e6d9;--color-teal-400:#4fd1c5;--color-teal-500:#38b2ac;--color-teal-600:#319795;--color-teal-700:#2c7a7b;--color-teal-800:#285e61;--color-teal-900:#234e52;--color-blue-100:#ebf8ff;--color-blue-200:#bee3f8;--color-blue-300:#90cdf4;--color-blue-400:#63b3ed;--color-blue-500:#4299e1;--color-blue-600:#3182ce;--color-blue-700:#2b6cb0;--color-blue-800:#2c5282;--color-blue-900:#2a4365;--color-indigo-100:#ebf4ff;--color-indigo-200:#c3dafe;--color-indigo-300:#a3bffa;--color-indigo-400:#7f9cf5;--color-indigo-500:#667eea;--color-indigo-600:#5a67d8;--color-indigo-700:#4c51bf;--color-indigo-800:#434190;--color-indigo-900:#3c366b;--color-purple-100:#faf5ff;--color-purple-200:#e9d8fd;--color-purple-300:#d6bcfa;--color-purple-400:#b794f4;--color-purple-500:#9f7aea;--color-purple-600:#805ad5;--color-purple-700:#6b46c1;--color-purple-800:#553c9a;--color-purple-900:#44337a;--color-pink-100:#fff5f7;--color-pink-200:#fed7e2;--color-pink-300:#fbb6ce;--color-pink-400:#f687b3;--color-pink-500:#ed64a6;--color-pink-600:#d53f8c;--color-pink-700:#b83280;--color-pink-800:#97266d;--color-pink-900:#702459;--color-primary-50:#f2fdf9;--color-primary-100:#e6faf2;--color-primary-200:#bff3e0;--color-primary-300:#99ebcd;--color-primary-400:#4ddca7;--color-primary-500:#00cd81;--color-primary-600:#00b974;--color-primary-700:#007b4d;--color-primary-800:#005c3a;--color-primary-900:#003e27}.space-x-2>:not(template)~:not(template){--space-x-reverse:0;margin-right:calc(.5rem*var(--space-x-reverse));margin-left:calc(.5rem*(1 - var(--space-x-reverse)))}.space-x-4>:not(template)~:not(template){--space-x-reverse:0;margin-right:calc(1rem*var(--space-x-reverse));margin-left:calc(1rem*(1 - var(--space-x-reverse)))}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0}.bg-black{--bg-opacity:1;background-color:#000;background-color:rgba(0,0,0,var(--bg-opacity))}.bg-white{--bg-opacity:1;background-color:#fff;background-color:rgba(255,255,255,var(--bg-opacity))}.bg-gray-200{--bg-opacity:1;background-color:#edf2f7;background-color:rgba(237,242,247,var(--bg-opacity))}.bg-gray-800{--bg-opacity:1;background-color:#2d3748;background-color:rgba(45,55,72,var(--bg-opacity))}.bg-red-100{--bg-opacity:1;background-color:#fff5f5;background-color:rgba(255,245,245,var(--bg-opacity))}.bg-red-200{--bg-opacity:1;background-color:#fed7d7;background-color:rgba(254,215,215,var(--bg-opacity))}.bg-red-900{--bg-opacity:1;background-color:#742a2a;background-color:rgba(116,42,42,var(--bg-opacity))}.bg-orange-100{--bg-opacity:1;background-color:#fffaf0;background-color:rgba(255,250,240,var(--bg-opacity))}.bg-orange-200{--bg-opacity:1;background-color:#feebc8;background-color:rgba(254,235,200,var(--bg-opacity))}.bg-yellow-900{--bg-opacity:1;background-color:#744210;background-color:rgba(116,66,16,var(--bg-opacity))}.bg-green-100{--bg-opacity:1;background-color:#f0fff4;background-color:rgba(240,255,244,var(--bg-opacity))}.bg-green-200{--bg-opacity:1;background-color:#c6f6d5;background-color:rgba(198,246,213,var(--bg-opacity))}.bg-green-900{--bg-opacity:1;background-color:#22543d;background-color:rgba(34,84,61,var(--bg-opacity))}.bg-blue-100{--bg-opacity:1;background-color:#ebf8ff;background-color:rgba(235,248,255,var(--bg-opacity))}.bg-blue-200{--bg-opacity:1;background-color:#bee3f8;background-color:rgba(190,227,248,var(--bg-opacity))}.bg-blue-900{--bg-opacity:1;background-color:#2a4365;background-color:rgba(42,67,101,var(--bg-opacity))}.bg-primary-100{--bg-opacity:1;background-color:#e6faf2;background-color:rgba(230,250,242,var(--bg-opacity))}.bg-primary-500{--bg-opacity:1;background-color:#00cd81;background-color:rgba(0,205,129,var(--bg-opacity))}.focus\:bg-white:focus{--bg-opacity:1;background-color:#fff;background-color:rgba(255,255,255,var(--bg-opacity))}.dark-mode .dark\:bg-gray-800{--bg-opacity:1;background-color:#2d3748;background-color:rgba(45,55,72,var(--bg-opacity))}.dark-mode .dark\:bg-gray-900{--bg-opacity:1;background-color:#1a202c;background-color:rgba(26,32,44,var(--bg-opacity))}.dark-mode .dark\:bg-primary-900{--bg-opacity:1;background-color:#003e27;background-color:rgba(0,62,39,var(--bg-opacity))}.dark-mode .dark-focus\:bg-gray-900:focus{--bg-opacity:1;background-color:#1a202c;background-color:rgba(26,32,44,var(--bg-opacity))}.border-transparent{border-color:transparent}.border-gray-300{--border-opacity:1;border-color:#e2e8f0;border-color:rgba(226,232,240,var(--border-opacity))}.border-gray-700{--border-opacity:1;border-color:#4a5568;border-color:rgba(74,85,104,var(--border-opacity))}.focus\:border-gray-300:focus{--border-opacity:1;border-color:#e2e8f0;border-color:rgba(226,232,240,var(--border-opacity))}.dark-mode .dark\:border-gray-700{--border-opacity:1;border-color:#4a5568;border-color:rgba(74,85,104,var(--border-opacity))}.dark-mode .dark\:border-gray-800{--border-opacity:1;border-color:#2d3748;border-color:rgba(45,55,72,var(--border-opacity))}.dark-mode .dark-focus\:border-gray-700:focus{--border-opacity:1;border-color:#4a5568;border-color:rgba(74,85,104,var(--border-opacity))}.rounded{border-radius:.25rem}.rounded-md{border-radius:.375rem}.rounded-full{border-radius:9999px}.rounded-t-none{border-top-left-radius:0;border-top-right-radius:0}.rounded-b-none{border-bottom-right-radius:0;border-bottom-left-radius:0}.rounded-t-md{border-top-left-radius:.375rem;border-top-right-radius:.375rem}.border-dashed{border-style:dashed}.border-0{border-width:0}.border{border-width:1px}.border-b-2{border-bottom-width:2px}.border-l-4{border-left-width:4px}.border-t{border-top-width:1px}.border-b{border-bottom-width:1px}.first\:border-t-0:first-child{border-top-width:0}.block{display:block}.inline-block{display:inline-block}.inline{display:inline}.flex{display:flex}.inline-flex{display:inline-flex}.table{display:table}.grid{display:grid}.contents{display:contents}.hidden{display:none}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.flex-wrap-reverse{flex-wrap:wrap-reverse}.items-start{align-items:flex-start}.items-end{align-items:flex-end}.items-center{align-items:center}.justify-start{justify-content:flex-start}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.flex-1{flex:1 1 0%}.flex-grow{flex-grow:1}.flex-shrink-0{flex-shrink:0}.font-mono{font-family:DM Mono,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}.font-light{font-weight:300}.font-normal{font-weight:400}.font-medium{font-weight:500}.font-semibold{font-weight:600}.font-bold{font-weight:700}.font-black{font-weight:900}.h-2{height:.5rem}.h-3{height:.75rem}.h-4{height:1rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.h-8{height:2rem}.h-16{height:4rem}.h-20{height:5rem}.h-full{height:100%}.h-screen{height:100vh}.text-xs{font-size:.75rem;line-height:1rem}.text-sm{font-size:.875rem;line-height:1.25rem}.text-base{font-size:1rem;line-height:1.5rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-4xl{font-size:2.25rem;line-height:2.5rem}.leading-5{line-height:1.25rem}.leading-7{line-height:1.75rem}.leading-none{line-height:1}.leading-normal{line-height:1.5}.leading-loose{line-height:2}.m-0{margin:0}.my-0{margin-top:0;margin-bottom:0}.mx-1{margin-left:.25rem;margin-right:.25rem}.mx-2{margin-left:.5rem;margin-right:.5rem}.mx-auto{margin-left:auto;margin-right:auto}.ml-0{margin-left:0}.mt-1{margin-top:.25rem}.mr-1{margin-right:.25rem}.ml-1{margin-left:.25rem}.mt-2{margin-top:.5rem}.mr-2{margin-right:.5rem}.mb-2{margin-bottom:.5rem}.ml-2{margin-left:.5rem}.mt-3{margin-top:.75rem}.mr-3{margin-right:.75rem}.mb-3{margin-bottom:.75rem}.ml-3{margin-left:.75rem}.mt-4{margin-top:1rem}.mr-4{margin-right:1rem}.mb-4{margin-bottom:1rem}.ml-4{margin-left:1rem}.ml-5{margin-left:1.25rem}.mb-6{margin-bottom:1.5rem}.mt-16{margin-top:4rem}.mt-px{margin-top:1px}.-mr-2{margin-right:-.5rem}.-mt-4{margin-top:-1rem}.max-w-none{max-width:none}.max-w-full{max-width:100%}.opacity-0{opacity:0}.opacity-75{opacity:.75}.opacity-100{opacity:1}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.overflow-auto{overflow:auto}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.overflow-y-hidden{overflow-y:hidden}.p-2{padding:.5rem}.p-4{padding:1rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.px-2{padding-left:.5rem;padding-right:.5rem}.py-3{padding-top:.75rem;padding-bottom:.75rem}.px-3{padding-left:.75rem;padding-right:.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.px-4{padding-left:1rem;padding-right:1rem}.pb-2{padding-bottom:.5rem}.pr-3{padding-right:.75rem}.pl-3{padding-left:.75rem}.pt-4{padding-top:1rem}.pr-4{padding-right:1rem}.pb-4{padding-bottom:1rem}.pl-4{padding-left:1rem}.pl-10{padding-left:2.5rem}.pt-16{padding-top:4rem}.hover\:pl-1:hover{padding-left:.25rem}.placeholder-gray-500::-moz-placeholder{--placeholder-opacity:1;color:#a0aec0;color:rgba(160,174,192,var(--placeholder-opacity))}.placeholder-gray-500:-ms-input-placeholder{--placeholder-opacity:1;color:#a0aec0;color:rgba(160,174,192,var(--placeholder-opacity))}.placeholder-gray-500::placeholder{--placeholder-opacity:1;color:#a0aec0;color:rgba(160,174,192,var(--placeholder-opacity))}.pointer-events-none{pointer-events:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.inset-0{right:0;left:0}.inset-0,.inset-y-0{top:0;bottom:0}.top-0{top:0}.right-0{right:0}.bottom-0{bottom:0}.left-0{left:0}.shadow-xs{box-shadow:0 0 0 1px rgba(0,0,0,.05)}.shadow{box-shadow:0 1px 3px 0 rgba(0,0,0,.1),0 1px 2px 0 rgba(0,0,0,.06)}.shadow-lg{box-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -2px rgba(0,0,0,.05)}.shadow-none{box-shadow:none}.text-left{text-align:left}.text-center{text-align:center}.text-white{--text-opacity:1;color:#fff;color:rgba(255,255,255,var(--text-opacity))}.text-gray-300{--text-opacity:1;color:#e2e8f0;color:rgba(226,232,240,var(--text-opacity))}.text-gray-400{--text-opacity:1;color:#cbd5e0;color:rgba(203,213,224,var(--text-opacity))}.text-gray-500{--text-opacity:1;color:#a0aec0;color:rgba(160,174,192,var(--text-opacity))}.text-gray-600{--text-opacity:1;color:#718096;color:rgba(113,128,150,var(--text-opacity))}.text-gray-700{--text-opacity:1;color:#4a5568;color:rgba(74,85,104,var(--text-opacity))}.hover\:text-primary-500:hover,.text-primary-500{--text-opacity:1;color:#00cd81;color:rgba(0,205,129,var(--text-opacity))}.dark-mode .dark\:text-white{--text-opacity:1;color:#fff;color:rgba(255,255,255,var(--text-opacity))}.dark-mode .dark\:text-gray-300{--text-opacity:1;color:#e2e8f0;color:rgba(226,232,240,var(--text-opacity))}.dark-mode .dark\:text-gray-400{--text-opacity:1;color:#cbd5e0;color:rgba(203,213,224,var(--text-opacity))}.dark-mode .dark-hover\:text-primary-500:hover{--text-opacity:1;color:#00cd81;color:rgba(0,205,129,var(--text-opacity))}.dark-mode .dark-focus\:text-white:focus{--text-opacity:1;color:#fff;color:rgba(255,255,255,var(--text-opacity))}.uppercase{text-transform:uppercase}.hover\:underline:hover{text-decoration:underline}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.tracking-tight{letter-spacing:-.025em}.tracking-wider{letter-spacing:.05em}.truncate,.whitespace-no-wrap{white-space:nowrap}.truncate{overflow:hidden;text-overflow:ellipsis}.w-2{width:.5rem}.w-3{width:.75rem}.w-4{width:1rem}.w-5{width:1.25rem}.w-6{width:1.5rem}.w-auto{width:auto}.w-4\/6{width:66.666667%}.w-full{width:100%}.z-10{z-index:10}.z-20{z-index:20}.z-30{z-index:30}.z-40{z-index:40}.z-50{z-index:50}.gap-2{grid-gap:.5rem;gap:.5rem}.gap-4{grid-gap:1rem;gap:1rem}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.transform{--transform-translate-x:0;--transform-translate-y:0;--transform-rotate:0;--transform-skew-x:0;--transform-skew-y:0;--transform-scale-x:1;--transform-scale-y:1;transform:translateX(var(--transform-translate-x)) translateY(var(--transform-translate-y)) rotate(var(--transform-rotate)) skewX(var(--transform-skew-x)) skewY(var(--transform-skew-y)) scaleX(var(--transform-scale-x)) scaleY(var(--transform-scale-y))}.origin-top-right{transform-origin:top right}.scale-95{--transform-scale-x:.95;--transform-scale-y:.95}.scale-100{--transform-scale-x:1;--transform-scale-y:1}.transition{transition-property:background-color,border-color,color,fill,stroke,opacity,box-shadow,transform}.transition-colors{transition-property:background-color,border-color,color,fill,stroke}.transition-padding{transition-property:padding}.ease-linear{transition-timing-function:linear}.ease-in{transition-timing-function:cubic-bezier(.4,0,1,1)}.ease-out{transition-timing-function:cubic-bezier(0,0,.2,1)}.ease-in-out{transition-timing-function:cubic-bezier(.4,0,.2,1)}.duration-75{transition-duration:75ms}.duration-100{transition-duration:.1s}.duration-150{transition-duration:.15s}.duration-300{transition-duration:.3s}@-webkit-keyframes spin{to{transform:rotate(1turn)}}@keyframes spin{to{transform:rotate(1turn)}}@-webkit-keyframes ping{75%,to{transform:scale(2);opacity:0}}@keyframes ping{75%,to{transform:scale(2);opacity:0}}@-webkit-keyframes pulse{50%{opacity:.5}}@keyframes pulse{50%{opacity:.5}}@-webkit-keyframes bounce{0%,to{transform:translateY(-25%);-webkit-animation-timing-function:cubic-bezier(.8,0,1,1);animation-timing-function:cubic-bezier(.8,0,1,1)}50%{transform:none;-webkit-animation-timing-function:cubic-bezier(0,0,.2,1);animation-timing-function:cubic-bezier(0,0,.2,1)}}@keyframes bounce{0%,to{transform:translateY(-25%);-webkit-animation-timing-function:cubic-bezier(.8,0,1,1);animation-timing-function:cubic-bezier(.8,0,1,1)}50%{transform:none;-webkit-animation-timing-function:cubic-bezier(0,0,.2,1);animation-timing-function:cubic-bezier(0,0,.2,1)}}.animate-pulse{-webkit-animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite;animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite}@media (min-width:640px){.sm\:flex-row{flex-direction:row}}@media (min-width:768px){.md\:text-sm{font-size:.875rem;line-height:1.25rem}}@media (min-width:1024px){.dark-mode .lg\:dark\:bg-transparent,.lg\:bg-transparent{background-color:transparent}.lg\:border-t-0{border-top-width:0}.lg\:border-r{border-right-width:1px}.lg\:border-l{border-left-width:1px}.lg\:block{display:block}.lg\:hidden{display:none}.lg\:h-auto{height:auto}.lg\:text-xs{font-size:.75rem;line-height:1rem}.lg\:-mx-8{margin-left:-2rem;margin-right:-2rem}.lg\:mt-0{margin-top:0}.lg\:mb-0{margin-bottom:0}.lg\:mb-2{margin-bottom:.5rem}.lg\:max-h-\(screen-16\){max-height:calc(100vh - 4rem)}.lg\:overflow-y-auto{overflow-y:auto}.lg\:py-8{padding-top:2rem;padding-bottom:2rem}.lg\:px-8{padding-left:2rem;padding-right:2rem}.lg\:pl-0{padding-left:0}.lg\:pr-2{padding-right:.5rem}.lg\:pb-4{padding-bottom:1rem}.lg\:pt-8{padding-top:2rem}.lg\:pr-8{padding-right:2rem}.lg\:pl-8{padding-left:2rem}.lg\:relative{position:relative}.lg\:sticky{position:-webkit-sticky;position:sticky}.lg\:top-16{top:4rem}.lg\:w-1\/4{width:25%}.lg\:w-3\/4{width:75%}.lg\:w-1\/5{width:20%}.lg\:w-4\/5{width:80%}.lg\:w-full{width:100%}.lg\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}.dark-mode .light-img{display:none}.dark-mode .dark-img{display:block}.dark-img{display:none}.light-img{display:block}.nuxt-content{word-wrap:break-word}.nuxt-content h2:before,.nuxt-content h3:before{display:block;content:" ";margin-top:-85px;height:85px;visibility:hidden;pointer-events:none}.nuxt-content h2>a,.nuxt-content h3>a{margin-left:1.25rem}.nuxt-content h2>a:before,.nuxt-content h3>a:before{content:"#";--text-opacity:1;color:#00cd81;color:rgba(0,205,129,var(--text-opacity));font-weight:400;font-size:1.25rem;line-height:1.75rem;line-height:2rem;margin-left:-1.25rem;padding-right:.5rem;position:absolute;opacity:1}@media (min-width:1024px){.nuxt-content h2>a,.nuxt-content h3>a{margin-left:0}.nuxt-content h2>a:before,.nuxt-content h3>a:before{opacity:0}}.nuxt-content h2:hover>a:before,.nuxt-content h3:hover>a:before{opacity:1}.nuxt-content .nuxt-content-highlight{position:relative}.nuxt-content .nuxt-content-highlight>.filename{position:absolute;right:0;top:0;--text-opacity:1;color:#f7fafc;color:rgba(247,250,252,var(--text-opacity));z-index:10;font-family:DM Mono,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:.875rem;line-height:1.25rem;letter-spacing:-.025em;line-height:1;margin-right:1rem;margin-top:.75rem}.nuxt-content .nuxt-content-highlight>.filename+pre[class*=language-]{padding-top:2rem}.nuxt-content .nuxt-content-highlight>.copy{display:none;position:absolute;right:0;bottom:0;line-height:1;box-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -2px rgba(0,0,0,.05);padding:.5rem;--text-opacity:1;color:#fff;color:rgba(255,255,255,var(--text-opacity));--bg-opacity:1;background-color:#2d3748;background-color:rgba(45,55,72,var(--bg-opacity));font-size:.875rem;line-height:1.25rem;text-transform:uppercase;border-radius:.375rem;border-width:1px;--border-opacity:1;border-color:#fff;border-color:rgba(255,255,255,var(--border-opacity));font-weight:600;margin-right:.75rem;margin-bottom:.75rem}.nuxt-content .nuxt-content-highlight>.copy:hover{--bg-opacity:1;background-color:#4a5568;background-color:rgba(74,85,104,var(--bg-opacity))}.nuxt-content .nuxt-content-highlight>.copy:focus{outline:2px solid transparent;outline-offset:2px;--bg-opacity:1;background-color:#718096;background-color:rgba(113,128,150,var(--bg-opacity))}.nuxt-content .nuxt-content-highlight:hover>.copy{display:block}.nuxt-content pre[class*=language-]{--bg-opacity:1;background-color:#2d3748;background-color:rgba(45,55,72,var(--bg-opacity));position:static}.prose img{margin-top:1em;margin-bottom:1em}code[class*=language-],pre[class*=language-]{text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;color:#c3cee3;background:#263238;font-family:Roboto Mono,monospace;font-size:1em;line-height:1.5em;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-ms-hyphens:none;hyphens:none}code[class*=language-] ::-moz-selection,code[class*=language-]::-moz-selection,pre[class*=language-] ::-moz-selection,pre[class*=language-]::-moz-selection{background:#363636}code[class*=language-] ::selection,code[class*=language-]::selection,pre[class*=language-] ::selection,pre[class*=language-]::selection{background:#363636}:not(pre)>code[class*=language-]{white-space:normal;border-radius:.2em;padding:.1em}pre[class*=language-]{overflow:auto;position:relative;margin:.5em 0;padding:1.25em 1em}.language-css>code,.language-sass>code,.language-scss>code{color:#fd9170}[class*=language-] .namespace{opacity:.7}.token.atrule{color:#c792ea}.token.attr-name{color:#ffcb6b}.token.attr-value,.token.attribute{color:#c3e88d}.token.boolean{color:#c792ea}.token.builtin{color:#ffcb6b}.token.cdata,.token.char{color:#80cbc4}.token.class{color:#ffcb6b}.token.class-name,.token.color{color:#f2ff00}.token.comment{color:#546e7a}.token.constant{color:#c792ea}.token.deleted{color:#f07178}.token.doctype{color:#546e7a}.token.entity{color:#f07178}.token.function{color:#c792ea}.token.hexcode{color:#f2ff00}.token.id,.token.important{color:#c792ea;font-weight:700}.token.inserted{color:#80cbc4}.token.keyword{color:#c792ea;font-style:italic}.token.number{color:#fd9170}.token.operator{color:#89ddff}.token.prolog{color:#546e7a}.token.property{color:#80cbc4}.token.pseudo-class,.token.pseudo-element{color:#c3e88d}.token.punctuation{color:#89ddff}.token.regex{color:#f2ff00}.token.selector{color:#f07178}.token.string{color:#c3e88d}.token.symbol{color:#c792ea}.token.tag,.token.unit{color:#f07178}.token.url{color:#fd9170}.token.variable{color:#f07178}.nuxt-progress{position:fixed;top:0;left:0;right:0;height:2px;width:0;opacity:1;transition:width .1s,opacity .4s;background-color:#00cd81;z-index:999999}.nuxt-progress.nuxt-progress-notransition{transition:none}.nuxt-progress-failed{background-color:red}.alert p{margin:0!important}.alert a{--text-opacity:1!important;color:#4a5568!important;color:rgba(74,85,104,var(--text-opacity))!important}.dark-mode .alert a{--text-opacity:1!important;color:#e2e8f0!important;color:rgba(226,232,240,var(--text-opacity))!important}.alert strong{color:currentColor}.alert-content pre code{background-color:inherit!important}.alert-info{--bg-opacity:1;background-color:#ebf8ff;background-color:rgba(235,248,255,var(--bg-opacity));--border-opacity:1;border-color:#63b3ed;border-color:rgba(99,179,237,var(--border-opacity))}.alert-info code{--bg-opacity:1;background-color:#bee3f8;background-color:rgba(190,227,248,var(--bg-opacity));box-shadow:none;border-width:0;color:currentColor}.alert-info .alert-icon{--text-opacity:1;color:#63b3ed;color:rgba(99,179,237,var(--text-opacity))}.alert-info .alert-content{--text-opacity:1;color:#2b6cb0;color:rgba(43,108,176,var(--text-opacity))}.dark-mode .alert-info{--bg-opacity:1;background-color:#2a4365;background-color:rgba(42,67,101,var(--bg-opacity));--border-opacity:1;border-color:#2b6cb0;border-color:rgba(43,108,176,var(--border-opacity))}.dark-mode .alert-info code{--bg-opacity:1;background-color:#2c5282;background-color:rgba(44,82,130,var(--bg-opacity))}.dark-mode .alert-info .alert-content{--text-opacity:1;color:#90cdf4;color:rgba(144,205,244,var(--text-opacity))}.alert-success{--bg-opacity:1;background-color:#f0fff4;background-color:rgba(240,255,244,var(--bg-opacity));--border-opacity:1;border-color:#68d391;border-color:rgba(104,211,145,var(--border-opacity))}.alert-success code{--bg-opacity:1;background-color:#c6f6d5;background-color:rgba(198,246,213,var(--bg-opacity));box-shadow:none;border-width:0;color:currentColor}.alert-success .alert-icon{--text-opacity:1;color:#68d391;color:rgba(104,211,145,var(--text-opacity))}.alert-success .alert-content{--text-opacity:1;color:#2f855a;color:rgba(47,133,90,var(--text-opacity))}.dark-mode .alert-success{--bg-opacity:1;background-color:#22543d;background-color:rgba(34,84,61,var(--bg-opacity));--border-opacity:1;border-color:#2f855a;border-color:rgba(47,133,90,var(--border-opacity))}.dark-mode .alert-success code{--bg-opacity:1;background-color:#276749;background-color:rgba(39,103,73,var(--bg-opacity))}.dark-mode .alert-success .alert-content{--text-opacity:1;color:#9ae6b4;color:rgba(154,230,180,var(--text-opacity))}.alert-warning{--bg-opacity:1;background-color:#fffaf0;background-color:rgba(255,250,240,var(--bg-opacity));--border-opacity:1;border-color:#f6ad55;border-color:rgba(246,173,85,var(--border-opacity))}.alert-warning code{--bg-opacity:1;background-color:#feebc8;background-color:rgba(254,235,200,var(--bg-opacity));box-shadow:none;border-width:0;color:currentColor}.alert-warning .alert-icon{--text-opacity:1;color:#f6ad55;color:rgba(246,173,85,var(--text-opacity))}.alert-warning .alert-content{--text-opacity:1;color:#c05621;color:rgba(192,86,33,var(--text-opacity))}.dark-mode .alert-warning{--bg-opacity:1;background-color:#744210;background-color:rgba(116,66,16,var(--bg-opacity));--border-opacity:1;border-color:#b7791f;border-color:rgba(183,121,31,var(--border-opacity))}.dark-mode .alert-warning code{--bg-opacity:1;background-color:#975a16;background-color:rgba(151,90,22,var(--bg-opacity))}.dark-mode .alert-warning .alert-content{--text-opacity:1;color:#fbd38d;color:rgba(251,211,141,var(--text-opacity))}.alert-danger{--bg-opacity:1;background-color:#fff5f5;background-color:rgba(255,245,245,var(--bg-opacity));--border-opacity:1;border-color:#fc8181;border-color:rgba(252,129,129,var(--border-opacity))}.alert-danger code{--bg-opacity:1;background-color:#fed7d7;background-color:rgba(254,215,215,var(--bg-opacity));box-shadow:none;border-width:0;color:currentColor}.alert-danger .alert-icon{--text-opacity:1;color:#fc8181;color:rgba(252,129,129,var(--text-opacity))}.alert-danger .alert-content{--text-opacity:1;color:#c53030;color:rgba(197,48,48,var(--text-opacity))}.dark-mode .alert-danger{--bg-opacity:1;background-color:#742a2a;background-color:rgba(116,42,42,var(--bg-opacity));--border-opacity:1;border-color:#c53030;border-color:rgba(197,48,48,var(--border-opacity))}.dark-mode .alert-danger code{--bg-opacity:1;background-color:#9b2c2c;background-color:rgba(155,44,44,var(--bg-opacity))}.dark-mode .alert-danger .alert-content{--text-opacity:1;color:#feb2b2;color:rgba(254,178,178,var(--text-opacity))}#busuanzi_container_site_pv[data-v-30e009f0],#busuanzi_container_site_uv[data-v-30e009f0]{display:contents!important}</style><link rel="preload" href="/code-study/_nuxt/static/1655887935/cicd-2.0/chapter10/state.js" as="script"><link rel="preload" href="/code-study/_nuxt/static/1655887935/cicd-2.0/chapter10/payload.js" as="script"><link rel="preload" href="/code-study/_nuxt/static/1655887935/manifest.js" as="script">
+  </head>
+  <body class="antialiased text-gray-700 leading-normal bg-white dark:bg-gray-900 dark:text-gray-300" data-n-head="%7B%22class%22:%7B%22ssr%22:%5B%22antialiased%20text-gray-700%20leading-normal%20bg-white%20dark:bg-gray-900%20dark:text-gray-300%22%5D%7D%7D">
+    <script data-n-head="ssr" data-hid="nuxt-color-mode-script" data-pbody="true">!function(){"use strict";var t=window,e=document,a=e.documentElement,o=["dark","light"],s=window.localStorage.getItem("nuxt-color-mode")||"dark",c="system"===s?n():s,e=e.body.getAttribute("data-color-mode-forced");function r(e){e+="-mode";a.classList?a.classList.add(e):a.className+=" "+e}function l(e){return t.matchMedia("(prefers-color-scheme"+e+")")}function n(){if(t.matchMedia&&"not all"!==l("").media)for(var e of o)if(l(":"+e).matches)return e;return"light"}r(c=e?e:c),t.__NUXT_COLOR_MODE__={preference:s,value:c,getColorScheme:n,addClass:r,removeClass:function(e){e+="-mode";a.classList?a.classList.remove(e):a.className=a.className.replace(new RegExp(e,"g"),"")}}}()</script><div data-server-rendered="true" id="__nuxt"><!----><div id="__layout"><div class="pt-16"><nav class="fixed top-0 z-40 w-full border-b dark:border-gray-800 bg-white dark:bg-gray-900"><div class="container mx-auto flex-1 px-4 lg:px-8"><div class="flex items-center justify-between h-16"><div class="lg:w-1/5 flex items-center pr-4"><a href="/code-study/" aria-label="摳Sense讀書會筆記 Logo" class="flex-shrink-0 flex-1 font-bold text-xl nuxt-link-active"><span>摳Sense讀書會筆記 </span> <!----> <!----></a></div> <div class="flex-1 flex justify-start w-4/6"><div class="w-full relative flex flex-col justify-between hidden lg:block"><div class="w-full relative"><label for="search" class="sr-only">Search</label> <div class="relative"><div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor" class="h-5 w-5 text-gray-500"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></div> <input id="search" placeholder='搜尋文件(按"/" 查詢)' type="search" autocomplete="off" class="block w-full pl-10 pr-3 py-2 truncate leading-5 placeholder-gray-500 border border-transparent text-gray-700 dark:text-white dark-focus:text-white focus:border-gray-300 dark-focus:border-gray-700 rounded-md focus:outline-none focus:bg-white dark-focus:bg-gray-900 bg-gray-200 dark:bg-gray-800"></div></div> <ul class="z-10 absolute w-full flex-1 top-0 bg-white dark:bg-gray-900 rounded-md border border-gray-300 dark:border-gray-700 overflow-hidden" style="margin-top:37px;display:none"><!----> </ul></div></div> <div class="lg:w-1/5 flex items-center pl-4 lg:pl-8 justify-between"><div class="font-semibold leading-none text-gray-700 dark:text-gray-300 text-base">
+          v1.0.21
+        </div> <div class="flex items-center"><!----> <a href="https://github.com/codesensegroup/code-study" target="_blank" rel="noopener noreferrer" title="Github" name="Github" class="text-gray-700 dark:text-gray-300 hover:text-primary-500 dark-hover:text-primary-500 ml-4 hidden lg:block"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github w-5 h-5"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a> <span class="inline-flex ml-4 mt-1 hidden lg:block"><button aria-label="Color Mode" class="rounded-md hover:text-primary-500 focus:outline-none transition ease-in-out duration-150"><!----></button></span> <button aria-label="Menu" class="lg:hidden p-2 rounded-md text-gray-700 dark:text-gray-300 focus:outline-none -mr-2"><svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5"><path d="M4 6h16M4 12h16M4 18h16"></path></svg></button></div></div></div></div></nav> <main class="container mx-auto px-4 lg:px-8"><div class="flex flex-wrap relative"><aside class="w-full lg:w-1/5 lg:block fixed lg:relative inset-0 mt-16 lg:mt-0 z-30 bg-white dark:bg-gray-900 lg:bg-transparent lg:dark:bg-transparent hidden"><div class="lg:sticky lg:top-16 overflow-y-auto h-full lg:h-auto lg:max-h-(screen-16)"><ul class="p-4 lg:py-8 lg:pl-0 lg:pr-8"><li class="mb-4 lg:hidden"><div class="w-full relative flex flex-col justify-between"><div class="w-full relative"><label for="search" class="sr-only">Search</label> <div class="relative"><div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor" class="h-5 w-5 text-gray-500"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></div> <input id="search" placeholder='搜尋文件(按"/" 查詢)' type="search" autocomplete="off" class="block w-full pl-10 pr-3 py-2 truncate leading-5 placeholder-gray-500 border border-transparent text-gray-700 dark:text-white dark-focus:text-white focus:border-gray-300 dark-focus:border-gray-700 rounded-md focus:outline-none focus:bg-white dark-focus:bg-gray-900 bg-gray-200 dark:bg-gray-800"></div></div> <ul class="z-10 absolute w-full flex-1 top-0 bg-white dark:bg-gray-900 rounded-md border border-gray-300 dark:border-gray-700 overflow-hidden" style="margin-top:37px;display:none"><!----> </ul></div></li> <li class="mb-4"><p class="mb-2 text-gray-500 uppercase tracking-wider font-bold text-sm lg:text-xs">基本介紹</p> <ul><li class="text-gray-700 dark:text-gray-300"><a href="/code-study/" class="px-2 rounded font-medium py-1 hover:text-primary-500 flex items-center justify-between nuxt-link-active">
+              讀書目錄
+              <!----></a></li></ul></li><li class="mb-4 active"><p class="mb-2 text-gray-500 uppercase tracking-wider font-bold text-sm lg:text-xs">持續交付2.0：實務導向的DevOps</p> <ul><li class="text-gray-700 dark:text-gray-300"><a href="/code-study/cicd-2.0/chapter5" class="px-2 rounded font-medium py-1 hover:text-primary-500 flex items-center justify-between">
+              Chapter 05
+              <!----></a></li><li class="text-gray-700 dark:text-gray-300"><a href="/code-study/cicd-2.0/chapter7" class="px-2 rounded font-medium py-1 hover:text-primary-500 flex items-center justify-between">
+              Chapter 07
+              <!----></a></li><li class="text-gray-700 dark:text-gray-300"><a href="/code-study/cicd-2.0/chapter8" class="px-2 rounded font-medium py-1 hover:text-primary-500 flex items-center justify-between">
+              Chapter 08
+              <!----></a></li><li class="text-gray-700 dark:text-gray-300"><a href="/code-study/cicd-2.0/chapter9" class="px-2 rounded font-medium py-1 hover:text-primary-500 flex items-center justify-between">
+              Chapter 09
+              <!----></a></li><li class="text-gray-700 dark:text-gray-300"><a href="/code-study/cicd-2.0/chapter10" aria-current="page" class="px-2 rounded font-medium py-1 hover:text-primary-500 flex items-center justify-between text-primary-500 bg-primary-100 hover:text-primary-500 dark:bg-primary-900 nuxt-link-active">
+              Chapter 10
+              <!----></a></li></ul></li><li class="mb-4 lg:mb-0"><p class="mb-2 text-gray-500 uppercase tracking-wider font-bold text-sm lg:text-xs">Web API的設計與開發</p> <ul><li class="text-gray-700 dark:text-gray-300"><a href="/code-study/web-api/chapter2" class="px-2 rounded font-medium py-1 hover:text-primary-500 flex items-center justify-between">
+              Chapter 02
+              <!----></a></li><li class="text-gray-700 dark:text-gray-300"><a href="/code-study/web-api/chapter5" class="px-2 rounded font-medium py-1 hover:text-primary-500 flex items-center justify-between">
+              Chapter 05
+              <!----></a></li><li class="text-gray-700 dark:text-gray-300"><a href="/code-study/web-api/chapter6" class="px-2 rounded font-medium py-1 hover:text-primary-500 flex items-center justify-between">
+              Chapter 06
+              <!----></a></li></ul></li> <li class="lg:hidden space-x-2"><p class="mb-2 text-gray-500 uppercase tracking-wider font-bold text-sm lg:text-xs">其他</p> <div class="flex items-center space-x-4"><!----> <a href="https://github.com/codesensegroup/code-study" target="_blank" rel="noopener noreferrer" title="Github" name="Github" class="inline-flex text-gray-700 dark:text-gray-300 hover:text-primary-500"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github w-5 h-5"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a> <!----> <span class="inline-flex"><button aria-label="Color Mode" class="rounded-md hover:text-primary-500 focus:outline-none transition ease-in-out duration-150"><!----></button></span></div></li></ul></div></aside> <div class="flex flex-wrap-reverse w-full lg:w-4/5"><div class="w-full py-4 lg:pt-8 lg:pb-4 dark:border-gray-800 lg:w-3/4 lg:border-l lg:border-r"><article class="prose dark:prose-dark max-w-none lg:px-8"><h1 class="flex items-center justify-between">
+        Chapter 10 自動化測試策略與方法
+        <!----></h1> <div class="flex flex-col -mt-4"><!----> <div><span class="text-xs md:text-sm">
+      字數總計：5589 個
+    </span> <span class="mx-1">|</span> <span class="text-xs md:text-sm">
+      閱讀時長：28 分鐘
+    </span> <span class="mx-1">|</span> <span id="busuanzi_container_page_pv" class="text-xs md:text-sm"><span>閱讀次數：</span> <span id="busuanzi_value_page_pv"></span>
+      次
+    </span></div> <div class="mt-1 z-10"></div></div> <div class="nuxt-content"><h2 id="前言"><a aria-hidden="true" href="#%E5%89%8D%E8%A8%80" tabindex="-1"><span class="icon icon-link"></span></a>前言</h2>
+<p>想發揮持續整合的真正作用，一個至關重要的部分就是自動化測試策略。</p>
+<p>本章主要討論軟體進入生產環境之前的自動化測試管理，包含：</p>
+<ol>
+<li>自動化測試的定位：
+<ul>
+<li>包含哪些測試，怎麼分類？</li>
+<li>哪些可以被自動化？</li>
+<li>本書主要探討哪些測試？</li>
+</ul>
+</li>
+<li>傳統自動化測試的困境：
+<ul>
+<li>以前的團隊做自動化測試遇到的問題、不好的做法</li>
+<li>傳統自動化測試是什麼？(良好自動化測試的反例)</li>
+</ul>
+</li>
+<li>如何實踐良好的自動化測試</li>
+</ol>
+<h2 id="101-自動化測試的自身定位"><a aria-hidden="true" href="#101-%E8%87%AA%E5%8B%95%E5%8C%96%E6%B8%AC%E8%A9%A6%E7%9A%84%E8%87%AA%E8%BA%AB%E5%AE%9A%E4%BD%8D" tabindex="-1"><span class="icon icon-link"></span></a>10.1 自動化測試的自身定位</h2>
+<h3 id="測試領域的4類活動"><a aria-hidden="true" href="#%E6%B8%AC%E8%A9%A6%E9%A0%98%E5%9F%9F%E7%9A%844%E9%A1%9E%E6%B4%BB%E5%8B%95" tabindex="-1"><span class="icon icon-link"></span></a>測試領域的4類活動</h3>
+<ol>
+<li>「問題認知」：對業務問題本身的理解與認識</li>
+<li>「分析」：測試分析與設計 (以最低的測試成本，達到能驗證程式是否解決問題)</li>
+<li>「執行」：執行測試，得到測試結果數據</li>
+<li>「決策」：根據測試結果進行下一步行動判斷</li>
+</ol>
+<ul>
+<li>其中的「執行」存在大量重複性勞動，自動化測試能夠降低此成本</li>
+<li>回歸測試：重複執行以前的全部或部分相同的測試工作</li>
+</ul>
+<h3 id="brian-marick-測試4象限"><a aria-hidden="true" href="#brian-marick-%E6%B8%AC%E8%A9%A64%E8%B1%A1%E9%99%90" tabindex="-1"><span class="icon icon-link"></span></a>Brian Marick 測試4象限</h3>
+<div class="alert border-l-4 p-4 mb-4 mt-4 alert-info"><div class="flex items-start"><div class="flex-shrink-0"><svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor" class="alert-icon mt-px w-6 h-6"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div> <div class="flex-grow ml-2 overflow-auto alert-content">
+有很多不同的測試，如何分類？哪些測試可以被自動化？
+</div></div></div>
+<p><img alt="測試四象限" src="images/cicd-2.0/10/10-1-%E6%B8%AC%E8%A9%A6%E5%9B%9B%E8%B1%A1%E9%99%90.png"></p>
+<ul>
+<li>四個面向
+<ul>
+<li>面向業務專家：能與業務專家無障礙溝通</li>
+<li>面向技術人員：易與技術人員達成共識</li>
+<li>支持編程：目標是為了幫助研發團隊檢查功能需求是否開發完成</li>
+<li>評判項目：目標是為了找出產品是否有缺限</li>
+</ul>
+</li>
+<li>四個象限
+<ul>
+<li>第一象限：(手工) 用戶演示demo、可用性測試、探索性測試</li>
+<li>第二象限：<strong>(自動化)</strong> 功能驗收測試 => 以用戶的角度</li>
+<li>第三象限：<strong>(自動化)</strong> 系統集成測試、組件測試、單元測試 => 技術實現的驗證</li>
+<li>第四象限：(自動化/手工) 非功能驗收測試(性能測試、容量測試、可靠性測試…)</li>
+</ul>
+</li>
+<li>本章主要討論第二、第三象限的自動化測試</li>
+</ul>
+<h3 id="1011-自動化測試的優勢"><a aria-hidden="true" href="#1011-%E8%87%AA%E5%8B%95%E5%8C%96%E6%B8%AC%E8%A9%A6%E7%9A%84%E5%84%AA%E5%8B%A2" tabindex="-1"><span class="icon icon-link"></span></a>10.1.1 自動化測試的優勢</h3>
+<div class="alert border-l-4 p-4 mb-4 mt-4 alert-info"><div class="flex items-start"><div class="flex-shrink-0"><svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor" class="alert-icon mt-px w-6 h-6"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div> <div class="flex-grow ml-2 overflow-auto alert-content">
+相較於手動測試，自動化測試有哪些優勢<br>
+(機械自動化 v.s. 人的手動執行)
+</div></div></div>
+<h4 id="減少失誤率提高準確性"><a aria-hidden="true" href="#%E6%B8%9B%E5%B0%91%E5%A4%B1%E8%AA%A4%E7%8E%87%E6%8F%90%E9%AB%98%E6%BA%96%E7%A2%BA%E6%80%A7" tabindex="-1"><span class="icon icon-link"></span></a>「減少失誤率，提高準確性」:</h4>
+<ul>
+<li>機械不受情緒、經驗的影響，每次執行都重覆相同的動作並紀錄詳細的結果</li>
+</ul>
+<h4 id="節省時間和執行成本"><a aria-hidden="true" href="#%E7%AF%80%E7%9C%81%E6%99%82%E9%96%93%E5%92%8C%E5%9F%B7%E8%A1%8C%E6%88%90%E6%9C%AC" tabindex="-1"><span class="icon icon-link"></span></a>「節省時間和執行成本」</h4>
+<ul>
+<li>在長生命週期、發佈頻率高的產品中，時間成本的節省相當明顯</li>
+</ul>
+<h4 id="提升測試覆蓋度"><a aria-hidden="true" href="#%E6%8F%90%E5%8D%87%E6%B8%AC%E8%A9%A6%E8%A6%86%E8%93%8B%E5%BA%A6" tabindex="-1"><span class="icon icon-link"></span></a>「提升測試覆蓋度」:</h4>
+<ul>
+<li>自動化測試可以增加測試的深度和範圍，以提高軟件質量</li>
+<li>ex: 內存使用、內部程序狀態…</li>
+</ul>
+<h4 id="做手工無法完成的測試"><a aria-hidden="true" href="#%E5%81%9A%E6%89%8B%E5%B7%A5%E7%84%A1%E6%B3%95%E5%AE%8C%E6%88%90%E7%9A%84%E6%B8%AC%E8%A9%A6" tabindex="-1"><span class="icon icon-link"></span></a>「做手工無法完成的測試」:</h4>
+<ul>
+<li>手動測試難做到如摸擬成千上萬個虛擬用戶同時間與軟體進行互動 (mock)</li>
+</ul>
+<h4 id="為開發人員提高質量反饋速度"><a aria-hidden="true" href="#%E7%82%BA%E9%96%8B%E7%99%BC%E4%BA%BA%E5%93%A1%E6%8F%90%E9%AB%98%E8%B3%AA%E9%87%8F%E5%8F%8D%E9%A5%8B%E9%80%9F%E5%BA%A6" tabindex="-1"><span class="icon icon-link"></span></a>「為開發人員提高質量反饋速度」:</h4>
+<ul>
+<li>讓開發人員可以方便的執行，快速發現問題</li>
+</ul>
+<h4 id="提高團隊士氣"><a aria-hidden="true" href="#%E6%8F%90%E9%AB%98%E5%9C%98%E9%9A%8A%E5%A3%AB%E6%B0%A3" tabindex="-1"><span class="icon icon-link"></span></a>「提高團隊士氣」:</h4>
+<ul>
+<li>讓團隊可以將時間花在更具挑戰性和更有價值的活動中</li>
+<li>ex: 探索性測試</li>
+</ul>
+<h3 id="1012-自動化測試所需的投入"><a aria-hidden="true" href="#1012-%E8%87%AA%E5%8B%95%E5%8C%96%E6%B8%AC%E8%A9%A6%E6%89%80%E9%9C%80%E7%9A%84%E6%8A%95%E5%85%A5" tabindex="-1"><span class="icon icon-link"></span></a>10.1.2 自動化測試所需的投入</h3>
+<div class="alert border-l-4 p-4 mb-4 mt-4 alert-info"><div class="flex items-start"><div class="flex-shrink-0"><svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor" class="alert-icon mt-px w-6 h-6"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div> <div class="flex-grow ml-2 overflow-auto alert-content">
+事物都具有兩面性，自動化測試帶來收益的同時，也會產生成本
+</div></div></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th align="left">成本</th><th align="left">說明</th></tr></thead><tbody><tr><td align="left">工具投入成本</td><td align="left">測試工具、測試框架的研究與培訓</td></tr><tr><td align="left">測試案例維護成本</td><td align="left">功能調整的同時，需維護相對應的測試案例</td></tr><tr><td align="left">專業技能人員的成本</td><td align="left">測試編程、設計規劃的經驗、培訓</td></tr><tr><td align="left">設備資源的投入</td><td align="left">自動化測試無法完全替代手動測試<br>保留手動測試所需的測試環境，也要為自動化測試的執行準備相應的測試環境</td></tr></tbody></table>
+<h4 id="手動測試與自動化測試的不同"><a aria-hidden="true" href="#%E6%89%8B%E5%8B%95%E6%B8%AC%E8%A9%A6%E8%88%87%E8%87%AA%E5%8B%95%E5%8C%96%E6%B8%AC%E8%A9%A6%E7%9A%84%E4%B8%8D%E5%90%8C" tabindex="-1"><span class="icon icon-link"></span></a>手動測試與自動化測試的不同</h4>
+<div class="alert border-l-4 p-4 mb-4 mt-4 alert-info"><div class="flex items-start"><div class="flex-shrink-0"><svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor" class="alert-icon mt-px w-6 h-6"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div> <div class="flex-grow ml-2 overflow-auto alert-content">
+自動化測試有很多優勢，但手動測試依舊不可完全被取代
+<br>
+為什麼？兩者的本質上有哪些不同？
+</div></div></div>
+<ul>
+<li>
+<p>自動化測試</p>
+<ul>
+<li>無主觀意識，它只做腳本要求它做的事</li>
+<li>比較沒有無主動觀察、主動認知和分析的能力，沒有創造力</li>
+<li>擅長回答：系統是否照我們「預先設計」的方式正確運行？</li>
+<li>ex: 用戶功能驗收測試</li>
+</ul>
+</li>
+<li>
+<p>手動測試</p>
+<ul>
+<li>有人為主觀意識的介入</li>
+<li>具主動觀察、學習、分析、創造力</li>
+<li>擅長回答：我們是否正在開發一個正確的，滿足用戶期望的軟體系統？</li>
+<li>ex: 探索性測試</li>
+</ul>
+</li>
+</ul>
+<h4 id="自動化測試與手工測試的成本收益對比示意圖"><a aria-hidden="true" href="#%E8%87%AA%E5%8B%95%E5%8C%96%E6%B8%AC%E8%A9%A6%E8%88%87%E6%89%8B%E5%B7%A5%E6%B8%AC%E8%A9%A6%E7%9A%84%E6%88%90%E6%9C%AC%E6%94%B6%E7%9B%8A%E5%B0%8D%E6%AF%94%E7%A4%BA%E6%84%8F%E5%9C%96" tabindex="-1"><span class="icon icon-link"></span></a>自動化測試與手工測試的成本收益對比示意圖</h4>
+<p><img alt="自動化測試與手工測試的成本收益對比示意圖" src="images/cicd-2.0/10/10-2-%E8%87%AA%E5%8B%95%E5%8C%96%E6%B8%AC%E8%A9%A6%E8%88%87%E6%89%8B%E5%B7%A5%E6%B8%AC%E8%A9%A6%E7%9A%84%E6%88%90%E6%9C%AC%E6%94%B6%E7%9B%8A%E5%B0%8D%E6%AF%94%E7%A4%BA%E6%84%8F%E5%9C%96.png"></p>
+<h2 id="102-突破傳統自動化測試的困境"><a aria-hidden="true" href="#102-%E7%AA%81%E7%A0%B4%E5%82%B3%E7%B5%B1%E8%87%AA%E5%8B%95%E5%8C%96%E6%B8%AC%E8%A9%A6%E7%9A%84%E5%9B%B0%E5%A2%83" tabindex="-1"><span class="icon icon-link"></span></a>10.2 突破傳統自動化測試的困境</h2>
+<ul>
+<li>自動化測試常作為提測前的檢驗標準 (提交給手工測試之前，先運行自動化測試案例)</li>
+</ul>
+<h3 id="自動化測試的創建流程"><a aria-hidden="true" href="#%E8%87%AA%E5%8B%95%E5%8C%96%E6%B8%AC%E8%A9%A6%E7%9A%84%E5%89%B5%E5%BB%BA%E6%B5%81%E7%A8%8B" tabindex="-1"><span class="icon icon-link"></span></a>自動化測試的創建流程</h3>
+<p><img alt="10-3-傳統自動化測試流程" src="images/cicd-2.0/10/10-3-%E5%82%B3%E7%B5%B1%E8%87%AA%E5%8B%95%E5%8C%96%E6%B8%AC%E8%A9%A6%E6%B5%81%E7%A8%8B.png"></p>
+<ol>
+<li>測試分析者 => 分析測試案例，並文檔化(撰寫測試流程的文檔)</li>
+<li>測試執行者 => 照測試流程文件執行測試，發現BUG向開發人員報告</li>
+<li>開發人員   => 修復bug</li>
+<li>測試執行者 => 再次執行測試，直至驗證通過</li>
+<li>測試分析者 => 從測試案例文檔中選出一些重要且變動可能性較小的測試案例</li>
+<li>自動化測試開發者 => 對挑選出來的測試案例編寫自動化腳本，並歸入自動化回歸測試庫</li>
+</ol>
+<h3 id="1021-傳統自動化測試的特點"><a aria-hidden="true" href="#1021-%E5%82%B3%E7%B5%B1%E8%87%AA%E5%8B%95%E5%8C%96%E6%B8%AC%E8%A9%A6%E7%9A%84%E7%89%B9%E9%BB%9E" tabindex="-1"><span class="icon icon-link"></span></a>10.2.1 傳統自動化測試的特點</h3>
+<h4 id="1-測試案例執行成本過高"><a aria-hidden="true" href="#1-%E6%B8%AC%E8%A9%A6%E6%A1%88%E4%BE%8B%E5%9F%B7%E8%A1%8C%E6%88%90%E6%9C%AC%E9%81%8E%E9%AB%98" tabindex="-1"><span class="icon icon-link"></span></a>1. 測試案例執行成本過高</h4>
+<ul>
+<li>處理流程較長、要準備的測試案例較多，需花費較多時間、精力</li>
+<li>多為黑盒自動化測試案例，摸擬真實用戶的介面操作來驅動的系統集成測試</li>
+</ul>
+<h4 id="2-自動化測試執行頻率低"><a aria-hidden="true" href="#2-%E8%87%AA%E5%8B%95%E5%8C%96%E6%B8%AC%E8%A9%A6%E5%9F%B7%E8%A1%8C%E9%A0%BB%E7%8E%87%E4%BD%8E" tabindex="-1"><span class="icon icon-link"></span></a>2. 自動化測試執行頻率低</h4>
+<ul>
+<li>通常是在軟件開發完後(提測階段)、或系統回歸測試(重覆以前全部或部份的測試工作)用</li>
+</ul>
+<h4 id="3-質量反饋滯後"><a aria-hidden="true" href="#3-%E8%B3%AA%E9%87%8F%E5%8F%8D%E9%A5%8B%E6%BB%AF%E5%BE%8C" tabindex="-1"><span class="icon icon-link"></span></a>3. 質量反饋滯後</h4>
+<ul>
+<li>大部份的測試案例是回歸測試案例，無法對當前正在開發的新功能進行測試</li>
+<li>為了能安全執行，經常會通過 sleep 這樣的指令讓流程暫停，再繼續下一流程，因此很耗時</li>
+</ul>
+<h4 id="4-測試環境準備成本高"><a aria-hidden="true" href="#4-%E6%B8%AC%E8%A9%A6%E7%92%B0%E5%A2%83%E6%BA%96%E5%82%99%E6%88%90%E6%9C%AC%E9%AB%98" tabindex="-1"><span class="icon icon-link"></span></a>4. 測試環境準備成本高</h4>
+<ul>
+<li>完善的測試數據集</li>
+<li>整套的運行環境</li>
+<li>測試環境的搭建手動操作較多，甚至需要多人的參與</li>
+</ul>
+<h4 id="5-測試結果可性度低"><a aria-hidden="true" href="#5-%E6%B8%AC%E8%A9%A6%E7%B5%90%E6%9E%9C%E5%8F%AF%E6%80%A7%E5%BA%A6%E4%BD%8E" tabindex="-1"><span class="icon icon-link"></span></a>5. 測試結果可性度低</h4>
+<ul>
+<li>受機械硬體配置、網路狀況、案例處理時間長度等影響，可能會產生隨機失敗</li>
+<li>大型團隊中，若界面需求的改動若沒有即時通知測試團隊，也會造成測試失敗</li>
+<li>團隊可能會更傾向忽略這些自動化測試案例的存在</li>
+</ul>
+<h4 id="6-人員依賴性強"><a aria-hidden="true" href="#6-%E4%BA%BA%E5%93%A1%E4%BE%9D%E8%B3%B4%E6%80%A7%E5%BC%B7" tabindex="-1"><span class="icon icon-link"></span></a>6. 人員依賴性強</h4>
+<ul>
+<li>編寫自動化測試案例很大程度依賴少數測試開發專職人員</li>
+<li>適合用于發佈版本週期較長，使用傳統瀑布開發方法的團隊</li>
+<li>軟件版本迭代速度越來越快，這種自動化測試案例的投資回報率越來越低</li>
+</ul>
+<h4 id="名詞解釋"><a aria-hidden="true" href="#%E5%90%8D%E8%A9%9E%E8%A7%A3%E9%87%8B" tabindex="-1"><span class="icon icon-link"></span></a>名詞解釋：</h4>
+<ul>
+<li>黑箱測試(功能測試)
+<ul>
+<li>把測試軟件當成黑箱，不在乎內部的實作，只在乎輸入輸出結果是否正確</li>
+<li>根據用戶說明書、需求文檔，去進行操作、輸入測試</li>
+<li>優點：站在用戶的立場進行測試</li>
+<li>缺點：無法對程序內部特定的內容進行測試</li>
+</ul>
+</li>
+<li>白箱測試(單元測試)
+<ul>
+<li>把軟體當成透明的盒子，在乎程式內部的運行邏輯，對其結構進行測試</li>
+<li>優點：對程式內部的問題進行覆蓋(盡量作到能夠覆蓋到每一行原碼中)</li>
+<li>缺點：無法檢驗程式外部的特徵，也無法站在用戶的角度進行測試</li>
+</ul>
+</li>
+</ul>
+<h3 id="1022-自動化測試的分層"><a aria-hidden="true" href="#1022-%E8%87%AA%E5%8B%95%E5%8C%96%E6%B8%AC%E8%A9%A6%E7%9A%84%E5%88%86%E5%B1%A4" tabindex="-1"><span class="icon icon-link"></span></a>10.2.2 自動化測試的分層</h3>
+<ul>
+<li>本章聚焦的測試類型為
+<ul>
+<li>「用戶驗收測試」(用戶角度) 第二象限</li>
+<li>「系統集成測試」(系統角度) 第三象限</li>
+</ul>
+</li>
+<li>傳統自動化測試方式產生的測試案例類型通常偏上層測試
+<ul>
+<li>其被測範圍較大</li>
+<li>單個測試運行的時間也較長</li>
+<li>形成測試蛋筒冰淇淋 (頭重腳輕) => 不利於持續整合</li>
+</ul>
+</li>
+</ul>
+<h4 id="測試蛋筒冰淇淋"><a aria-hidden="true" href="#%E6%B8%AC%E8%A9%A6%E8%9B%8B%E7%AD%92%E5%86%B0%E6%B7%87%E6%B7%8B" tabindex="-1"><span class="icon icon-link"></span></a>測試蛋筒冰淇淋</h4>
+<p><img alt="10-4-測試類別與被測對象範圍的對應關係.png" src="images/cicd-2.0/10/10-4-%E6%B8%AC%E8%A9%A6%E9%A1%9E%E5%88%A5%E8%88%87%E8%A2%AB%E6%B8%AC%E5%B0%8D%E8%B1%A1%E7%AF%84%E5%9C%8D%E7%9A%84%E5%B0%8D%E6%87%89%E9%97%9C%E4%BF%82.png"></p>
+<h4 id="快捷時信"><a aria-hidden="true" href="#%E5%BF%AB%E6%8D%B7%E6%99%82%E4%BF%A1" tabindex="-1"><span class="icon icon-link"></span></a>「快、捷、時、信」</h4>
+<div class="alert border-l-4 p-4 mb-4 mt-4 alert-info"><div class="flex items-start"><div class="flex-shrink-0"><svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor" class="alert-icon mt-px w-6 h-6"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div> <div class="flex-grow ml-2 overflow-auto alert-content">
+良好的自動化測試實踐，應該要「快、捷、時、信」
+</div></div></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th align="left">項目</th><th align="left">說明</th></tr></thead><tbody><tr><td align="left">快速</td><td align="left">測試案例的執行速度要快<br>(持續整合的要求是，最好在十分鐘以內，不要超過15分鐘)</td></tr><tr><td align="left">便捷</td><td align="left">每名工程師都可方便執行測試，不會影響到他人</td></tr><tr><td align="left">及時</td><td align="left">一但功能發生變化，就能馬上告知本次代碼變更對軟體質量的影響 <br>(但若沒有新增此次改動對應的測試案例，會導至反饋速度的降低)</td></tr><tr><td align="left">可信</td><td align="left">不存在隨機失敗的現象。<br>持續整合實踐要求一但自動化測試案例失敗，必須立即修復<br>隨機失敗會大大增加工程師的無效投入，並降低工程師對持續整合的信心</td></tr></tbody></table>
+<h4 id="如何達到-快速-和-可信"><a aria-hidden="true" href="#%E5%A6%82%E4%BD%95%E9%81%94%E5%88%B0-%E5%BF%AB%E9%80%9F-%E5%92%8C-%E5%8F%AF%E4%BF%A1" tabindex="-1"><span class="icon icon-link"></span></a>如何達到 "快速" 和 "可信"</h4>
+<div class="alert border-l-4 p-4 mb-4 mt-4 alert-info"><div class="flex items-start"><div class="flex-shrink-0"><svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor" class="alert-icon mt-px w-6 h-6"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div> <div class="flex-grow ml-2 overflow-auto alert-content">
+快速在於降低時間成本，可信的在於提高穩定性
+</div></div></div>
+<ul>
+<li>開發上層測試案例成本較高，穩定性差
+<ul>
+<li>被測對象範圍較大，測資準備工作量大</li>
+<li>執行時間久，不穩定性也高</li>
+</ul>
+</li>
+<li>降低成本：
+<ul>
+<li>減少上層測試案例數量</li>
+<li>增加下層測試案例數量</li>
+<li>形成穩定的正三角形</li>
+</ul>
+</li>
+</ul>
+<p><img alt="10-5-測試金字塔.png" src="images/cicd-2.0/10/10-5-%E6%B8%AC%E8%A9%A6%E9%87%91%E5%AD%97%E5%A1%94.png"></p>
+<h3 id="1023-不同類型的測試金字塔"><a aria-hidden="true" href="#1023-%E4%B8%8D%E5%90%8C%E9%A1%9E%E5%9E%8B%E7%9A%84%E6%B8%AC%E8%A9%A6%E9%87%91%E5%AD%97%E5%A1%94" tabindex="-1"><span class="icon icon-link"></span></a>10.2.3 不同類型的測試金字塔</h3>
+<ul>
+<li>軟體架構發展的趨勢
+<ul>
+<li>朝「服務化」和「微服務化」發展 => 掀起大規模分散式應用服務浪潮</li>
+<li>軟體服務由「單體應用架構」拆分成「服務導向的架構(SOA)」
+<ul>
+<li>服務之間透過RPC等方式進行溝通</li>
+<li>RPC：Remote Procedure Call, 遠端過程呼叫</li>
+</ul>
+</li>
+<li>服務導向架構 => 微服務架構
+<ul>
+<li>後台服務化模組被拆分成很多的微服務</li>
+<li>客戶端軟體向元件化或微核架構發展</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><img alt="10-8-微核架構與微服務架構示意圖" src="images/cicd-2.0/10/10-8-%E5%BE%AE%E6%A0%B8%E6%9E%B6%E6%A7%8B%E8%88%87%E5%BE%AE%E6%9C%8D%E5%8B%99%E6%9E%B6%E6%A7%8B%E7%A4%BA%E6%84%8F%E5%9C%96.png"></p>
+<h4 id="1-微核架構的測試金字塔"><a aria-hidden="true" href="#1-%E5%BE%AE%E6%A0%B8%E6%9E%B6%E6%A7%8B%E7%9A%84%E6%B8%AC%E8%A9%A6%E9%87%91%E5%AD%97%E5%A1%94" tabindex="-1"><span class="icon icon-link"></span></a>1. 微核架構的測試金字塔</h4>
+<p><img alt="10-9-微核架構的測試金字塔" src="images/cicd-2.0/10/10-9-%E5%BE%AE%E6%A0%B8%E6%9E%B6%E6%A7%8B%E7%9A%84%E6%B8%AC%E8%A9%A6%E9%87%91%E5%AD%97%E5%A1%94.png"></p>
+<ul>
+<li>端到端自動化測試
+<ul>
+<li><strong>「摸擬介面操作」</strong> 來驅動的自動化測試</li>
+</ul>
+</li>
+<li>API自動化測試
+<ul>
+<li>UI層之下， <strong>「透過API介面」</strong> 來驅動下層業務邏輯的自動化測試</li>
+</ul>
+</li>
+<li>元件或外掛間服務的介面自動化測試
+<ul>
+<li><strong>「兩個或兩個以上元件(外掛)間」</strong> 的功能正確性</li>
+</ul>
+</li>
+<li>元件測試
+<ul>
+<li>對 <strong>「單個元件或框架」</strong> 本身進行品質驗證</li>
+</ul>
+</li>
+<li>自動化單元測試
+<ul>
+<li>最細粒度的自動化測試</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-微服務架構的測試金字塔"><a aria-hidden="true" href="#2-%E5%BE%AE%E6%9C%8D%E5%8B%99%E6%9E%B6%E6%A7%8B%E7%9A%84%E6%B8%AC%E8%A9%A6%E9%87%91%E5%AD%97%E5%A1%94" tabindex="-1"><span class="icon icon-link"></span></a>2. 微服務架構的測試金字塔</h4>
+<p><img alt="10-10-微服務架構的測試金字塔" src="images/cicd-2.0/10/10-10-%E5%BE%AE%E6%9C%8D%E5%8B%99%E6%9E%B6%E6%A7%8B%E7%9A%84%E6%B8%AC%E8%A9%A6%E9%87%91%E5%AD%97%E5%A1%94.png"></p>
+<ol>
+<li>
+<p>單元測試：</p>
+<ul>
+<li>軟體中最小可測業務邏輯單元 (一個函式、一個Class)</li>
+<li>對外部依賴(如檔案系統、網路等)比較少</li>
+<li>測試運行時不需系統處於執行狀態</li>
+<li>測試運行速度快</li>
+<li>強調業務邏輯單元，非程式碼功能</li>
+</ul>
+</li>
+<li>
+<p>業務元件或服務測試</p>
+<ul>
+<li>對 <strong>「單個元件或服務」</strong> 的測試</li>
+<li>元件由多個最小業務邏輯單元組成</li>
+<li>可能與本系統「內部」的其它元件互動，也可能負責與「外部」整合點進行互動</li>
+<li>ex: GoCD 中的類別 MaterialService，就是負責與Git或Subversion打交道的一個元件</li>
+<li>元件通常不需要應用系統處於執行狀態，但可能涉及外部依賴
+<ul>
+<li>(檔案系統、網路、資料庫等)</li>
+</ul>
+</li>
+<li>執行進度可能比單元測試稍慢</li>
+</ul>
+</li>
+<li>
+<p>契約測試，又稱消費者驅動的契約測試(consumer driven contracts test)</p>
+<ul>
+<li>測試範圍縮小到 <strong>「兩個服務之間」</strong> 的契約</li>
+<li>契約是指軟體系統中各個服務間互動的資料標準格式</li>
+<li>目標是測試消費者介面與服務者介面之間的正確性
+<ul>
+<li>驗證服務者提供的資料是否為消費者所需要的</li>
+</ul>
+</li>
+<li><img alt="10-11-服務間的契約" src="images/cicd-2.0/10/10-11-%E6%9C%8D%E5%8B%99%E9%96%93%E7%9A%84%E5%A5%91%E7%B4%84.png"></li>
+</ul>
+</li>
+<li>
+<p>業務工作流測試</p>
+<ul>
+<li>關注 <strong>「多服務組合互動」</strong> 、測試介面連通性和流程的可用性</li>
+<li>啟動執行兩個以上的微服務，進行業務流程上的測試</li>
+<li>驗證多個被測服務之間是否可以正常工作，達成某一業務請求</li>
+</ul>
+</li>
+<li>
+<p>端到端測試</p>
+<ul>
+<li>對 <strong>「整個軟體服務」</strong> 的流程進行測試
+<ul>
+<li>模擬用戶在可視化介面上執行各種操作</li>
+<li>若軟體服務對外提供非可視介面的服務(如API呼叫)，這類測試也歸屬端到端測試</li>
+</ul>
+</li>
+<li>從用戶的角度驗證整個功能的準確性和可用性</li>
+<li>不關注某一細小功能的實作</li>
+</ul>
+</li>
+</ol>
+<h2 id="103-自動化測試的實施策略"><a aria-hidden="true" href="#103-%E8%87%AA%E5%8B%95%E5%8C%96%E6%B8%AC%E8%A9%A6%E7%9A%84%E5%AF%A6%E6%96%BD%E7%AD%96%E7%95%A5" tabindex="-1"><span class="icon icon-link"></span></a>10.3 自動化測試的實施策略</h2>
+<ul>
+<li>考慮自動化測試案例的成本，為了更好的投資報酬率，需要更聰明地啟動自動化測試實踐</li>
+</ul>
+<h3 id="1031-增加自動化測試案例的著手點"><a aria-hidden="true" href="#1031-%E5%A2%9E%E5%8A%A0%E8%87%AA%E5%8B%95%E5%8C%96%E6%B8%AC%E8%A9%A6%E6%A1%88%E4%BE%8B%E7%9A%84%E8%91%97%E6%89%8B%E9%BB%9E" tabindex="-1"><span class="icon icon-link"></span></a>10.3.1 增加自動化測試案例的著手點</h3>
+<h4 id="1-針對代碼熱區補充自動化測試案例"><a aria-hidden="true" href="#1-%E9%87%9D%E5%B0%8D%E4%BB%A3%E7%A2%BC%E7%86%B1%E5%8D%80%E8%A3%9C%E5%85%85%E8%87%AA%E5%8B%95%E5%8C%96%E6%B8%AC%E8%A9%A6%E6%A1%88%E4%BE%8B" tabindex="-1"><span class="icon icon-link"></span></a>1. 針對代碼熱區補充自動化測試案例</h4>
+<ul>
+<li>程式碼熱區
+<ul>
+<li><strong>程式碼變動頻率相對較高</strong> 的檔案或函數</li>
+<li><strong>經常出問題</strong> 的功能元件</li>
+<li>若非程式碼熱區，說明執行穩定，編寫自動化測試的投報率較低</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-跟隨新功能開發的進度"><a aria-hidden="true" href="#2-%E8%B7%9F%E9%9A%A8%E6%96%B0%E5%8A%9F%E8%83%BD%E9%96%8B%E7%99%BC%E7%9A%84%E9%80%B2%E5%BA%A6" tabindex="-1"><span class="icon icon-link"></span></a>2. 跟隨新功能開發的進度</h4>
+<ul>
+<li>給目前的功能開發提供即時的品質回饋</li>
+<li>若只是在補充原有功能的自動化測試案例，無法即時發揮保護網的作用</li>
+<li>多數自動化測試案例是由開發工程師自行負責編寫
+<ul>
+<li>若同一功能由一人編寫測試，一人編寫代碼，就會產生溝通成本
+<ul>
+<li>(傳統自動化測試的缺點)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-從測試金字塔的中間層向上下兩端擴展"><a aria-hidden="true" href="#3-%E5%BE%9E%E6%B8%AC%E8%A9%A6%E9%87%91%E5%AD%97%E5%A1%94%E7%9A%84%E4%B8%AD%E9%96%93%E5%B1%A4%E5%90%91%E4%B8%8A%E4%B8%8B%E5%85%A9%E7%AB%AF%E6%93%B4%E5%B1%95" tabindex="-1"><span class="icon icon-link"></span></a>3. 從測試金字塔的中間層向上下兩端擴展</h4>
+<ul>
+<li>ex: 採用微服務架構的服務端軟體 => 從契約層開始著手</li>
+<li>ex: 手機端APP(微核架構) => 從元件級或API級的測試開始入手</li>
+</ul>
+<h4 id="4-自動化測試案例的質量比數量重要"><a aria-hidden="true" href="#4-%E8%87%AA%E5%8B%95%E5%8C%96%E6%B8%AC%E8%A9%A6%E6%A1%88%E4%BE%8B%E7%9A%84%E8%B3%AA%E9%87%8F%E6%AF%94%E6%95%B8%E9%87%8F%E9%87%8D%E8%A6%81" tabindex="-1"><span class="icon icon-link"></span></a>4. 自動化測試案例的質量比數量重要</h4>
+<ul>
+<li>在能達到「驗證品質目的」的前提下，自動化測試的案例越少越好 (降低成本)</li>
+<li><strong>「在實作成本最低的測試層級上，進行相應業務邏輯的測試」</strong>
+<ul>
+<li>不要在不同層級的測試(如單元測試層和元件測試層)中，針對相同的邏輯編寫測試案例</li>
+<li>不寫不必要的測試程式碼</li>
+</ul>
+</li>
+</ul>
+<h3 id="1032-提高自動化測試的執行次數"><a aria-hidden="true" href="#1032-%E6%8F%90%E9%AB%98%E8%87%AA%E5%8B%95%E5%8C%96%E6%B8%AC%E8%A9%A6%E7%9A%84%E5%9F%B7%E8%A1%8C%E6%AC%A1%E6%95%B8" tabindex="-1"><span class="icon icon-link"></span></a>10.3.2 提高自動化測試的執行次數</h3>
+<ul>
+<li>測試執行次數越多 => 成本越低、獲益越高</li>
+<li>如何提高執行次數？</li>
+</ul>
+<h4 id="1-共享自動化測試案例-測試可以被反覆利用甚至自動化"><a aria-hidden="true" href="#1-%E5%85%B1%E4%BA%AB%E8%87%AA%E5%8B%95%E5%8C%96%E6%B8%AC%E8%A9%A6%E6%A1%88%E4%BE%8B-%E6%B8%AC%E8%A9%A6%E5%8F%AF%E4%BB%A5%E8%A2%AB%E5%8F%8D%E8%A6%86%E5%88%A9%E7%94%A8%E7%94%9A%E8%87%B3%E8%87%AA%E5%8B%95%E5%8C%96" tabindex="-1"><span class="icon icon-link"></span></a>1. 共享自動化測試案例 (測試可以被反覆利用，甚至自動化)</h4>
+<ul>
+<li>反例：
+<ul>
+<li>測試只保存在自己的電腦中</li>
+<li>測試只能在自己的環境中執行</li>
+<li>測試案例無法針對不同環境(如測試環境、預生產環境)進行適配</li>
+</ul>
+</li>
+<li>正例：
+<ul>
+<li>將自動化測試案例放到團隊的程式碼倉庫中</li>
+<li>整合到持續部署流水線中自動執行</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-開發人員是自動化測試的第一用戶"><a aria-hidden="true" href="#2-%E9%96%8B%E7%99%BC%E4%BA%BA%E5%93%A1%E6%98%AF%E8%87%AA%E5%8B%95%E5%8C%96%E6%B8%AC%E8%A9%A6%E7%9A%84%E7%AC%AC%E4%B8%80%E7%94%A8%E6%88%B6" tabindex="-1"><span class="icon icon-link"></span></a>2. 開發人員是自動化測試的第一用戶</h4>
+<ul>
+<li>每個開發人員，隨時都能非常方便地執行自動化測試案例
+<ul>
+<li>將自動化測試作為開發人員日常開發中的一張品質保護網</li>
+<li>而非測試人員用來驗收開發人員工作成果的工具</li>
+</ul>
+</li>
+</ul>
+<h3 id="1033-良好自動化測試的特徵"><a aria-hidden="true" href="#1033-%E8%89%AF%E5%A5%BD%E8%87%AA%E5%8B%95%E5%8C%96%E6%B8%AC%E8%A9%A6%E7%9A%84%E7%89%B9%E5%BE%B5" tabindex="-1"><span class="icon icon-link"></span></a>10.3.3 良好自動化測試的特徵</h3>
+<h4 id="1-案例之間必須相互獨立"><a aria-hidden="true" href="#1-%E6%A1%88%E4%BE%8B%E4%B9%8B%E9%96%93%E5%BF%85%E9%A0%88%E7%9B%B8%E4%BA%92%E7%8D%A8%E7%AB%8B" tabindex="-1"><span class="icon icon-link"></span></a>1. 案例之間必須相互獨立</h4>
+<ul>
+<li>案例間若存在順序依賴
+<ul>
+<li>就只能線性執行</li>
+<li>執行時間拉長，回饋效率降低</li>
+<li>搜尋失敗原因難度提高</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-測試案例的運行結果必須穩定"><a aria-hidden="true" href="#2-%E6%B8%AC%E8%A9%A6%E6%A1%88%E4%BE%8B%E7%9A%84%E9%81%8B%E8%A1%8C%E7%B5%90%E6%9E%9C%E5%BF%85%E9%A0%88%E7%A9%A9%E5%AE%9A" tabindex="-1"><span class="icon icon-link"></span></a>2. 測試案例的運行結果必須穩定</h4>
+<ul>
+<li>不穩定的測試案例只會提供錯誤的品質訊號，浪費團隊的時間</li>
+</ul>
+<h4 id="3-測試案例的運行速度必須快"><a aria-hidden="true" href="#3-%E6%B8%AC%E8%A9%A6%E6%A1%88%E4%BE%8B%E7%9A%84%E9%81%8B%E8%A1%8C%E9%80%9F%E5%BA%A6%E5%BF%85%E9%A0%88%E5%BF%AB" tabindex="-1"><span class="icon icon-link"></span></a>3. 測試案例的運行速度必須快</h4>
+<ul>
+<li>將一個測試案例分解成多個獨立的測試案例，每個案例僅測原測試案例的一部份
+<ul>
+<li>=> 平行執行</li>
+</ul>
+</li>
+<li>「等待」改為「輪詢」，以很小的時間間隔不斷查詢是否到達下一步執行的狀態
+<ul>
+<li>=> polling 取代 sleep</li>
+</ul>
+</li>
+</ul>
+<h4 id="4-測試環境應該統一-最大化測試案例共享的獲益"><a aria-hidden="true" href="#4-%E6%B8%AC%E8%A9%A6%E7%92%B0%E5%A2%83%E6%87%89%E8%A9%B2%E7%B5%B1%E4%B8%80-%E6%9C%80%E5%A4%A7%E5%8C%96%E6%B8%AC%E8%A9%A6%E6%A1%88%E4%BE%8B%E5%85%B1%E4%BA%AB%E7%9A%84%E7%8D%B2%E7%9B%8A" tabindex="-1"><span class="icon icon-link"></span></a>4. 測試環境應該統一 (最大化測試案例共享的獲益)</h4>
+<ul>
+<li>反例：測試只能在某測試環境上執行，甚至只能在某開發人員的開發機器上執行</li>
+<li>想辦法讓大家的測試環境統一或是讓測試能適配不同的環境</li>
+</ul>
+<h3 id="1034-共享自動化測試的維護職責"><a aria-hidden="true" href="#1034-%E5%85%B1%E4%BA%AB%E8%87%AA%E5%8B%95%E5%8C%96%E6%B8%AC%E8%A9%A6%E7%9A%84%E7%B6%AD%E8%AD%B7%E8%81%B7%E8%B2%AC" tabindex="-1"><span class="icon icon-link"></span></a>10.3.4 共享自動化測試的維護職責</h3>
+<ul>
+<li>自動化測試也是軟體程式碼，應花費時間心力使其易於維護，避免程式碼腐爛</li>
+<li>自動化測試應盡可能與生產程式碼同步變化
+<ul>
+<li>沒有同步變化，執行就會失敗</li>
+<li>當開發人員執行自動化測試失敗後，就應該馬上進行修改
+<ul>
+<li>(可能是功能出錯，也可能是測試需要修改)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>破窗效應：
+<ul>
+<li>犯罪學理論：環境中的不良現象如果被放任存在，會誘使人們仿效，甚至變本加厲</li>
+<li>越來越多測試失敗卻沒有受到關注，久了就對自動化測試的結果視而不見</li>
+</ul>
+</li>
+</ul>
+<h3 id="1035-代碼測試覆蓋率"><a aria-hidden="true" href="#1035-%E4%BB%A3%E7%A2%BC%E6%B8%AC%E8%A9%A6%E8%A6%86%E8%93%8B%E7%8E%87" tabindex="-1"><span class="icon icon-link"></span></a>10.3.5 代碼測試覆蓋率</h3>
+<ul>
+<li>有人認為它是非常有用的指標，應該要求達到一定比例的測試覆蓋度</li>
+<li>有人認為它是有用的工具，但它
+<ul>
+<li>只能告訴你「哪些程式碼缺乏測試案例覆蓋」</li>
+<li>卻無法證明「被覆蓋的程式碼就一定是真正經過良好驗證的程式碼」</li>
+<li>提供一種錯誤的安全感</li>
+</ul>
+</li>
+<li>Google公司並沒有規定測試覆蓋率的統一標準，只有一個建議性標準：
+<ul>
+<li>單元測試覆蓋率達到85%</li>
+</ul>
+</li>
+<li>Facebook於2004年剛上線時也沒寫自動化測試
+<ul>
+<li>業務發展快速、工程師數量大幅增加</li>
+<li>交付品質變差、開發人員常常處於救火狀態</li>
+<li>2008年始，Facebook正式引入自動化測試實踐</li>
+<li>Facebook 也無統一規定要寫多少自動化測試</li>
+<li>Facebook 公司中，自動化測試案例的大多數由開發工程師自己負責</li>
+</ul>
+</li>
+</ul>
+<p><img alt="10-12-谷歌公司2014年自動化測試覆蓋率統計圖" src="images/cicd-2.0/10/10-12-%E8%B0%B7%E6%AD%8C%E5%85%AC%E5%8F%B82014%E5%B9%B4%E8%87%AA%E5%8B%95%E5%8C%96%E6%B8%AC%E8%A9%A6%E8%A6%86%E8%93%8B%E7%8E%87%E7%B5%B1%E8%A8%88%E5%9C%96.png">
+<img alt="10-13-谷歌公司不同編程語言的測試覆蓋率統計" src="images/cicd-2.0/10/10-13-%E8%B0%B7%E6%AD%8C%E5%85%AC%E5%8F%B8%E4%B8%8D%E5%90%8C%E7%B7%A8%E7%A8%8B%E8%AA%9E%E8%A8%80%E7%9A%84%E6%B8%AC%E8%A9%A6%E8%A6%86%E8%93%8B%E7%8E%87%E7%B5%B1%E8%A8%88.png">
+<img alt="10-14-2008-2012年Facebook自動化測試案例的增長趨勢" src="images/cicd-2.0/10/10-14-2008-2012%E5%B9%B4Facebook%E8%87%AA%E5%8B%95%E5%8C%96%E6%B8%AC%E8%A9%A6%E6%A1%88%E4%BE%8B%E7%9A%84%E5%A2%9E%E9%95%B7%E8%B6%A8%E5%8B%A2.png"></p>
+<h2 id="104-用戶驗收自動化測試要點"><a aria-hidden="true" href="#104-%E7%94%A8%E6%88%B6%E9%A9%97%E6%94%B6%E8%87%AA%E5%8B%95%E5%8C%96%E6%B8%AC%E8%A9%A6%E8%A6%81%E9%BB%9E" tabindex="-1"><span class="icon icon-link"></span></a>10.4 用戶驗收自動化測試要點</h2>
+<ul>
+<li>用戶驗收自動化測試處於自動化測試金字塔的最高層，成本最高</li>
+<li>開發更多用戶驗收測試前，必須精心準備，以便以較低的成本持續維護比較健康的測試案例集</li>
+</ul>
+<h3 id="1041-先搭建分層框架"><a aria-hidden="true" href="#1041-%E5%85%88%E6%90%AD%E5%BB%BA%E5%88%86%E5%B1%A4%E6%A1%86%E6%9E%B6" tabindex="-1"><span class="icon icon-link"></span></a>10.4.1 先搭建分層框架</h3>
+<ul>
+<li>先選擇適合專案的測試框架，做一定的調整</li>
+<li>產生腳本程式後，進行測試腳本程式的分層重構</li>
+</ul>
+<h4 id="1-測試案例的描述層"><a aria-hidden="true" href="#1-%E6%B8%AC%E8%A9%A6%E6%A1%88%E4%BE%8B%E7%9A%84%E6%8F%8F%E8%BF%B0%E5%B1%A4" tabindex="-1"><span class="icon icon-link"></span></a>1. 測試案例的描述層</h4>
+<ul>
+<li>test case 描述</li>
+</ul>
+<h4 id="2-測試案例的實現層"><a aria-hidden="true" href="#2-%E6%B8%AC%E8%A9%A6%E6%A1%88%E4%BE%8B%E7%9A%84%E5%AF%A6%E7%8F%BE%E5%B1%A4" tabindex="-1"><span class="icon icon-link"></span></a>2. 測試案例的實現層</h4>
+<ul>
+<li>實作 test case</li>
+</ul>
+<h4 id="3-測試案例的接口層介面層"><a aria-hidden="true" href="#3-%E6%B8%AC%E8%A9%A6%E6%A1%88%E4%BE%8B%E7%9A%84%E6%8E%A5%E5%8F%A3%E5%B1%A4%E4%BB%8B%E9%9D%A2%E5%B1%A4" tabindex="-1"><span class="icon icon-link"></span></a>3. 測試案例的接口層(介面層)</h4>
+<ul>
+<li>把 test case 中 可以重用的東西提取出來</li>
+</ul>
+<h3 id="1042-測試案例應保持低位案例數應保持少量低成本"><a aria-hidden="true" href="#1042-%E6%B8%AC%E8%A9%A6%E6%A1%88%E4%BE%8B%E6%87%89%E4%BF%9D%E6%8C%81%E4%BD%8E%E4%BD%8D%E6%A1%88%E4%BE%8B%E6%95%B8%E6%87%89%E4%BF%9D%E6%8C%81%E5%B0%91%E9%87%8F%E4%BD%8E%E6%88%90%E6%9C%AC" tabindex="-1"><span class="icon icon-link"></span></a>10.4.2 測試案例應保持低位(案例數應保持少量，低成本)</h3>
+<ul>
+<li>測試案例數量不應太多</li>
+<li>focus在驗證軟體服務的核心工作流程</li>
+<li>實作細節可交由下層的自動化測試案例來覆蓋</li>
+<li>ex: 驗證系統登入行為時
+<ul>
+<li>驗證目標主要在驗證整個登錄流程是否得到正確執行</li>
+<li>而不是驗證輸入資訊是否非法</li>
+<li>後者可透過更低層次的自動化測試案例來覆蓋</li>
+</ul>
+</li>
+</ul>
+<h3 id="1043-為自動化測試案例預留api"><a aria-hidden="true" href="#1043-%E7%82%BA%E8%87%AA%E5%8B%95%E5%8C%96%E6%B8%AC%E8%A9%A6%E6%A1%88%E4%BE%8B%E9%A0%90%E7%95%99api" tabindex="-1"><span class="icon icon-link"></span></a>10.4.3 為自動化測試案例預留API</h3>
+<ul>
+<li>少用模擬圖形介面操作的程式碼
+<ul>
+<li>介面操作反應慢</li>
+<li>可能會有不容易定位，或執行不穩定的情況</li>
+</ul>
+</li>
+<li>盡量呼叫位於介面下層的API來驅動業務流程的執行</li>
+</ul>
+<h3 id="1045-測試數據的準備"><a aria-hidden="true" href="#1045-%E6%B8%AC%E8%A9%A6%E6%95%B8%E6%93%9A%E7%9A%84%E6%BA%96%E5%82%99" tabindex="-1"><span class="icon icon-link"></span></a>10.4.5 測試數據的準備</h3>
+<ol>
+<li>通過一些規則，編寫程序自動生成數據(當規則複雜時，較難編寫程序)</li>
+<li>通過錄制手工測試時產生的數據</li>
+<li>將生產環境的非敏感數據克隆一份，或截取一個片段</li>
+<li>進行生產環境數據的自動化錄制，並保存備份</li>
+</ol>
+<h2 id="105-其他質量檢查方法"><a aria-hidden="true" href="#105-%E5%85%B6%E4%BB%96%E8%B3%AA%E9%87%8F%E6%AA%A2%E6%9F%A5%E6%96%B9%E6%B3%95" tabindex="-1"><span class="icon icon-link"></span></a>10.5 其他質量檢查方法</h2>
+<h3 id="1051-差異批注測試方法"><a aria-hidden="true" href="#1051-%E5%B7%AE%E7%95%B0%E6%89%B9%E6%B3%A8%E6%B8%AC%E8%A9%A6%E6%96%B9%E6%B3%95" tabindex="-1"><span class="icon icon-link"></span></a>10.5.1 差異批注測試方法</h3>
+<h3 id="1052-代碼規範檢查與代碼動靜態檢測"><a aria-hidden="true" href="#1052-%E4%BB%A3%E7%A2%BC%E8%A6%8F%E7%AF%84%E6%AA%A2%E6%9F%A5%E8%88%87%E4%BB%A3%E7%A2%BC%E5%8B%95%E9%9D%9C%E6%85%8B%E6%AA%A2%E6%B8%AC" tabindex="-1"><span class="icon icon-link"></span></a>10.5.2 代碼規範檢查與代碼動靜態檢測</h3>
+<h3 id="1053-ai在測試領域的應用"><a aria-hidden="true" href="#1053-ai%E5%9C%A8%E6%B8%AC%E8%A9%A6%E9%A0%98%E5%9F%9F%E7%9A%84%E6%87%89%E7%94%A8" tabindex="-1"><span class="icon icon-link"></span></a>10.5.3 AI在測試領域的應用</h3>
+<h2 id="106-小結"><a aria-hidden="true" href="#106-%E5%B0%8F%E7%B5%90" tabindex="-1"><span class="icon icon-link"></span></a>10.6 小結</h2>
+<ol>
+<li>自動化測試案例運行次數越多，平均成本越低，收益越大</li>
+<li>自動化測試案例間應該盡可能獨立，互不影響</li>
+<li>在質量有保障的前提下，自動化測試的案例越少越好</li>
+<li>遺留代碼的自動化測試編寫應從代碼熱區開始</li>
+<li>自動化測試案例從測試金字塔的中間層開始補充，投入產出比最高</li>
+</ol></div></article> <div class="pt-4 pb-4 lg:px-8 flex flex-col sm:flex-row justify-between"><a href="https://github.com/codesensegroup/code-study/edit/master/content/zh/cicd-2.0/chapter10.md" target="_blank" rel="noopener" class="text-gray-600 dark:text-gray-400 text-sm font-medium hover:underline flex items-center">
+    在GitHub上在編輯此頁面
+    <svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4 ml-1"><path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a> <span class="text-gray-600 dark:text-gray-400 text-sm font-medium flex items-center">
+    更新時間： 2022年6月22日 上午8:51:19
+  </span></div> <div class="grid grid-cols-2 gap-2 lg:px-8 pt-4 border-t dark:border-gray-800"><a href="/code-study/cicd-2.0/chapter9" class="text-primary-500 font-bold hover:underline flex items-center justify-start"><svg fill="currentColor" viewBox="0 0 20 20" class="w-4 h-4 mr-1 flex-shrink-0"><path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"></path></svg> <span class="truncate">Chapter 09 持續整合</span></a> <a href="/code-study/web-api/chapter2" class="text-primary-500 font-bold hover:underline flex items-center justify-end"><span class="truncate">第2章 EndPoint設計與請求形式</span> <svg fill="currentColor" viewBox="0 0 20 20" class="w-4 h-4 ml-1 flex-shrink-0"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg></a></div></div> <div class="w-full lg:w-1/4 block relative"><div class="lg:sticky lg:top-16 overflow-y-auto h-full lg:h-auto lg:max-h-(screen-16)"><nav class="py-4 lg:py-8 lg:pl-8 lg:pr-2"><p class="mb-3 lg:mb-2 text-gray-500 uppercase tracking-wider font-bold text-sm lg:text-xs">文件目錄</p> <ul class="scrollactive-nav"><li class="text-gray-700 dark:text-gray-300 border-t border-dashed dark:border-gray-800 first:border-t-0"><a href="#前言" class="block text-sm scrollactive-item transition-padding ease-in-out duration-300 hover:pl-1 py-2">前言</a></li><li class="text-gray-700 dark:text-gray-300 border-t border-dashed dark:border-gray-800 first:border-t-0"><a href="#101-自動化測試的自身定位" class="block text-sm scrollactive-item transition-padding ease-in-out duration-300 hover:pl-1 py-2">10.1 自動化測試的自身定位</a></li><li class="text-gray-700 dark:text-gray-300"><a href="#測試領域的4類活動" class="block text-sm scrollactive-item transition-padding ease-in-out duration-300 hover:pl-1 ml-2 pb-2">測試領域的4類活動</a></li><li class="text-gray-700 dark:text-gray-300"><a href="#brian-marick-測試4象限" class="block text-sm scrollactive-item transition-padding ease-in-out duration-300 hover:pl-1 ml-2 pb-2">Brian Marick 測試4象限</a></li><li class="text-gray-700 dark:text-gray-300"><a href="#1011-自動化測試的優勢" class="block text-sm scrollactive-item transition-padding ease-in-out duration-300 hover:pl-1 ml-2 pb-2">10.1.1 自動化測試的優勢</a></li><li class="text-gray-700 dark:text-gray-300"><a href="#1012-自動化測試所需的投入" class="block text-sm scrollactive-item transition-padding ease-in-out duration-300 hover:pl-1 ml-2 pb-2">10.1.2 自動化測試所需的投入</a></li><li class="text-gray-700 dark:text-gray-300 border-t border-dashed dark:border-gray-800 first:border-t-0"><a href="#102-突破傳統自動化測試的困境" class="block text-sm scrollactive-item transition-padding ease-in-out duration-300 hover:pl-1 py-2">10.2 突破傳統自動化測試的困境</a></li><li class="text-gray-700 dark:text-gray-300"><a href="#自動化測試的創建流程" class="block text-sm scrollactive-item transition-padding ease-in-out duration-300 hover:pl-1 ml-2 pb-2">自動化測試的創建流程</a></li><li class="text-gray-700 dark:text-gray-300"><a href="#1021-傳統自動化測試的特點" class="block text-sm scrollactive-item transition-padding ease-in-out duration-300 hover:pl-1 ml-2 pb-2">10.2.1 傳統自動化測試的特點</a></li><li class="text-gray-700 dark:text-gray-300"><a href="#1022-自動化測試的分層" class="block text-sm scrollactive-item transition-padding ease-in-out duration-300 hover:pl-1 ml-2 pb-2">10.2.2 自動化測試的分層</a></li><li class="text-gray-700 dark:text-gray-300"><a href="#1023-不同類型的測試金字塔" class="block text-sm scrollactive-item transition-padding ease-in-out duration-300 hover:pl-1 ml-2 pb-2">10.2.3 不同類型的測試金字塔</a></li><li class="text-gray-700 dark:text-gray-300 border-t border-dashed dark:border-gray-800 first:border-t-0"><a href="#103-自動化測試的實施策略" class="block text-sm scrollactive-item transition-padding ease-in-out duration-300 hover:pl-1 py-2">10.3 自動化測試的實施策略</a></li><li class="text-gray-700 dark:text-gray-300"><a href="#1031-增加自動化測試案例的著手點" class="block text-sm scrollactive-item transition-padding ease-in-out duration-300 hover:pl-1 ml-2 pb-2">10.3.1 增加自動化測試案例的著手點</a></li><li class="text-gray-700 dark:text-gray-300"><a href="#1032-提高自動化測試的執行次數" class="block text-sm scrollactive-item transition-padding ease-in-out duration-300 hover:pl-1 ml-2 pb-2">10.3.2 提高自動化測試的執行次數</a></li><li class="text-gray-700 dark:text-gray-300"><a href="#1033-良好自動化測試的特徵" class="block text-sm scrollactive-item transition-padding ease-in-out duration-300 hover:pl-1 ml-2 pb-2">10.3.3 良好自動化測試的特徵</a></li><li class="text-gray-700 dark:text-gray-300"><a href="#1034-共享自動化測試的維護職責" class="block text-sm scrollactive-item transition-padding ease-in-out duration-300 hover:pl-1 ml-2 pb-2">10.3.4 共享自動化測試的維護職責</a></li><li class="text-gray-700 dark:text-gray-300"><a href="#1035-代碼測試覆蓋率" class="block text-sm scrollactive-item transition-padding ease-in-out duration-300 hover:pl-1 ml-2 pb-2">10.3.5 代碼測試覆蓋率</a></li><li class="text-gray-700 dark:text-gray-300 border-t border-dashed dark:border-gray-800 first:border-t-0"><a href="#104-用戶驗收自動化測試要點" class="block text-sm scrollactive-item transition-padding ease-in-out duration-300 hover:pl-1 py-2">10.4 用戶驗收自動化測試要點</a></li><li class="text-gray-700 dark:text-gray-300"><a href="#1041-先搭建分層框架" class="block text-sm scrollactive-item transition-padding ease-in-out duration-300 hover:pl-1 ml-2 pb-2">10.4.1 先搭建分層框架</a></li><li class="text-gray-700 dark:text-gray-300"><a href="#1042-測試案例應保持低位案例數應保持少量低成本" class="block text-sm scrollactive-item transition-padding ease-in-out duration-300 hover:pl-1 ml-2 pb-2">10.4.2 測試案例應保持低位(案例數應保持少量，低成本)</a></li><li class="text-gray-700 dark:text-gray-300"><a href="#1043-為自動化測試案例預留api" class="block text-sm scrollactive-item transition-padding ease-in-out duration-300 hover:pl-1 ml-2 pb-2">10.4.3 為自動化測試案例預留API</a></li><li class="text-gray-700 dark:text-gray-300"><a href="#1045-測試數據的準備" class="block text-sm scrollactive-item transition-padding ease-in-out duration-300 hover:pl-1 ml-2 pb-2">10.4.5 測試數據的準備</a></li><li class="text-gray-700 dark:text-gray-300 border-t border-dashed dark:border-gray-800 first:border-t-0"><a href="#105-其他質量檢查方法" class="block text-sm scrollactive-item transition-padding ease-in-out duration-300 hover:pl-1 py-2">10.5 其他質量檢查方法</a></li><li class="text-gray-700 dark:text-gray-300"><a href="#1051-差異批注測試方法" class="block text-sm scrollactive-item transition-padding ease-in-out duration-300 hover:pl-1 ml-2 pb-2">10.5.1 差異批注測試方法</a></li><li class="text-gray-700 dark:text-gray-300"><a href="#1052-代碼規範檢查與代碼動靜態檢測" class="block text-sm scrollactive-item transition-padding ease-in-out duration-300 hover:pl-1 ml-2 pb-2">10.5.2 代碼規範檢查與代碼動靜態檢測</a></li><li class="text-gray-700 dark:text-gray-300"><a href="#1053-ai在測試領域的應用" class="block text-sm scrollactive-item transition-padding ease-in-out duration-300 hover:pl-1 ml-2 pb-2">10.5.3 AI在測試領域的應用</a></li><li class="text-gray-700 dark:text-gray-300 border-t border-dashed dark:border-gray-800 first:border-t-0"><a href="#106-小結" class="block text-sm scrollactive-item transition-padding ease-in-out duration-300 hover:pl-1 py-2">10.6 小結</a></li></ul></nav></div></div></div></div></main> <footer class="h-20 relative w-full border-t dark:border-gray-800 bg-white dark:bg-gray-900 z-20 text-center flex flex-col items-center justify-center" data-v-30e009f0><div class="font-light" data-v-30e009f0>© 2022 Code Sense</div> <div class="busuanzi flex" data-v-30e009f0><span id="busuanzi_container_site_uv" class="flex" data-v-30e009f0><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="mt-1 mr-1 w-4 h-4" data-v-30e009f0><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg> <span title="訪客總數" class="site-uv" data-v-30e009f0><span id="busuanzi_value_site_uv" data-v-30e009f0></span></span></span> <span class="mx-2" data-v-30e009f0>|</span> <span id="busuanzi_container_site_pv" class="flex" data-v-30e009f0><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="mt-1 mr-1 w-4 h-4" data-v-30e009f0><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path> <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"></path></svg> <span title="總瀏覽次數" class="site-pv" data-v-30e009f0><span id="busuanzi_value_site_pv" data-v-30e009f0></span></span></span></div></footer></div></div></div><script defer src="/code-study/_nuxt/static/1655887935/cicd-2.0/chapter10/state.js"></script><script src="/code-study/_nuxt/8e7c416.js" defer></script><script src="/code-study/_nuxt/a094b91.js" defer></script><script src="/code-study/_nuxt/1366841.js" defer></script><script src="/code-study/_nuxt/2a29f01.js" defer></script><script src="/code-study/_nuxt/18f4d55.js" defer></script><script src="/code-study/_nuxt/dcf5049.js" defer></script><script src="/code-study/_nuxt/808d0a5.js" defer></script><script src="/code-study/_nuxt/ca16d2b.js" defer></script>
+  </body>
+</html>
