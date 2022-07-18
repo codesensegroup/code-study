@@ -54,5 +54,13 @@ Runner Server須根據開發應用選擇不同的作業環境，例如若你的�
 
 因Runner Server會根據Script指令做建置與測試甚至是部屬，所以需安裝可執行相對應的CLI指令及SDK。如上述提到的.Net Core，若Runner Server要編譯.Net Core專案，則就需安裝相對應的SDK。若CD需透過SSH連至部屬機操作，則Runner Server則需具備SSH連線能力。簡單的說，開發環境可做的事情，大部分在Runner上也要都具有相同功能。
 
-### 安裝Runner
+### R
+
+### 安裝Runner設定(Windows)
+
+本章節安裝設定會以Windows為主，目前Runner設置在不同平台，Gitlab已有手把手指令教學。點選路徑為
+
+Group下
+
+Setting/CICD
 
