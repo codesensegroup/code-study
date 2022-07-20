@@ -144,3 +144,24 @@ YourGroup → Setting → CI/CD → Runner (點選Expand) → Take me there
 
 ### Shell設置
 
+上述設置好Ruuner後，接著需調整Runner設定檔的執行器，請開啟Runner資料夾下的toml檔，並照下圖設置
+
+<p align="center">
+  <img src="images/cicd-2.0/00/009.png" width="70%" /> 
+</p>
+
+詳細對應Shell設定可至此查詢[[連結請點我](https://docs.gitlab.com/runner/shells/)]
+
+### 安裝編譯環境設定
+
+因為Runner為代替本機電腦做建置、測試與部屬。所以需在上面安裝相對應環境，專案上我們會使用dotnet core為範例。所以電腦需安裝對應需有的SDK，若使用Docker則需安裝Docker環境。
+
+ - [Net Core SDK安裝參考](https://docs.microsoft.com/zh-tw/dotnet/core/install/windows?tabs=net60)
+ - [Dokcer安裝參考](https://github.com/changemyminds/script/tree/master/docker/install) 好用請給讚，謝謝
+
+## CI撰寫
+
+
+
+
+## CD撰寫
