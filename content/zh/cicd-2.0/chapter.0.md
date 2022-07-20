@@ -161,7 +161,142 @@ YourGroup → Setting → CI/CD → Runner (點選Expand) → Take me there
 
 ## CI撰寫
 
+### 建置與測試
+
+### Hello CI/CD
+
+請到此下載Sample Code
+
+https://gitlab.com/test8214/emptyproject
+
+下載下來後將此專案上到你的Group Project，若你的Runner已設好，我們可以直接從Gitlab頁面點選 Set up CI/C，如下圖
+
+<p align="center">
+  <img src="images/cicd-2.0/00/010.png" width="90%" /> 
+</p>
+
+接著點選Configure pipeline，此時Gitlab會幫你生成yml Sample Code，此Sample Code已幫你寫好的基本build, test與deploy Stages。請將最上層註解刪除，並加上default區段，runner tag
+
+```=script
+# default表示所有job都會參考以及使用
+default:
+  # 使用Gitlab Runner有相關的標籤
+  tags:
+    - Windows(根據你的Runner Tag去填寫)
+```
+
+此時若Runner設置無誤，就可以看到Gitlab開始跑CI/CD，如下圖
+
+<p align="center">
+  <img src="images/cicd-2.0/00/011.png" width="90%" /> 
+</p>
+
+根據此腳本，我們可以得知CI.yml的基本語法由stages及對應的job name中的script。若要新增Job則只需在stages新增，例如我們在test站點後新增build-release，請修改stage區塊如下
 
 
+```=script
+stages:          # List of stages for jobs, and their order of execution
+  - build
+  - test
+  - build-release # 新增build-release
+  - deploy
+```
+
+並將以下Script放置lint-test-job下
+
+```=script
+lint-test-job:   # This job also runs in the test stage.
+  stage: test    # It can run at the same time as unit-test-job (in parallel).
+  script:
+    - echo "Linting code... This will take about 10 seconds."
+    - sleep 10
+    - echo "No lint issues found."
+
+#新增build-release job
+build-release-job:
+  stage: build-release
+  script:
+    - echo "Build release app package..."
+    - echo "Build complete."
+```
+
+接著做commit，我們即可看到Pipeline由三個站點變成四個站點
+
+<p align="center">
+  <img src="images/cicd-2.0/00/012.png" width="100%" /> 
+</p>
+
+### build 與 test
+
+#### build-job
+
+一般在CI/CD Sample，很常會看到這個站點，用意在測試建置專案是否能編譯過。在dotnet core專案，我們在CLI模式下可以用dotnet build去建置專案，此時我們可以嘗試將build-job站點script加入dotnet build指令(建議先註解調build job以外的job Script站別)，如下
+
+```=script
+build-job:       # This job runs in the build stage, which runs first.
+  stage: build
+  script:
+    - echo "Compiling the code..."
+    - dotnet build SampleWebAPI\src\SampleWebAPI -c debug
+```
+
+更新yml file後，檢查一下Pipeline能否編輯的過。編譯過可看到訊息如下
+
+<p align="center">
+  <img src="images/cicd-2.0/00/013.png" width="100%" /> 
+</p>
+
+
+#### unit-test-job
+接著我們嘗試加入Test Job，請刪除lint-test-job只保留unit-test-job並將dotnet test加入script，如下
+
+```=script
+unit-test-job:   # This job runs in the test stage.
+  stage: test    # It only starts when the job in the build stage completes successfully.
+  script:
+    - echo "Running unit tests... This will take about 60 seconds."
+    - dotnet test SampleWebAPI\test\SampleWebAPI.Test
+```
+更新yml file後，檢查一下Pipeline能否編輯的過。編譯過可看到訊息如下
+
+<p align="center">
+  <img src="images/cicd-2.0/00/014.png" width="100%" /> 
+</p>
+
+#### 使用變數
+
+上述編譯與測試有使用到dotnet build與test，基本上我們可以將我們的src與test路徑寫成變數，這樣在使用上可以重複利用減少重複的程式碼
+
+```=script
+variables:
+  AppFolderPath: SampleWebAPI\\src\\SampleWebAPI
+  TestFolderPath: SampleWebAPI\\test\\SampleWebAPI.Test
+```
+
+接著將原本的Build與Test Jib Script換掉
+
+```=script
+build-job:       # This job runs in the build stage, which runs first.
+  stage: build
+  script:
+    - echo "Compiling the code..."
+    - dotnet build ${AppFolderPath} -c debug
+
+unit-test-job:   # This job runs in the test stage.
+  stage: test    # It only starts when the job in the build stage completes successfully.
+  script:
+    - echo "Running unit tests... This will take about 60 seconds."
+    - dotnet test ${TestFolderPath}
+```
+
+<alert>
+因為我們使用dot net core，所以在測試建置這個站點(build-job)，如果我們有寫測試Code，我們可以直接省略測試建置這個站點。只需要做Test即可。下dot net test時，因為要跑測試，他會順便建置App專案。
+</alert>
 
 ## CD撰寫
+
+### 建置與部屬
+
+### SSH設定
+
+### publish與deploy
