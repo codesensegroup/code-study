@@ -1,9 +1,9 @@
 ---
-title: 'Chapter 00 使用Gitlab做CI/CD'
-description: 'Chapter 09 使用Gitlab做CI/CD'
-position: 99
+title: 'Appendix 00 使用Gitlab做CI/CD'
+description: 'Appendix 00 使用Gitlab做CI/CD'
+position: 200
 category: 持續交付2.0：實務導向的DevOps
-menuTitle: 'Chapter 00'
+menuTitle: 'Appendix 00'
 contributors: ['spyua','changemyminds']
 ---
 
@@ -507,7 +507,6 @@ deploy-job:
 
 
 ```script
-
 default:
   tags:
     - Linux
@@ -589,10 +588,45 @@ deploy完後此時就可以透過API，得到資料
 
  http://x.x.x.x:你的對外Port/weatherforecast
 
-
 <alert>
 deploy可以看到pm2 start兩次，因為在第一次加入時沒有對應service name可以刪除會出錯。使用> /dev/null 測試沒用。只能先用此法暫解。章節目的還是在於如何建立一起一條簡易的CI/CD Pipeline為注。正式複雜的場合可以參考Docker版本
 </alert>
+
+
+#### only tags
+
+接著我們要在deploy上tags觸發事件(上標籤)，只需要在原本的script下，多一個tags屬性
+
+```script
+# 部屬      
+deploy-job:
+  stage: deploy
+  script:
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -     
+    - mkdir -p ~/.ssh     
+    - chmod 700 ~/.ssh 
+    - >
+      ssh -o StrictHostKeyChecking=no -v user@125.229.14.65 -p 40122
+      "mkdir -p ~/sampleapi &&
+       wget -O ~/sampleapi/release-build.zip https://gitlab.com/test8214/testproject/-/jobs/artifacts/main/download?job=build-release-job &&
+       sudo unzip -o ~/sampleapi/release-build.zip -d ~/sampleapi &&
+       pm2 start 'dotnet ~/sampleapi/SampleWebAPI/src/SampleWebAPI/bin/release/netcoreapp3.1/SampleWebAPI.dll --urls http://0.0.0.0:5000' --name 'code-sense-api-service' &&
+       pm2 delete code-sense-api-service &&
+       pm2 start 'dotnet ~/sampleapi/SampleWebAPI/src/SampleWebAPI/bin/release/netcoreapp3.1/SampleWebAPI.dll --urls http://0.0.0.0:5000' --name 'code-sense-api-service'
+      "
+  # 上tags觸發事件
+  only:
+    - tags
+```
+上完tags後，deploy事件則只會在你上tag時觸發。接著就可以在tag頁面看到此次的release tag是否有通過Pipeline Job。
+
+![019](images/cicd-2.0/00/019.png)
+
+<alert>
+一般CD做release build與deploy都會上only tags，此範例因為artifacts還不確定是不是已正確方式拿取，所以只在deploy上only tags。
+</alert>
+
 
 ## 參考專案
 
