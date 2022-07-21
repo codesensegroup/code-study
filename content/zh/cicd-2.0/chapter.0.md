@@ -1,9 +1,9 @@
 ---
-title: 'Chapter 00 使用Gitlab做CI/CD'
-description: 'Chapter 09 使用Gitlab做CI/CD'
-position: 99
+title: 'Appendix 00 使用Gitlab做CI/CD'
+description: 'Appendix 00 使用Gitlab做CI/CD'
+position: 200
 category: 持續交付2.0：實務導向的DevOps
-menuTitle: 'Chapter 00'
+menuTitle: 'Appendix 00'
 contributors: ['spyua','changemyminds']
 ---
 
