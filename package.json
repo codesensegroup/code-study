@@ -18,6 +18,7 @@
     "busuanzi.pure.js": "^1.0.3",
     "nuxt": "^2.15.8",
     "reading-time": "^1.5.0",
+    "rehype-urls": "^1.1.1",
     "vue-multiselect": "^2.1.6"
   },
   "devDependencies": {
