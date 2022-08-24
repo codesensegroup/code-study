@@ -4,6 +4,7 @@ import rt from 'reading-time';
 
 const routerBase = process.env.DEPLOY_ENV === 'GH_PAGES'
   ? '/code-study/' : '/'
+const path = require('path');
 
 export default theme({
   head: {
@@ -11,6 +12,18 @@ export default theme({
   },
   router: {
     base: routerBase
+  },
+  // https://github.com/nuxt/content/issues/376   
+  content: {
+    markdown: {
+      rehypePlugins: [
+        ['rehype-urls', function addBaseToImages(url) {
+          if (url.href && url.href.startsWith('images/')) {
+            return path.join(routerBase, url.href);
+          }
+        }]
+      ]
+    }
   },
   docs: {
     primaryColor: '#00CD81'
@@ -53,5 +66,8 @@ export default theme({
         document.readingStats = stats;
       }
     },
+    "vue-renderer:ssr:templateParams": function (params) {
+      params.HEAD = params.HEAD.replace(`<base href="${routerBase}">`, "");
+    }
   },
 })
