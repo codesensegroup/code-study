@@ -70,4 +70,11 @@ export default theme({
       params.HEAD = params.HEAD.replace(`<base href="${routerBase}">`, "");
     }
   },
+  // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
+  plugins: [
+    { src: '~~/plugins/material-icons.js' },
+  ],
+  build: {
+    transpile: ['screenfull']
+  }
 })
