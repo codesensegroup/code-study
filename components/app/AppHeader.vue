@@ -124,8 +124,10 @@
             >
               <IconGithub class="w-5 h-5" />
             </a>
- 
-            <AppColorSwitcher class="ml-4 mt-1 hidden lg:block" />
+
+            <AppColorSwitcher class="ml-4 mt-1 mr-3 hidden lg:block" />
+
+            <AppFullScreen class="w-5 h-5 -mt-1 hidden lg:block"/>
 
             <button
               v-if="settings.layout !== 'single'"
@@ -204,7 +206,6 @@ export default {
       }
       window.scrollTo(0, 0);
     },
-    noop() {},
   },
 };
 </script>

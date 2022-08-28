@@ -68,3 +68,35 @@ index d67127b..749cf88 100644
  
          <NuxtContent :document="document" />
        </article>
+diff --git a/node_modules/@nuxt/content-theme-docs/src/tailwind.config.js b/node_modules/@nuxt/content-theme-docs/src/tailwind.config.js
+index 2e83ca9..a981c0b 100644
+--- a/node_modules/@nuxt/content-theme-docs/src/tailwind.config.js
++++ b/node_modules/@nuxt/content-theme-docs/src/tailwind.config.js
+@@ -209,7 +209,26 @@ module.exports = ({ nuxt }) => ({
+         zIndex: false,
+         opacity: false
+       }
+-    )
++    ),
++    function ({ addComponents }) {
++      addComponents({
++        '.container': {
++          maxWidth: '100%',
++          '@screen sm': {
++            maxWidth: '640px',
++          },
++          '@screen md': {
++            maxWidth: '768px',
++          },
++          '@screen lg': {
++            maxWidth: '1280px',
++          },
++          '@screen xl': {
++            maxWidth: '1536px',
++          },
++        }
++      })
++    }    
+   ],
+   purge: {
+     // Learn more on https://tailwindcss.com/docs/controlling-file-size/#removing-unused-css
