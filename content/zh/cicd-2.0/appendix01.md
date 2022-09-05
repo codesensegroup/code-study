@@ -25,7 +25,7 @@ contributors: ['changemyminds']
 在`state based`模式底下，我們僅需要維護資料庫的目標狀態，每個**表(Table)**、**Stored Procedure**、**View**、**Trigger**將保存為單獨的SQL文件，這些SQL文件就是資料庫真實的樣貌。而升級資料庫所需的腳本會由工具自動生成，從而大大減輕維護成本。
 > 可以想像成MySQL中的mysqldump所建立的DDL表結構語法。
 
-在`IaC(IacInfrastructure-as-Code)`領域中，Kubernetes、HashiCorp Terraform等流行軟體皆採用這種方式。
+在`IaC(Infrastructure-as-Code)`領域中，Kubernetes、HashiCorp Terraform等流行軟體皆採用這種方式。
 
 <aside>
 
@@ -59,7 +59,7 @@ Liquibase版本，我們將採用4.15.0版本進行演示，記得必須要安�
 
 #### Win10
 
-1. 依照對應所需的版本進行安裝，我們使用zip檔進行安裝
+1. 前往[官網載點](https://www.liquibase.org/download?_ga=2.168149096.812788205.1662033186-1359190506.1661672342)或[Github Release](https://github.com/liquibase/liquibase/releases)依照對應所需的版本進行安裝，我們使用zip檔進行安裝
 
     <p align="center">
       <img src="images/cicd-2.0/a01/004.png" width="50%" />
@@ -356,8 +356,8 @@ liquibase drop-all
 
     ```bash
     
-    # 對資料庫進行兩者差異的比較，進行顯示
-    liquibase diff
+    # 對資料庫進行兩者差異的比較，並將結果寫入到檔案中
+    liquibase diff --outputFile=diff_between_DEV_PROD.log
     
     # 對資料庫進行兩者差異的比較，並且產生changelog
     liquibase diffChangeLog
