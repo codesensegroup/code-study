@@ -1,7 +1,7 @@
 ---
 title: 'Chapter 10 自動化測試策略與方法'
 description: 'Chapter 10 自動化測試策略與方法'
-position: 104
+position: 105
 category: 持續交付2.0：實務導向的DevOps
 menuTitle: 'Chapter 10'
 contributors: ['hdsbook', 'BackPOPO']
