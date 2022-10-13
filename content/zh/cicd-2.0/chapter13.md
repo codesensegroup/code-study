@@ -1,10 +1,10 @@
 ---
 title: 'Chapter 13 監測與決策'
 description: 'Chapter 13 監測與決策'
-position: 110
+position: 109
 category: 持續交付2.0：實務導向的DevOps
 menuTitle: 'Chapter 13'
-contributors: ['jezzaSoup']['YuLiangLin']
+contributors: ['jezzaSoup','YuLiangLin']
 ---
 
 ## 前言
