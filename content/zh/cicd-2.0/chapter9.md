@@ -1,7 +1,7 @@
 ---
 title: 'Chapter 09 持續整合'
 description: 'Chapter 09 持續整合'
-position: 104
+position: 191
 category: 持續交付2.0：實務導向的DevOps
 menuTitle: 'Chapter 09'
 contributors: ['cshs108']

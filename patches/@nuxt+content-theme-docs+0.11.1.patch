@@ -1,5 +1,5 @@
 diff --git a/node_modules/@nuxt/content-theme-docs/src/components/app/AppSearch.vue b/node_modules/@nuxt/content-theme-docs/src/components/app/AppSearch.vue
-index 31ce990..6028a9e 100644
+index 31ce990..9772c6c 100644
 --- a/node_modules/@nuxt/content-theme-docs/src/components/app/AppSearch.vue
 +++ b/node_modules/@nuxt/content-theme-docs/src/components/app/AppSearch.vue
 @@ -31,7 +31,7 @@
@@ -11,6 +11,15 @@ index 31ce990..6028a9e 100644
        <li
          v-for="(result, index) of results"
          :key="result.slug"
+@@ -76,7 +76,7 @@ export default {
+         return
+       }
+       this.searching = true
+-      this.results = await this.$content(this.$i18n.locale, { deep: true }).sortBy('position', 'asc').only(['title', 'slug', 'category', 'to']).limit(12).search(q).fetch()
++      this.results = await this.$content(this.$i18n.locale, { deep: true }).sortBy('position', 'desc').only(['title', 'slug', 'category', 'to']).limit(12).search(q).fetch()
+       this.searching = false
+     }
+   },
 diff --git a/node_modules/@nuxt/content-theme-docs/src/components/app/AppSubtitle.vue b/node_modules/@nuxt/content-theme-docs/src/components/app/AppSubtitle.vue
 new file mode 100644
 index 0000000..f92baf2
@@ -54,13 +63,13 @@ index 0000000..1ee87e6
 +    }
 +}
 diff --git a/node_modules/@nuxt/content-theme-docs/src/pages/_.vue b/node_modules/@nuxt/content-theme-docs/src/pages/_.vue
-index d67127b..749cf88 100644
+index d67127b..710b31d 100644
 --- a/node_modules/@nuxt/content-theme-docs/src/pages/_.vue
 +++ b/node_modules/@nuxt/content-theme-docs/src/pages/_.vue
 @@ -17,9 +17,7 @@
            {{ document.title }}
            <Badge v-if="document.badge">{{ document.badge }}</Badge>
-         </h1>         
+         </h1>
 -        <div v-if="document.subtitle" class="-mt-4">
 -          <p class="text-gray-600 dark:text-gray-400">{{ document.subtitle }}</p>
 -        </div>
@@ -68,8 +77,30 @@ index d67127b..749cf88 100644
  
          <NuxtContent :document="document" />
        </article>
+@@ -57,7 +55,7 @@ export default {
+ 
+     const [prev, next] = await $content(app.i18n.locale, { deep: true })
+       .only(['title', 'path', 'to'])
+-      .sortBy('position', 'asc')
++      .sortBy('position', 'desc')
+       .surround(document.path, { before: 1, after: 1 })
+       .fetch()
+ 
+diff --git a/node_modules/@nuxt/content-theme-docs/src/store/index.js b/node_modules/@nuxt/content-theme-docs/src/store/index.js
+index 8d880e6..a5924c3 100644
+--- a/node_modules/@nuxt/content-theme-docs/src/store/index.js
++++ b/node_modules/@nuxt/content-theme-docs/src/store/index.js
+@@ -75,7 +75,7 @@ export const actions = {
+     if (process.dev === false && state.categories[this.$i18n.locale]) {
+       return
+     }
+-    const docs = await this.$content(this.$i18n.locale, { deep: true }).only(['title', 'menuTitle', 'category', 'slug', 'version', 'to']).sortBy('position', 'asc').fetch()
++    const docs = await this.$content(this.$i18n.locale, { deep: true }).only(['title', 'menuTitle', 'category', 'slug', 'version', 'to']).sortBy('position', 'desc').fetch()
+     if (state.releases.length > 0) {
+       docs.push({ slug: 'releases', title: 'Releases', category: 'Community', to: '/releases' })
+     }
 diff --git a/node_modules/@nuxt/content-theme-docs/src/tailwind.config.js b/node_modules/@nuxt/content-theme-docs/src/tailwind.config.js
-index 2e83ca9..a981c0b 100644
+index 2e83ca9..ce54cdc 100644
 --- a/node_modules/@nuxt/content-theme-docs/src/tailwind.config.js
 +++ b/node_modules/@nuxt/content-theme-docs/src/tailwind.config.js
 @@ -209,7 +209,26 @@ module.exports = ({ nuxt }) => ({

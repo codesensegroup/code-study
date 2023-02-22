@@ -1,9 +1,9 @@
 ---
-title: 'Chapter 4 編碼與演化'
-description: 'Chapter 4 編碼與演化'
-position: 304
+title: 'Chapter 04 編碼與演化'
+description: 'Chapter 04 編碼與演化'
+position: 296
 category: 資料密集型應用系統設計
-menuTitle: 'Chapter 4'
+menuTitle: 'Chapter 04'
 contributors: ['Simon-din']
 ---
 

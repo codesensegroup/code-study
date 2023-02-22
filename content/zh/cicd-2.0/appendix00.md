@@ -1,7 +1,7 @@
 ---
 title: 'Appendix 00 使用Gitlab做CI/CD'
 description: 'Appendix 00 使用Gitlab做CI/CD'
-position: 200
+position: 150
 category: 持續交付2.0：實務導向的DevOps
 menuTitle: 'Appendix 00'
 contributors: ['spyua','changemyminds']

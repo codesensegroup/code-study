@@ -1,7 +1,7 @@
 ---
 title: 'Appendix 00 Redis快速入門'
 description: 'Appendix 00 Redis快速入門'
-position: 20
+position: 250
 category: 資料密集型應用系統設計
 menuTitle: 'Appendix 00'
 contributors: ['changemyminds']

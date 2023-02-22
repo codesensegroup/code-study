@@ -1,7 +1,7 @@
 ---
 title: 'Chapter 01 可靠性、可伸縮性和可維護性'
 description: 'Chapter 01 可靠性、可伸縮性和可維護性'
-position: 100
+position: 299
 category: 資料密集型應用系統設計
 menuTitle: 'Chapter 01'
 contributors: ['mashi0101']

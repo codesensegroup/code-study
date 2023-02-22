@@ -1,7 +1,7 @@
 ---
 title: 'Chapter 11 軟件配置管理'
 description: 'Chapter 11 軟件配置管理'
-position: 106
+position: 189
 category: 持續交付2.0：實務導向的DevOps
 menuTitle: 'Chapter 11'
 contributors: ['pomeloJ','changemyminds']

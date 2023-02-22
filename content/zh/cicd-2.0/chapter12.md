@@ -1,7 +1,7 @@
 ---
 title: 'Chapter 12 低風險發佈'
 description: 'Chapter 12 低風險發佈'
-position: 108
+position: 188
 category: 持續交付2.0：實務導向的DevOps
 menuTitle: 'Chapter 12'
 contributors: ['hdsbook']
