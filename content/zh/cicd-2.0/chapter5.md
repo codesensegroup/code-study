@@ -1,7 +1,7 @@
 ---
 title: 'Chapter 05 持續交付的軟體系統架構'
 description: 'Chapter 05 持續交付的軟體系統架構'
-position: 100
+position: 195
 category: 持續交付2.0：實務導向的DevOps
 menuTitle: 'Chapter 05'
 contributors: ['changemyminds']

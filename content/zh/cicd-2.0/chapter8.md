@@ -1,7 +1,7 @@
 ---
 title: 'Chapter 08 利於集成的分支策略'
 description: 'Chapter 08 利於集成的分支策略'
-position: 102
+position: 192
 category: 持續交付2.0：實務導向的DevOps
 menuTitle: 'Chapter 08'
 contributors: ['frank30941','rainlay']

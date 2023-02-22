@@ -1,7 +1,7 @@
 ---
 title: 'Chapter 16 研發推動的DevOps'
 description: 'Chapter 16 研發推動的DevOps'
-position: 110
+position: 184
 category: 持續交付2.0：實務導向的DevOps
 menuTitle: 'Chapter 16'
 contributors: ['cshs108']

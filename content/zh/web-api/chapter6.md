@@ -1,7 +1,7 @@
 ---
 title: '第6章開發牢固的WebAPI'
 description: '第6章開發牢固的WebAPI'
-position: 206
+position: 94
 category: Web API的設計與開發
 menuTitle: 'Chapter 06'
 contributors: ['BackPOPO']

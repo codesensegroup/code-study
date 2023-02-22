@@ -1,7 +1,7 @@
 ---
 title: 'Appendix 01 Database Version Control'
 description: 'Appendix 01 Database Version Control'
-position: 201
+position: 149
 category: 持續交付2.0：實務導向的DevOps
 menuTitle: 'Appendix 01'
 contributors: ['changemyminds']
