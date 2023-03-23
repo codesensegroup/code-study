@@ -1,7 +1,7 @@
 ---
 title: 'Chapter 03 數據儲存與檢索'
 description: 'Chapter 03 數據儲存與檢索'
-position: 295
+position: 297
 category: 資料密集型應用系統設計
 menuTitle: 'Chapter 03'
 contributors: ['yulin0629']
