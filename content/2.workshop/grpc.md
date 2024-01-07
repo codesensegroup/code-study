@@ -287,7 +287,7 @@ getting-started-with-buf-cli
 ## gRCP 呼叫的四種類型
 
 <div class="flex justify-between">
-  <img src="images/ddia/appendix01/grpc-4-types.png" />
+  <img src="images/workshop/grpc/grpc-4-types.png" />
 </div>
 
 ### Unary

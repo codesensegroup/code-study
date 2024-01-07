@@ -28,10 +28,11 @@ defineProps({
       <div class="section right">
         <AppDocSearch v-if="hasDocSearch" />
         <AppSearch v-else :fuse="config.fuse" />
-        <ThemeSelect />
         <div class="social-icons">
-          <AppSocialIcons />
+          <AppMember />
+          <AppGithub />
         </div>
+        <ThemeSelect />
       </div>
     </Container>
   </header>

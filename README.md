@@ -1,57 +1,27 @@
-# Docus Starter
+# Code Sense
 
-Starter template for [Docus](https://docus.dev).
+## Environment Requirements
 
-## Clone
+### Version
 
-Clone the repository (using `nuxi`):
+- Node.js 18 or higher
 
-```bash
-npx nuxi init -t themes/docus
-```
+## Installation
 
-## Setup
+### VSCode Extensions
 
-Install dependencies:
-
-```bash
-yarn install
-```
+- [MDC - Markdown Components](https://marketplace.visualstudio.com/items?itemName=Nuxt.mdc)
+- [Vue Language Features (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
+- [Vite](https://marketplace.visualstudio.com/items?itemName=antfu.vite)
 
 ## Development
 
-```bash
-yarn dev
-```
-
-## Edge Side Rendering
-
-Can be deployed to Vercel Functions, Netlify Functions, AWS, and most Node-compatible environments.
-
-Look at all the available presets [here](https://v3.nuxtjs.org/guide/deploy/presets).
+### Local Development
 
 ```bash
-yarn build
+npm run dev
 ```
 
-## Static Generation
+## Github Page
 
-Use the `generate` command to build your application.
-
-The HTML files will be generated in the .output/public directory and ready to be deployed to any static compatible hosting.
-
-```bash
-yarn generate
-```
-
-## Preview build
-
-You might want to preview the result of your build locally, to do so, run the following command:
-
-```bash
-yarn preview
-```
-
----
-
-For a detailed explanation of how things work, check out [Docus](https://docus.dev).
+[code-study](https://codesensegroup.github.io/code-study/)
