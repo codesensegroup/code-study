@@ -1,30 +1,29 @@
 {
-  "name": "study-document-record",
-  "version": "1.0.0",
-  "description": "Code Sense Study document record.",
+  "name": "docus-starter",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "nuxt",
-    "serve": "nuxt",
-    "build": "nuxt build",
-    "start": "nuxt start",
-    "generate": "nuxt generate",
+    "dev": "nuxi dev",
+    "build": "nuxi build",
+    "generate": "nuxi generate",
     "generate:github": "DEPLOY_ENV=GH_PAGES nuxt generate",
-    "deploy": "push-dir --dir=dist --branch=gh-pages --cleanup",
-    "postinstall": "patch-package"
-  },
-  "dependencies": {
-    "@nuxt/content-theme-docs": "^0.11.0",
-    "busuanzi.pure.js": "^1.0.3",
-    "nuxt": "^2.15.8",
-    "reading-time": "^1.5.0",
-    "rehype-urls": "^1.1.1",
-    "screenfull": "^6.0.2",
-    "vue-multiselect": "^2.1.6"
+    "preview": "nuxi preview",
+    "lint": "eslint ."
   },
   "devDependencies": {
-    "material-design-icons-iconfont": "^6.7.0",
-    "patch-package": "^6.4.7",
-    "push-dir": "^0.4.1"
+    "@nuxt-themes/docus": "latest",
+    "@nuxt/devtools": "^1.0.0",
+    "@nuxt/eslint-config": "^0.2.0",
+    "@nuxtjs/tailwindcss": "^6.9.4",
+    "@types/node": "^20.8.2",
+    "eslint": "^8.50.0",
+    "nuxt": "^3.7.4",
+    "@nuxt/content": "^2.9.0"
+  },
+  "dependencies": {     
+    "@vueuse/core": "^10.6.0",
+    "busuanzi.pure.js": "^1.0.3",
+    "reading-time": "^1.5.0",
+        "zod": "^3.22.4"
   }
 }

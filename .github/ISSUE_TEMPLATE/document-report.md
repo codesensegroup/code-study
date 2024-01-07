@@ -11,7 +11,7 @@ assignees: ''
 ex: 持續交付2.0：實務導向的DEVOPS, Chapter 05
 
 **Which line or content sentence is wrong ?**
-ex: 金常修復一處問題
+ex: 經常修復一處問題
 
 **The correct content should be ?**
 ex: 經常修復一處問題
