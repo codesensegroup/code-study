@@ -49,8 +49,6 @@ function watchScrollHeight() {
 }
 
 onMounted(() => {
-  console.log(page);
-
   if (asideScroll.value.parentPath !== getParentPath()) {
     asideScroll.value.parentPath = getParentPath();
     asideScroll.value.scrollTop = 0;
