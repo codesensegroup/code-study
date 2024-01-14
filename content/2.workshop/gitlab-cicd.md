@@ -192,7 +192,7 @@ default:
 根據此腳本，我們可以得知CI.yml的基本語法由stages及對應的job name中的script。若要新增Job則只需在stages新增，例如我們在test站點後新增build-release，請修改stage區塊如下
 
 ```yaml
-stages:          # List of stages for jobs, and their order of execution
+stages:          # List of stages for jobs, and their order of execution.
   - build
   - test
   - build-release # 新增build-release
