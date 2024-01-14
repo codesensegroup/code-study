@@ -1,6 +1,6 @@
 ---
-title: "Appendix 00 使用Gitlab做CI/CD"
-pageTitle: "Appendix 00 使用Gitlab做CI/CD"
+title: "使用Gitlab做CI/CD"
+pageTitle: "使用Gitlab做CI/CD"
 contributors: ['spyua','changemyminds']
 ---
 
@@ -28,7 +28,7 @@ CI/CD精神在於做到快速整合並保有高品質且能交付客戶使用，
 如下圖所示，在沒有自動化整合平台下，基本上所有流程都須透過手動去完成。
 
 <p align="center">
-  <img src="images/cicd-2.0/a00/001.png" width="100%" />
+  <img src="images/workshop/gitlab-cicd/001.png" width="100%" />
 </p>
 
 ### 使用CI/CD
@@ -38,7 +38,7 @@ CI/CD精神在於做到快速整合並保有高品質且能交付客戶使用，
 一般CI會做建置測試與程式碼分析，而CD則是做部屬、整合測試與交付。在不同的應用場合下，設置會根據不同環境應用建立專屬CI與CD Runner服務。但此章節不會講到太複雜的情境，會以簡易的開發、建置、測試與部屬四個步驟帶過。
 
 <p align="center">
-  <img src="images/cicd-2.0/a00/002.png" width="100%" />
+  <img src="images/workshop/gitlab-cicd/002.png" width="100%" />
 </p>
 
 <alert>
@@ -57,11 +57,11 @@ Gitlab Runner設置有三種模式，如下
 
 - Share Runner : 所有Group或專案可使用，不需自行架設Runner，免費版本兩千分鐘使用限制。
 - Specific(Project) Runner : 特定需求使用，需自行架設Runner。
-![003](images/cicd-2.0/a00/003.png)
+![003](images/workshop/gitlab-cicd/003.png)
 
 - Group Runner : 同Group的Project可使用，需自行架設Runner。
 
-![004](images/cicd-2.0/a00/004.png)
+![004](images/workshop/gitlab-cicd/004.png)
 
 ### 安裝Runner設定
 
@@ -71,11 +71,11 @@ YourGroup → Setting → CI/CD → Runner (點選Expand)
 
 展開後，請點選New group runner view的Take me there就會進入到Runners 設定頁面如下圖，
 
-![004](images/cicd-2.0/a00/004.png)
+![004](images/workshop/gitlab-cicd/004.png)
 
 你可以點選右上角的Register a group runner，並根據你要設置的平台，在Show runner installation and registration instructions 選項有詳細設置方式，如下圖
 
-![005](images/cicd-2.0/a00/005.png)
+![005](images/workshop/gitlab-cicd/005.png)
 
 ### Windows設置[[官網說明](https://docs.gitlab.com/runner/install/)]
 
@@ -102,7 +102,7 @@ gitlab-runner-windows-amd64.exe start
 
 點選Windows Tab 此時就會跑出建議指令流程，
 
-![006](images/cicd-2.0/a00/006.png)
+![006](images/workshop/gitlab-cicd/006.png)
 
 請輸入Register指令
 
@@ -126,7 +126,7 @@ YourGroup → Setting → CI/CD → Runner (點選Expand) → Take me there
 
 你就可以看到註冊好的Runner顯示在設定頁面上了
 
-![007](images/cicd-2.0/a00/007.png)
+![007](images/workshop/gitlab-cicd/007.png)
 
 ### Linux設置[[官網說明](https://docs.gitlab.com/runner/install/)]
 
@@ -136,7 +136,7 @@ YourGroup → Setting → CI/CD → Runner (點選Expand) → Take me there
 
 至YourGroup → Setting → CI/CD → Runner (點選Expand) → Take me there → Register group runner →Show runner installation and registration instructions
 
-![008](images/cicd-2.0/a00/008.png)
+![008](images/workshop/gitlab-cicd/008.png)
 
 - Step 2 : 註冊 (可直接參照上述 Windows設置註冊)
 
@@ -145,7 +145,7 @@ YourGroup → Setting → CI/CD → Runner (點選Expand) → Take me there
 上述設置好Ruuner後，接著需調整Runner設定檔的執行器，請開啟Runner資料夾下的toml檔，並照下圖設置
 
 <p align="center">
-  <img src="images/cicd-2.0/a00/009.png" width="70%" />
+  <img src="images/workshop/gitlab-cicd/009.png" width="70%" />
 </p>
 
 詳細對應Shell設定可至此查詢[[連結請點我](https://docs.gitlab.com/runner/shells/)]
@@ -170,7 +170,7 @@ YourGroup → Setting → CI/CD → Runner (點選Expand) → Take me there
 下載下來後將此專案上到你的Group Project，若你的Runner已設好，我們可以直接從Gitlab頁面點選 Set up CI/C，如下圖
 
 <p align="center">
-  <img src="images/cicd-2.0/a00/010.png" width="90%" />
+  <img src="images/workshop/gitlab-cicd/010.png" width="90%" />
 </p>
 
 接著點選Configure pipeline，此時Gitlab會幫你生成yml Sample Code，此Sample Code已幫你寫好的基本build, test與deploy Stages。請將最上層註解刪除，並加上default區段，runner tag
@@ -186,7 +186,7 @@ default:
 此時若Runner設置無誤，就可以看到Gitlab開始跑CI/CD，如下圖
 
 <p align="center">
-  <img src="images/cicd-2.0/a00/011.png" width="90%" />
+  <img src="images/workshop/gitlab-cicd/011.png" width="90%" />
 </p>
 
 根據此腳本，我們可以得知CI.yml的基本語法由stages及對應的job name中的script。若要新增Job則只需在stages新增，例如我們在test站點後新增build-release，請修改stage區塊如下
@@ -220,7 +220,7 @@ build-release-job:
 接著做commit，我們即可看到Pipeline由三個站點變成四個站點
 
 <p align="center">
-  <img src="images/cicd-2.0/a00/012.png" width="100%" />
+  <img src="images/workshop/gitlab-cicd/012.png" width="100%" />
 </p>
 
 ### build 與 test
@@ -240,7 +240,7 @@ build-job:       # This job runs in the build stage, which runs first.
 更新yml file後，檢查一下Pipeline能否編輯的過。編譯過可看到訊息如下
 
 <p align="center">
-  <img src="images/cicd-2.0/a00/013.png" width="100%" />
+  <img src="images/workshop/gitlab-cicd/013.png" width="100%" />
 </p>
 
 #### unit-test-job
@@ -258,7 +258,7 @@ unit-test-job:   # This job runs in the test stage.
 更新yml file後，檢查一下Pipeline能否編輯的過。編譯過可看到訊息如下
 
 <p align="center">
-  <img src="images/cicd-2.0/a00/014.png" width="100%" />
+  <img src="images/workshop/gitlab-cicd/014.png" width="100%" />
 </p>
 
 #### 使用變數
@@ -386,7 +386,7 @@ YourPorject Repo/Settings/CICD 下
 
 此時你會看到Variables，請新增一SSH_PRIVATE_KEY變數如下
 
-![015](images/cicd-2.0/a00/015.png)
+![015](images/workshop/gitlab-cicd/015.png)
 
 <alert>
 須注意!因為是Group Runner，所以一開始我只將SSH PK設置在Group Setting的CICD設置變數下。結果Project上tags觸發Pipeline在部屬時找不到SSH PK。所以Project Repo若要上tags，須將SSH PK設置在Project Repo Setting的CICD變數設定下。
@@ -457,7 +457,7 @@ build-release-job:
 
 此時我們在跑一次Pipeline，就可以看到build-release-job下有個可下載的介面(如下圖)，代表你的artifactst產生成功。
 
-![016](images/cicd-2.0/a00/016.png)
+![016](images/workshop/gitlab-cicd/016.png)
 
 #### artifacts url測試([參考點我](https://docs.gitlab.com/ee/ci/pipelines/job_artifacts.html#access-the-latest-job-artifacts-by-url))
 
@@ -483,7 +483,7 @@ build-release-job:
 
 因為這樣，所以這個Demo就不會將build-release-job上only tags。讓deploy可以正確拿取目前運行Pipeline編譯好的程式碼如下。
 
-![017](images/cicd-2.0/a00/017.png)
+![017](images/workshop/gitlab-cicd/017.png)
 
 <alert>
 較好的Pepeline設計是將release設置在tag觸發時，也就是做CD時機點。後續再找時間修正artifacts下載方式
@@ -596,7 +596,7 @@ deploy-job:
 
 <font color="#dd0000"> artifacts Project URL請根據你實際的 Project URL設定調整，誤直接照抄</font>
 
-![018](images/cicd-2.0/a00/018.png)
+![018](images/workshop/gitlab-cicd/018.png)
 
 deploy完後此時就可以透過API，得到資料
 
@@ -635,7 +635,7 @@ deploy-job:
 
 上完tags後，deploy事件則只會在你上tag時觸發。接著就可以在tag頁面看到此次的release tag是否有通過Pipeline Job。
 
-![019](images/cicd-2.0/a00/019.png)
+![019](images/workshop/gitlab-cicd/019.png)
 
 <alert>
 一般CD做release build與deploy都會上only tags，此範例因為artifacts還不確定是不是已正確方式拿取，所以只在deploy上only tags。
