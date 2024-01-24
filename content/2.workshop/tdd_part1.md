@@ -481,5 +481,277 @@ public class 安全登入StepDefinitions
 ```
 在一開始我們並沒有LoginService這個物件，因此IDE會反紅，此時直接使用IDE的Quick Action，點選產生新的類型
 
+![IDE Qucik Action](images/workshop/tdd-part1/014.png)
+
+專案點選Production WebApi Project，並選擇建立檔案，指定到Service資料夾下
+
+![IDE Qucik Action2](images/workshop/tdd-part1/015.png)
+
+接著對Login紅色HL部分，一樣使用IDE的Quick Action快速產生Method
+
+![IDE Qucik Action3](images/workshop/tdd-part1/016.png)
+
+此時執行測是會是紅燈，錯誤會顯示The method or operation is not implemented，我們下手去改這段Login Code如下，造著邏輯寫，Login流程在於針對username撈取用戶資訊後，做Password比對，過程中透過Quick Action去產生IUserRepoitory 介面以及User Entity物件。
 
 
+<details>
+  <summary>Code</summary>
+  
+  ```csharp
+  public class LoginService
+  {
+      private IUserRepoitory _userRepoitory;
+
+      public LoginService(IUserRepoitory userRepoitory)
+      {
+          _userRepoitory = userRepoitory;
+      }
+
+      public bool Login(string username, string password)
+      {
+          User user = _userRepoitory.GetUser(username);
+          
+          if(user == null || !user.Password.Equals(password) )
+          {
+              return false;
+          }
+
+          return true;
+      }
+  }
+
+  public class User
+  {
+      public string Password { get;  set; }
+      public string UserName { get;  set; }
+  }
+  ```
+
+</details>
+
+Production寫好後，接著我們要下手修改程式碼，要針對IUserRepoitory 做Stub替身物件，此時我們需要安裝NSubstitute，Stub替身物件設置如下
+
+```csharp
+private IUserRepoitory _userRepoitory; // 假設有一個使用者資料庫
+private LoginService _loginService; 
+private string _username;
+private string _password;
+private bool _loginResult;
+
+public 安全登入StepDefinitions()
+{
+    _userRepoitory = Substitute.For<IUserRepoitory>(); //替身設置
+    _loginService = new LoginService(_userRepoitory); 
+    _username = string.Empty;
+    _password = string.Empty;
+    _loginResult = false;
+}
+```
+Stub替身物件的存在在於模擬原物件的回傳值，在我們這個Case，我們需要透過替身物件模擬資料庫的回傳，以正確的帳號和密碼這個情境，我們假設回傳Password為我們Given所設置的Password如下
+
+```csharp
+[When(@"用戶嘗試登入")]
+public void When用戶嘗試登入()
+{
+		// 替身物件假設回傳正確的User訊息
+    _userRepoitory.GetUser(_username).Returns(new User { UserName = _username, Password = _password });
+    _loginResult = _loginService.Login(_username, _password);
+}
+```
+然後我們執行測試就會進入綠燈狀態了~~~
+
+在綠燈狀態後，我們再回到原本的LoginService程式碼，看一下有沒有哪部分需要做Refactor的，如果以可讀性來說，其實我們可以把if的判斷內容使用 Extract Method提煉出一個Invalid Method，一樣我們快速使用IDE的Qucik Action快速做重構，重構後如下，此時會看到Login Method Invalid那段的可讀性相對於之前就高了許多
+
+```csharp
+public bool Login(string username, string password)
+{
+    User user = _userRepoitory.GetUser(username);
+
+    if (InvalidPassword(password, user))
+    {
+        return false;
+    }
+
+    return true;
+}
+
+private static bool InvalidPassword(string password, User user)
+{
+    return user == null || !user.Password.Equals(password);
+}
+```
+
+### b. 探討測試與重構
+
+TDD過程中，對於如何寫測試與如何重構需要有一定的實作認知，這邊稍微概略提一下過程中較常使用到的技巧
+
+##### I. 關於單元測試
+
+TDD中的Test指的就是單元測試(Unit Test)，單元測試重點在於寫Product Code邏輯段的驗證程式碼。如我們提到登入密碼驗證的例子，密碼驗證就是一個判斷，只要程式碼有關係到一些邏輯判斷與運算判斷。基本上在開發都需要寫單元測試去保護我們的Product Code。就算你不是以TDD流程去做開發，直接從Product Code開發，一樣要補測試程式碼，這樣才是叫完善的開發考慮。通常會有幾個注意要點
+
+1. 如何寫測試
+
+最基礎就是如何使用測試框架，Net大多使用Nunit，Java為JUnit。該如何使用此測試框架去寫測試為TDD最基本要求，如何寫這部分可以參考[Nunit](https://learn.microsoft.com/zh-tw/dotnet/core/testing/unit-testing-with-nunit)與[JUnit](https://junit.org/junit5/docs/current/user-guide/)的教學參考。關鍵概念有
+
+- 如何產生測試專案
+- 如何撰寫測試程式碼
+- 有哪些常用測試工具套件輔助
+- 如何偵測測試覆蓋率
+
+2. **測試程式碼是否容易閱讀，越貼近自然語言越好**
+
+例如我們有一個測試情境為一個購物車購物後結算金額需正確，我們先來看一段測試程式如下，這段程式碼基本上只有工程師看得懂，離簡易的自然語言還有一段距離
+
+```csharp
+[TestMethod]
+public void test_total_should_be_the_sum_of_all_subtotals_plus_shpping_fee()
+{
+    #region Given
+    //the cart has 5 Erasers
+    ShoppingCart cart = new ShoppingCart();
+    cart.AddShoppingItem(new BaseShoppingModel()
+    {
+        Name = "Erasers",
+        UnitPrice = 10,
+        Qty = 5,
+        MaxPurchaseQty = 10,
+    });
+
+    #endregion
+
+    #region When
+    //the customer adds 10 pencils to the cart
+    cart.AddShoppingItem(new BaseShoppingModel() 
+    { 
+        Name="Pencil",
+        UnitPrice = 20,
+        Qty = 10,
+        MaxPurchaseQty = 10,
+    });
+    #endregion
+
+    #region Then            
+    int shoppingFee = cart.GetTotalShoppingFee();
+    Assert.AreEqual(shoppingFee, 310);
+    #endregion
+
+}
+```
+
+我們看一下另一段測試程式碼如下，這段程式碼驗證情境與上述一樣，當相對起來他就非常淺顯易懂，很明確看出Given就是在做構物情境，When為將物品放置購物車，Then則是做結算判斷。
+
+所以不只構物Method命名須看出測試Case外，整個測試內容流程盡量能接近自然語言一目了然最好
+
+```csharp
+[SetUp]
+public void Setup()
+{
+    Cart = new Cart();
+    Erasier = new CardItem(name: "Erasiers", unitPrice: 10, maxPurchaseQty: 10);
+    Pencial = new CardItem(name: "Pencial", unitPrice: 20, maxPurchaseQty: 10);
+    BluePen = new CardItem(name: "BluePen", unitPrice: 30, maxPurchaseQty: 10);
+    Ruler = new CardItem(name: "Ruler", unitPrice: 30, maxPurchaseQty: 10);
+    Notebook = new CardItem(name: "Notebook", unitPrice: 50, maxPurchaseQty: 5);
+    PencilSharpener = new CardItem(name: "PencilSharpener", unitPrice: 50, maxPurchaseQty: 5);
+}
+
+[Test]
+public void Test_total_should_be_the_sum_of_all_subtotals_plus_shipping_fee()
+{
+    // Given 
+    Erasier.Order(5);
+    Pencial.Order(5);
+
+    // When
+    Add_To_Cart(Erasier, Pencial);
+
+    // Then
+    Cart.TotalPrice.Should().Be(150);
+}
+```
+
+3. 根據情境善用測試假物件
+
+在我們寫單元測試過程中，測試的Method如果有參考到一些其他物件，他並不一定會與要測試的邏輯區段有關係，又或是需要模擬實際資料基礎建設層撈取資料的動作，但又不直接與DB連線，此時我們就會需要製作假物件注入到我們要測試的物件。
+
+這些假物件類別分為Dummy 、Stub、Spy、Mock、Fake，如要了解可參考Teddy文章([點我](http://teddy-chen-tw.blogspot.com/2014/09/test-double1.html))。
+
+##### II. 關於重構
+
+在TDD過程，我們由紅轉綠燈後，接著就會進入重構階段。重構目的在於
+
+1. **提高可讀性：** 讓程式碼更容易被人理解。
+2. **消除重複：** 移除重複的代碼，使得未來的修改更容易。
+3. **提高可維護性：** 使程式更容易修改和擴展。
+4. **改善設計：** 使程式結構更合理，更符合設計原則。
+
+而重構發生情境通常會在除錯、壞味道產生與測試時會去做這件事情，而TDD就是要寫測試，所以基本上一定會遇到重構這個環節。在TDD我們會常用的重構技巧有
+
+1. **提取方法（Extract Method）：** 如果一個方法太長或太複雜，你可以將部分代碼提取到新的方法中，使主方法更容易理解。
+2. **合併重複的代碼（Remove Duplicated Code）：** 找到並消除重複的代碼，通常可以提取到共用的方法或類中。
+3. **重新命名（Rename）：** 通過更改變量、方法或類的名稱使之更具描述性，以提高代碼的可讀性。
+4. **移動特性（Move Feature）：** 重新安排方法或屬性的位置，使其與相關的功能更接近，例如將方法從一個類移動到另一個更相關的類中。
+
+利如我們Run TDD小節就有使用Extract Method將if區段的程式碼提起出一個Invaild的方法。基本上重構也是一門很深的學問，有興趣可以去看這重構小藍書(連結點我)。但重構的上手很吃實際使用經驗與情境演練，純看理論會很難消化。另外針對TDD重構有一個重構九式思考脈絡，可參考此篇(點我)。此九式會帶出整個重構重要的環節脈絡，包含如何做好隔離相依這件事情。
+
+##### III. 重構急速開發
+
+TDD要進入心流狀態，我們需要配合熱鍵的使用。心流的意思是進入全專注思考開發，過程全程透過鍵盤來產生程式碼，熱鍵達成要求包括
+
+1. 如何快速找到要修改的程式碼區段 (導航搜索)
+2. 如何快速生成物件檔案到指定路徑 
+3. 如何快速重構 (程式碼重構)
+
+這些都需要配合工具與熱鍵設置的搭配，例如JetBrains的Resharper，或是Rider與IntelJ IDE，都有許多導航搜索與重構的快速設置，能提高開發人員的生產力，讓開發人員在開發過程中不會因為需思考要點選畫面哪個工具區塊而產生思考斷點。這也會是TDD開發要點環節之一(但優先權不會是最前面)。Part2 則會為這一塊做一個詳細的設置解說與情境演練。
+
+### c. 關於工具
+
+這個章節稍微做個工具整理
+
+- C#
+    
+    Nunit : 測試框架
+    
+    NSubstitute : 替身物件工具
+    
+    FluentAssertions : 編寫更具可讀性和更富表達力的單元測試斷言
+    
+    Specflow : ****Gherkin 編寫與測試程式碼產生工具****
+    
+    Resharper : 開發助手工具，提供開發人員更快速的編輯功能
+    
+- Java
+    
+    JUnit : 測試框架
+    
+    Mockito : 替身物件工具
+    
+    AssertJ : 編寫更具可讀性和更富表達力的單元測試斷言
+    
+    Cucumber  : ****Gherkin 編寫與測試程式碼產生工具****
+    
+    IntelJ : Java開發IDE，本身也提供開發人員更快速的編輯功能
+
+## 5. 天人合一
+
+### a. 技能樹
+
+基本上TDD為一個開發流程，而過程中的思維與技術包含面很廣，對於一開始軟體新手很難入心。
+
+硬技術層面包含
+
+- 如何撰寫測試及如何撰寫好的測試
+- 好的軟功基礎，OO與*SOLID*基本，需有Clean Code基礎且有一定的Pattern應用經驗，更進階到架構層面的設計
+- 重構，這會建置在好的軟功基礎，且對DI概念與介面隔離相依都要有一定的概念
+- 熱鍵Gen Code & Refactor使用，效益度這會建置在前三點基礎上，此點才可發揮出最大效果
+
+軟技術層面須對V-Model有一定的認知，此為軟體開發流程模型，強調過程中的測試活動。此章節沒提，因為包含範圍也很大。之中包含需求分析、系統設計、架構設計和單元設計。這些階段是按順序進行的，每個階段的輸出成為下一個階段的輸入。然後對應到單元測試、集成測試、系統測試和驗收測試。每個環節都有其一定的專業度，需有一定的了解，才會讓整個討論設計過程進入狀況。
+
+TDD雖然是一個流程形式的開發，有點像是一套實際可以打出有傷害力的技能，但這技能的強度可以打出多高的傷害，跟角色本身素質及被動技(軟硬實力)能有一定的相依性，再搭配裝備()(工具使用)的加成打出更高的傷害。所以他牽扯的環節會蠻多，使用模仿不難，要融會貫通整個開悟理解需要有一定的基礎。
+
+
+### b. TDD、BDD與DDD
+
+除了TDD，還有其他開發技巧叫BDD與DDD，BDD我們章節有提到，大致可以感受到Acceptance testing與**Gherkin的感受度差異。基本上不太可能用純TDD開發，因為TDD只是開發中實作的一個環節，他比較偏向底層開發思維，會較靠近開發者。所以我們需要理解較高層的使用情境，這樣才可以讓底層較貼近於實際的使用者情境。此時我們就可以以BDD行為驅動開發的探討去輔助。但如果更複雜的情境且有複雜的Context互動，此時通常會以服務架構角度去開發系統，Domain物件要設計得好，才能在複雜的Context互動有一定的解偶，在這狀況我們就會以DDD角度去開發，配合領域專家讓Domain Model能定義更明確。**大致理解之間的脈絡相依性後，會有種融會貫通的感覺，針對情境去做切換設計使用會更得心應手。
+
+順便一提DDD與整潔架構有很高的相依性，要設計得好對於圓形的整潔架構要有一定的認知。
