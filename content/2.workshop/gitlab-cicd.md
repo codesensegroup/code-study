@@ -27,9 +27,9 @@ CI/CD精神在於做到快速整合並保有高品質且能交付客戶使用，
 
 如下圖所示，在沒有自動化整合平台下，基本上所有流程都須透過手動去完成。
 
-<p align="center">
+<div align="center">
   <img src="images/workshop/gitlab-cicd/001.png" width="100%" />
-</p>
+</div>
 
 ### 使用CI/CD
 
@@ -37,9 +37,9 @@ CI/CD精神在於做到快速整合並保有高品質且能交付客戶使用，
 
 一般CI會做建置測試與程式碼分析，而CD則是做部屬、整合測試與交付。在不同的應用場合下，設置會根據不同環境應用建立專屬CI與CD Runner服務。但此章節不會講到太複雜的情境，會以簡易的開發、建置、測試與部屬四個步驟帶過。
 
-<p align="center">
+<div align="center">
   <img src="images/workshop/gitlab-cicd/002.png" width="100%" />
-</p>
+</div>
 
 <alert>
 一般可做自動化整合的Git Server，都會需要一個代理伺服器(Runner Server)來幫忙執行Script。因此我們會需要一台機器做專門的Runner Server來服務Git Server。
@@ -144,9 +144,9 @@ YourGroup → Setting → CI/CD → Runner (點選Expand) → Take me there
 
 上述設置好Ruuner後，接著需調整Runner設定檔的執行器，請開啟Runner資料夾下的toml檔，並照下圖設置
 
-<p align="center">
+<div align="center">
   <img src="images/workshop/gitlab-cicd/009.png" width="70%" />
-</p>
+</div>
 
 詳細對應Shell設定可至此查詢[[連結請點我](https://docs.gitlab.com/runner/shells/)]
 
@@ -169,9 +169,9 @@ YourGroup → Setting → CI/CD → Runner (點選Expand) → Take me there
 
 下載下來後將此專案上到你的Group Project，若你的Runner已設好，我們可以直接從Gitlab頁面點選 Set up CI/C，如下圖
 
-<p align="center">
+<div align="center">
   <img src="images/workshop/gitlab-cicd/010.png" width="90%" />
-</p>
+</div>
 
 接著點選Configure pipeline，此時Gitlab會幫你生成yml Sample Code，此Sample Code已幫你寫好的基本build, test與deploy Stages。請將最上層註解刪除，並加上default區段，runner tag
 
@@ -185,9 +185,9 @@ default:
 
 此時若Runner設置無誤，就可以看到Gitlab開始跑CI/CD，如下圖
 
-<p align="center">
+<div align="center">
   <img src="images/workshop/gitlab-cicd/011.png" width="90%" />
-</p>
+</div>
 
 根據此腳本，我們可以得知CI.yml的基本語法由stages及對應的job name中的script。若要新增Job則只需在stages新增，例如我們在test站點後新增build-release，請修改stage區塊如下
 
@@ -219,9 +219,9 @@ build-release-job:
 
 接著做commit，我們即可看到Pipeline由三個站點變成四個站點
 
-<p align="center">
+<div align="center">
   <img src="images/workshop/gitlab-cicd/012.png" width="100%" />
-</p>
+</div>
 
 ### build 與 test
 
@@ -239,9 +239,9 @@ build-job:       # This job runs in the build stage, which runs first.
 
 更新yml file後，檢查一下Pipeline能否編輯的過。編譯過可看到訊息如下
 
-<p align="center">
+<div align="center">
   <img src="images/workshop/gitlab-cicd/013.png" width="100%" />
-</p>
+</div>
 
 #### unit-test-job
 
@@ -257,9 +257,9 @@ unit-test-job:   # This job runs in the test stage.
 
 更新yml file後，檢查一下Pipeline能否編輯的過。編譯過可看到訊息如下
 
-<p align="center">
+<div align="center">
   <img src="images/workshop/gitlab-cicd/014.png" width="100%" />
-</p>
+</div>
 
 #### 使用變數
 
