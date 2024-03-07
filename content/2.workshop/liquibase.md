@@ -15,9 +15,9 @@ contributors: ["changemyminds"]
 
 ### State-based tools (基於狀態的版本控制)
 
-<p align="center">
+<div align="center">
   <img src="images/workshop/liquibase/001.png" width="70%" />
-</p>
+</div>
 
 在`state based`模式底下，我們僅需要維護資料庫的目標狀態，每個**表(Table)**、**Stored Procedure**、**View**、**Trigger**將保存為單獨的SQL文件，這些SQL文件就是資料庫真實的樣貌。而升級資料庫所需的腳本會由工具自動生成，從而大大減輕維護成本。
 > 可以想像成MySQL中的mysqldump所建立的DDL表結構語法。
@@ -32,9 +32,9 @@ contributors: ["changemyminds"]
 
 ### Migration-based tools (基於遷移的版本控制)
 
-<p align="center">
+<div align="center">
   <img src="images/workshop/liquibase/002.png" width="70%" />
-</p>
+</div>
 
 基於遷移的方法是將所有的遷移腳本儲存在Repository中。每一個腳本都包含了一系列的DDL語句，例如: CREATE/ALTER/DROP TABLE。最終的資料庫中的資料表結構是由這些腳本按照順序的執行來完成的。
 
@@ -44,9 +44,9 @@ contributors: ["changemyminds"]
 
 本圖片的來源資料，是參考[網址](https://dbmstools.com/categories/version-control-tools)
 
-<p align="center">
+<div align="center">
   <img src="images/workshop/liquibase/003.png" width="100%" />
-</p>
+</div>
 
 ## Liquibase快速入門
 
@@ -58,23 +58,23 @@ Liquibase版本，我們將採用4.15.0版本進行演示，記得必須要安�
 
 1. 前往[官網載點](https://www.liquibase.org/download?_ga=2.168149096.812788205.1662033186-1359190506.1661672342)或[Github Release](https://github.com/liquibase/liquibase/releases)依照對應所需的版本進行安裝，我們使用zip檔進行安裝
 
-    <p align="center">
+    <div align="center">
       <img src="images/workshop/liquibase/004.png" width="50%" />
-    </p>
+    </div>
 
 2. 下載後進行解壓縮放到指定的路徑底下，將liquibase放置在`D:\tool\liquibase-4.15.0`路徑
 
-    <p align="center">
+    <div align="center">
       <img src="images/workshop/liquibase/005.png" width="100%" />
-    </p>
+    </div>
 
 3. 設定系統環境變數，添加`D:\tool\liquibase-4.15.0`路徑
 
 4. 測試指令，重新開啟Terminal，並輸入指令liquibase -v
 
-    <p align="center">
+    <div align="center">
       <img src="images/workshop/liquibase/006.png" width="100%" />
-    </p>
+    </div>
 
 #### Docker
 
