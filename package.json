@@ -12,18 +12,21 @@
   },
   "devDependencies": {
     "@nuxt-themes/docus": "latest",
+    "@nuxt/content": "^2.9.0",
     "@nuxt/devtools": "^1.0.0",
     "@nuxt/eslint-config": "^0.2.0",
     "@nuxtjs/tailwindcss": "^6.9.4",
     "@types/node": "^20.8.2",
     "eslint": "^8.50.0",
-    "nuxt": "^3.7.4",
-    "@nuxt/content": "^2.9.0"
+    "nuxt": "^3.7.4"
   },
-  "dependencies": {     
+  "dependencies": {
     "@vueuse/core": "^10.6.0",
     "busuanzi.pure.js": "^1.0.3",
+    "mermaid": "^10.9.1",
     "reading-time": "^1.5.0",
-        "zod": "^3.22.4"
+    "rehype-mathjax": "^5.0.0",
+    "remark-math": "^5.0.0",
+    "zod": "^3.22.4"
   }
 }
