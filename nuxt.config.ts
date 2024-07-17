@@ -24,6 +24,10 @@ export default defineNuxtConfig({
     },
   },
   content: {
+    markdown: {
+      remarkPlugins: ['remark-math'],
+      rehypePlugins: ['rehype-mathjax'],
+    },
     highlight: {
       theme: {
         // Default theme (same as single string)
