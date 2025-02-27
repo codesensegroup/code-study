@@ -10,6 +10,7 @@ const baseUrl = z
 export default defineNuxtConfig({
   // https://github.com/nuxt-themes/docus
   extends: "@nuxt-themes/docus",
+  css: ["@/assets/css/override.css"],
   devtools: { enabled: true },
   modules: ["@nuxtjs/tailwindcss", "@nuxt/content"],
   app: {
