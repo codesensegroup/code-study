@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <!-- 背景框架 -->
+  <rect x="0" y="0" width="800" height="600" fill="white" stroke="black" stroke-width="2"/>
+  
+  <!-- 分隔線 -->
+  <line x1="160" y1="0" x2="160" y2="450" stroke="black" stroke-width="1"/>
+  <line x1="320" y1="0" x2="320" y2="600" stroke="black" stroke-width="1"/>
+  <line x1="480" y1="0" x2="480" y2="450" stroke="black" stroke-width="1"/>
+  <line x1="640" y1="0" x2="640" y2="600" stroke="black" stroke-width="1"/>
+  <line x1="0" y1="225" x2="640" y2="225" stroke="black" stroke-width="1"/>
+  <line x1="0" y1="450" x2="800" y2="450" stroke="black" stroke-width="1"/>
+
+  <!-- 標題 -->
+  <text x="10" y="30" font-size="14" font-weight="bold">關鍵合作夥伴</text>
+  <text x="170" y="30" font-size="14" font-weight="bold">關鍵活動</text>
+  <text x="330" y="30" font-size="14" font-weight="bold">價值主張</text>
+  <text x="490" y="30" font-size="14" font-weight="bold">顧客關係</text>
+  <text x="650" y="30" font-size="14" font-weight="bold">目標客群</text>
+  <text x="170" y="255" font-size="14" font-weight="bold">關鍵資源</text>
+  <text x="490" y="255" font-size="14" font-weight="bold">通路</text>
+  <text x="10" y="480" font-size="14" font-weight="bold">成本結構</text>
+  <text x="330" y="480" font-size="14" font-weight="bold">收益流</text>
+
+  <!-- 內容 -->
+  <text x="10" y="60" font-size="12">
+    <tspan x="10" dy="1.2em">- 軟體架構師</tspan>
+    <tspan x="10" dy="1.2em">- 開發團隊</tspan>
+    <tspan x="10" dy="1.2em">- 測試團隊</tspan>
+  </text>
+
+  <text x="170" y="60" font-size="12">
+    <tspan x="170" dy="1.2em">- 設計清晰架構</tspan>
+    <tspan x="170" dy="1.2em">- 定義邊界和介面</tspan>
+    <tspan x="170" dy="1.2em">- 實施SOLID原則</tspan>
+    <tspan x="170" dy="1.2em">- 持續重構</tspan>
+  </text>
+
+  <text x="330" y="60" font-size="12">
+    <tspan x="330" dy="1.2em">- 可維護性</tspan>
+    <tspan x="330" dy="1.2em">- 靈活性</tspan>
+    <tspan x="330" dy="1.2em">- 可測試性</tspan>
+    <tspan x="330" dy="1.2em">- 獨立部署</tspan>
+    <tspan x="330" dy="1.2em">- 延遲決策</tspan>
+    <tspan x="330" dy="1.2em">- 降低技術債務</tspan>
+  </text>
+
+  <text x="490" y="60" font-size="12">
+    <tspan x="490" dy="1.2em">- 提高開發效率</tspan>
+    <tspan x="490" dy="1.2em">- 降低維護成本</tspan>
+    <tspan x="490" dy="1.2em">- 快速適應需求變化</tspan>
+  </text>
+
+  <text x="650" y="60" font-size="12">
+    <tspan x="650" dy="1.2em">- 軟體開發公司</tspan>
+    <tspan x="650" dy="1.2em">- 需要長期維護的</tspan>
+    <tspan x="650" dy="1.2em">  大型系統擁有者</tspan>
+    <tspan x="650" dy="1.2em">- 快速發展的企業</tspan>
+  </text>
+
+  <text x="170" y="285" font-size="12">
+    <tspan x="170" dy="1.2em">- 架構知識</tspan>
+    <tspan x="170" dy="1.2em">- 設計模式</tspan>
+    <tspan x="170" dy="1.2em">- 編程語言</tspan>
+    <tspan x="170" dy="1.2em">- 測試工具</tspan>
+  </text>
+
+  <text x="490" y="285" font-size="12">
+    <tspan x="490" dy="1.2em">- 培訓課程</tspan>
+    <tspan x="490" dy="1.2em">- 技術博客</tspan>
+    <tspan x="490" dy="1.2em">- 架構諮詢服務</tspan>
+    <tspan x="490" dy="1.2em">- 開源社區</tspan>
+  </text>
+
+  <text x="10" y="510" font-size="12">
+    <tspan x="10" dy="1.2em">- 架構設計時間</tspan>
+    <tspan x="10" dy="1.2em">- 開發人員培訓</tspan>
+    <tspan x="10" dy="1.2em">- 重構現有系統</tspan>
+    <tspan x="10" dy="1.2em">- 測試和質量保證</tspan>
+  </text>
+
+  <text x="330" y="510" font-size="12">
+    <tspan x="330" dy="1.2em">- 節省的維護成本</tspan>
+    <tspan x="330" dy="1.2em">- 提高的開發效率</tspan>
+    <tspan x="330" dy="1.2em">- 降低的系統風險</tspan>
+    <tspan x="330" dy="1.2em">- 更快的市場響應</tspan>
+  </text>
+</svg>
