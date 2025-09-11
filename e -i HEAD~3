@@ -1,0 +1,217 @@
+[33mcb32261[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32m8.sdi-aig[m[33m, [m[1;31morigin/8.sdi-aig[m[33m)[m feat: update chapter 08
+[33m2661658[m feat: update chapter 08
+[33mb24a218[m 修正title
+[33m49d30d6[m feat: update-chapter-8
+[33m51d8c3f[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmaster[m[33m)[m Merge branch 'codesensegroup:master' into master
+[33m4b30b1f[m docs(sdi-aig): upload chapter 07 (#99)
+[33m2773538[m feat: update-chapter-6 (#98)
+[33m3b3e8d7[m feat: 加入第六章設計鍵值儲存系統(前半段內容) (#97)
+[33m920726e[m feat: 🎸 新增系統設計面試指南第四章 (#96)
+[33md169572[m feat(doc): add System Design Interview chapter1 (#95)
+[33mde3e9ea[m Add Clean Architecture Chapter 33 study for video sales system using Clean Architecture (#94)
+[33m7e13a92[m docs: add 30 31 32 (#92)
+[33md330666[m feat : 更新圖片未顯示的問題 (#90)
+[33m0f60180[m feat : 更新 19 章用詞 (#89)
+[33m10ed33d[m fat：新增 clean-arch 19、20 章 (#88)
+[33m921deaf[m feat: add chapter 18 (#87)
+[33meb4a2ef[m feat: add chapter 18
+[33m2803a16[m Merge branch 'codesensegroup:master' into master
+[33m93423a8[m upload chapter from 21 to 25. (#86)
+[33ma5a5cf4[m feat: add chapter 15 . 16 (#85)
+[33m80df226[m feat: add chapter 15 . 16
+[33m35cbc0d[m Page/add clean arch 12 13 14 (#84)
+[33m7e71fe2[m docs: added redis ring (#81)
+[33ma6b1f0f[m fix: 🐛 move content/zh/5.ddi/9.chapter9->content/5.ddia/9.chape (#80)
+[33mb6a6281[m feat: 🎸 新增ch9 (#79)
+[33m49c8174[m feat: 更新無瑕的程式碼Part2，前言及用詞調整。 (#78)
+[33mf2ee8bd[m feat: 更新無瑕的程式碼Part2 (#77)
+[33m95014d4[m fix(bug): fixed img disappear issue and modified word (#76)
+[33m4322313[m feat(clean-arch): added chapter1 and chapter2 (#75)
+[33meec1d02[m feat: update document (#73)
+[33mffe6c8d[m docs(custom): codeowner (#71)
+[33md7d1cab[m fix: fixed ui issue (#66)
+[33m4e5fe05[m feat: update document and home index (#65)
+[33m0ff5991[m feat: using the docs theme (#64)
+[33m30ef865[m 第五章剩下部分 (#62)
+[33mae0366e[m ddia chapter5 first (#60)
+[33mc2b102b[m Merge pull request #58 from changemyminds/master
+[33m91f1b84[m deploy: add manual
+[33m878acd7[m Merge pull request #57 from yulin0629/master
+[33m1f46c71[m Merge branch 'codesensegroup:master' into master
+[33m1f2c34b[m feat: 🎸 完成第三章最後的部份
+[33m2691dff[m fix: 🐛 修正順序 (#56)
+[33ma932b51[m Merge branch 'codesensegroup:master' into master
+[33m4db173d[m fix: 🐛 修正順序
+[33me3081cd[m Merge pull request #55 from yulin0629/master
+[33m6b0d719[m docs: ✏️ 增加第三章的內容，上半段
+[33m57a1469[m Merge pull request #54 from changemyminds/doc/ddia-grpc
+[33m9a3ffd1[m feature: 新增gRPC
+[33m8951472[m Merge pull request #53 from changemyminds/feature/sorting-page
+[33m32f7f43[m feat: 重新修正頁面排序順序
+[33mccbc2d5[m Merge pull request #52 from Simon-Din/master
+[33m37f591b[m Merge branch 'master' of github.com:Simon-Din/code-study
+[33m43cc54d[m feat : 更新chapter4
+[33mb55f442[m Merge pull request #51 from Simon-Din/master
+[33m452bbff[m feat : 更新chapter4
+[33mac8b2a1[m feat : 上傳資料密集型應用系統設計，Chapter4，編碼與演化 (#50)
+[33m4275678[m Merge pull request #49 from codesensegroup/pancybranch
+[33mce5ec2c[m 更新第一章
+[33m7de195e[m Merge pull request #48 from changemyminds/feature/ddia
+[33m2769605[m feat: 新增DDIA的附件Redis
+[33mbd8b974[m Merge pull request #47 from Simon-Din/master
+[33maa397c3[m feat : 新增16-1、16-2圖片
+[33mcbb6dee[m feat : 新增16-1、16-2
+[33md08d432[m Merge pull request #46 from cshs108/master
+[33m1d6eb26[m feat: 新增16.3~16.4
+[33ma2af135[m feat: 修改13-1~13-3 圖片路徑 (#45)
+[33me8bed74[m Merge pull request #44 from spyua/master
+[33m8a210c9[m feat : Adjust
+[33m662bb8d[m Merge pull request #43 from YuLiangLin/feat-cicd-chapter13
+[33m182550a[m Merge branch 'master' into feat-cicd-chapter13
+[33m660759b[m Merge pull request #42 from jezzaSoup/master
+[33mdb6dffc[m Update chapter13.md
+[33m4f0014f[m feat(image) : add discovery loop image
+[33m22b3275[m feat(cicd-2.0) - update document and images
+[33m7422211[m Create chapter13.md
+[33mfdbbb50[m Update chapter13.md
+[33m4977a2e[m Upload images for chapter 13
+[33m8254b14[m Added folder for chapter 13 images
+[33me9b803d[m Update chapter13.md
+[33m09e3048[m Create chapter13.md
+[33mef49956[m Merge pull request #41 from hdsbook/hander-docs
+[33mcaf9e0e[m docs(ci-cd2.0): 內容微調
+[33m24826bd[m docs:(cicd-2.0)add chapter 12
+[33mc9fcf66[m Merge branch 'codesensegroup:master' into master
+[33md40ba05[m Merge pull request #40 from changemyminds/fixed-page/ci-cd-appendix
+[33mc92ca4b[m docs: 修正附錄
+[33m50c5af2[m Merge pull request #39 from changemyminds/page/cicd-11.7-11.9
+[33ma4a7c03[m feat: 新增章節14.7.1 ~ 14.9，加入版本控制的補充說明
+[33m90484e4[m Merge pull request #38 from changemyminds/feature/fullsrcreen
+[33m58458ff[m feat: 新增全螢幕功能，調整螢幕寬度的大小
+[33m0d54f15[m Merge pull request #37 from changemyminds/master
+[33m6b45fa2[m fix(ui): 修正scroll的問題
+[33mec6cd93[m 11.4~11.6 初版 (#35)
+[33m731fee5[m Merge branch 'codesensegroup:master' into master
+[33m7f9552b[m Merge pull request #34 from codesensegroup/feat-modify-ci-cd-page
+[33m6819664[m feat: 🎸 修改CI/CD內容
+[33m1f26f0a[m Merge pull request #32 from codesensegroup/doc-chapter0-gitlab-ci/cd
+[33maab3cb2[m Merge pull request #33 from spyua/doc-gitlab-cicd
+[33mcfe2033[m docs: ✏️ 修改Chpater00為Appendix00
+[33m00dda8a[m Merge pull request #31 from spyua/doc-gitlab-cicd
+[33m6778179[m docs: ✏️ gitlab ci/cd上tags內容
+[33mc3700ec[m Merge pull request #30 from codesensegroup/doc-chapter0-gitlab-ci/cd
+[33mbb6b534[m Merge pull request #29 from spyua/doc-gitlab-cicd
+[33m982b56c[m docs: ✏️ 增加CI/CD章節
+[33m11c6c42[m Merge pull request #28 from spyua/doc-gitlab-cicd
+[33m6289e3a[m docs: ✏️ gitlab ci/cd內容
+[33mf4df54e[m Merge pull request #27 from spyua/doc-gitlab-cicd
+[33m2985b54[m docs: ✏️ 新增內容
+[33m31f0c0e[m feat: 🎸 增加Chapter0 CICD內容
+[33m78a49a5[m docs: ✏️ 新增CICD內容
+[33m01c79dc[m docs: ✏️ 撰寫Gitlab CICD 章節
+[33m56e795b[m docs(ci-cd2.0): add contributors to ch10 (#26)
+[33md79e45f[m docs(ci-cd2.0): add contributors to ch10
+[33macaf60d[m Merge branch 'codesensegroup:master' into master
+[33mba800cf[m Merge pull request #24 from BackPOPO/add-10-5
+[33mbf25c16[m docs(ci-cd2.0): ch10-1~3內容調整 (#25)
+[33mb4b845c[m docs(ci-cd2.0): ch10-1~3內容調整
+[33m0885961[m 加入10之5
+[33m6c73f77[m Merge pull request #23 from codesensegroup/doc/issue-template
+[33ma8c980f[m Update issue templates
+[33m1a055fa[m docs(ci-cd2.0): 新增10-1~10-3內容 (#22)
+[33m3c13959[m 更新排版 (#21)
+[33mf3dfdf8[m Merge pull request #20 from frank30941/page/cicd-2.0-chapter8-up
+[33ma142d42[m ♻️ merge 8-1 & 8-2
+[33m2cee68a[m Merge branch 'master' into page/cicd-2.0-chapter8-up
+[33m07bfb5b[m Merge pull request #19 from cshs108/master
+[33m2259133[m Bug: 修正aside效果無法正常呈現
+[33m2189c8f[m Bug: code style調整
+[33m7226877[m bug: 修正標題的md格式
+[33m02bea9a[m 新增第九章
+[33m2a9d0f6[m 🐛  add ## 前言
+[33m9f7d0f3[m Merge pull request #18 from frank30941/page/cicd-2.0-chapter8-up
+[33m29ec5f1[m 🐛 fix some words
+[33m5ba7291[m Merge pull request #17 from rainlay/ch8-2
+[33m4fe5613[m :egg: fix something
+[33m5b0d85c[m Merge pull request #16 from rainlay/ch8-2
+[33m9ee2642[m :poop: Add title, description, position, category, menuTitle
+[33m9978952[m :tada: Add CICD-2.0 8-3 ~ 8-5 心得
+[33m2561935[m Merge pull request #15 from frank30941/page/cicd-2.0-chapter8-up
+[33m14295e8[m 🎉 init 8-1 page
+[33meabaa76[m Merge pull request #14 from changemyminds/hotfix/workflow-action
+[33m021f4e7[m chore: fix ci-cd, limit master branch
+[33ma649970[m Merge pull request #13 from changemyminds/feature/web-api-design
+[33ma5b084e[m docs: 將2.6 ~ 2.10章節進行合併
+[33m09a9394[m docs: 新增Web API，2.1 ~ 2.5章節
+[33m2d2fd54[m Merge pull request #12 from BackPOPO/reivse
+[33mc30077a[m 修正檔名及position
+[33m019fbed[m Merge pull request #11 from BackPOPO/chapter-6
+[33md5565b0[m 加入第六章
+[33mb5cc4c3[m Merge pull request #10 from spyua/feat-web-chapter2
+[33mcb82cd8[m feat: 🎸 新增Web API. Chapter2內容
+[33m4f0e8d0[m Merge pull request #9 from cshs108/ch5
+[33m8b36b52[m feat: 新增WebApi的第五章節
+[33m1d82684[m Merge pull request #8 from changemyminds/feature/web-api-design
+[33mf08593e[m feat: 新增WebApi的第二章節
+[33m4f10288[m Merge pull request #7 from changemyminds/feature/authors-contributions
+[33m4dc62a6[m feat: add authors(contributions) to subtitle
+[33m8438c91[m docs: 修訂DevOps第7章.md
+[33mc9d6b5e[m Merge pull request #5 from spyua/feat-dev20-combine-chapter7doc
+[33mdaeb16a[m feat: 🎸 整合第七章文章
+[33mfc56003[m Merge pull request #4 from changemyminds/feature/fix-pv
+[33m43c13c0[m fix: fix busuanzi page view issue.
+[33m76f3e00[m Merge pull request #2 from changemyminds/feature/Appsubtitle
+[33md09a6cf[m chore: 修正gitlab-ci的workflow
+[33m4b2e934[m feat: 新增AppSubtitle、版本號更新
+[33mf4bad15[m Update chapter7_5.md
+[33m8e5e743[m Update chapter7_5.md
+[33m943418f[m Update chapter7_5.md
+[33mc66a964[m Update chapter7_5.md
+[33m9ed4382[m Update chapter7_5.md
+[33mb4f2eb4[m Update chapter7_5.md
+[33m1ecf134[m Update chapter7_5.md
+[33m45c16ec[m Update chapter7_5.md
+[33m4b517ac[m Update chapter7_5.md
+[33md21d318[m Update chapter7_5.md
+[33m4c1d58e[m feat: 🎸 更改Chapter7檔案名稱
+[33m4854d87[m Update chapter7_5.md
+[33m9bb4220[m Create chapter7_5.md
+[33m720fb98[m feat: 🎸 修正Dev2.0第七章
+[33m777b94d[m feat: 🎸 修正Dev2.0 Chapter7 錯別字
+[33ma7941f0[m feat: 🎸 增加Dev2.0 Chapter7內容(7.1~7.4)
+[33m3803b51[m feat: 🎸 增加Dev2.0 Chapter7內容
+[33ma304f16[m feat: 🎸 增加Dev2.0 Chapter 7 內容
+[33m60b87fa[m feat: 🎸 修正Dev2.0 Chapter7內容
+[33m72b44ce[m feat: 🎸 Dev2.0 Chapter7內容撰寫
+[33m9f51f1a[m Merge branch 'master' of https://github.com/codesensegroup/code-study
+[33m7075c67[m feat: 🎸 修正Chapter7 menuTitle
+[33m2cfdde6[m feat(pwa): 新增pwa short name
+[33me473cb0[m feat: 🎸 修改Dev2.0 Chapter7 Title
+[33m93560a2[m Merge branch 'master' of https://github.com/codesensegroup/code-study
+[33me368362[m feat: 🎸 新增Dev2.0 Chapter7內容
+[33mbfefa9f[m feat: 新增busuanzi，訪客人數、總瀏覽人數
+[33m2fc2807[m feat: 🎸 新增Chapter7圖片
+[33mc783185[m feat: 🎸 Chapter7 內容新增
+[33m7d1ab91[m feat: 🎸 調整Chapter7圖片大小
+[33mf9eea8e[m feat: 🎸 調整Chapter7圖片大小
+[33m04097c8[m feat: 🎸 調整 Chapter圖片大小
+[33m4e9e3b2[m feat: 🎸 增加Chapter 7內容
+[33mf55202a[m feat: 🎸 更新Dev2.0第七章內容
+[33mc875fc9[m feat: 🎸 New Dev2.0 Chapter7 Section
+[33m518c968[m chore: 暫時停用變更version
+[33mf6de252[m chore(deploy): 新增version變更
+[33mea34303[m feat(pwa): 新增pwa名稱
+[33m7a020c7[m docs: 修正github預設dir路徑
+[33md259720[m docs: 更新圖片
+[33m876bdfb[m docs: 新增README.md
+[33ma9693aa[m docs: 修正圖片置中問題
+[33mb54e41b[m docs: 更新持續交付2.0 05章節
+[33mbf8dc62[m fix: 修正url問題
+[33mecb12a9[m docs: 更新url和時間
+[33m16bc06e[m docs: 修改url測試
+[33me689f39[m feat(deploy): 新增gitlab page
+[33m6f91d7b[m test
+[33m00e5f8f[m fixed
+[33m86a28fb[m test
+[33m348d20e[m feat(deploy): code Sense讀書會專用Gitlab Page
+[33m7f5c4ff[m Initial commit
