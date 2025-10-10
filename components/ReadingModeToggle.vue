@@ -52,10 +52,10 @@ css({
       transform: 'scale(0.95)',
     },
     '&.active': {
-      backgroundColor: '{color.green.500}',
+      backgroundColor: '{color.primary.700}',
       transform: 'rotate(180deg)',
       '@dark': {
-        backgroundColor: '{color.green.600}',
+        backgroundColor: '{color.primary.800}',
       },
       '&:hover': {
         transform: 'rotate(180deg) scale(1.1)',
