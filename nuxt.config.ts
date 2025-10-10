@@ -10,7 +10,7 @@ const baseUrl = z
 export default defineNuxtConfig({
   // https://github.com/nuxt-themes/docus
   extends: "@nuxt-themes/docus",
-  css: ["@/assets/css/override.css"],
+  css: ["@/assets/css/override.css", "@/assets/css/transitions.css"],
   devtools: { enabled: true },
   modules: ["@nuxtjs/tailwindcss", "@nuxt/content"],
   app: {
@@ -18,6 +18,10 @@ export default defineNuxtConfig({
     head: {
       meta: [{ name: "referrer", content: "no-referrer-when-downgrade" }],
     },
+    pageTransition: false,
+  },
+  experimental: {
+    viewTransition: true
   },
   runtimeConfig: {
     public: {
