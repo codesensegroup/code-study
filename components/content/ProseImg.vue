@@ -85,7 +85,7 @@ onBeforeUnmount(() => {
   max-width: 50%;
   height: auto;
   display: block;
-  margin: 1.5rem 0;
+  margin: 0.75rem 0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   border-radius: 4px;
 }
