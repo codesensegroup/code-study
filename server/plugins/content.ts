@@ -14,7 +14,7 @@ export default defineNitroPlugin((nitroApp) => {
       visit(file.body, (n: any) => n.tag === 'img', (node) => {
         if (node.props && node.props.src.startsWith('images/')) {
           node.props.src = path.join(baseUrl, node.props.src);
-          console.log(node, node.props.src);
+          // console.log(node, node.props.src);
         }
       })
     }

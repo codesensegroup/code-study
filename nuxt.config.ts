@@ -11,6 +11,7 @@ export default defineNuxtConfig({
   // https://github.com/nuxt-themes/docus
   extends: "@nuxt-themes/docus",
   css: ["@/assets/css/override.css", "@/assets/css/transitions.css"],
+  compatibilityDate: '2025-10-10',
   devtools: { enabled: true },
   modules: ["@nuxtjs/tailwindcss", "@nuxt/content"],
   app: {
@@ -31,7 +32,7 @@ export default defineNuxtConfig({
   content: {
     markdown: {
       remarkPlugins: ['remark-math'],
-      rehypePlugins: ['rehype-mathjax'],
+      rehypePlugins: ['rehype-katex'],
     },
     highlight: {
       theme: {
