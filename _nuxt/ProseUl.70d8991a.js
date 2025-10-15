@@ -1,1 +1,0 @@
-import{k as t,b as _,c as a,a1 as r}from"./entry.afb90f09.js";const s={};function n(e,o){return _(),a("ul",null,[r(e.$slots,"default",{},void 0,!0)])}const c=t(s,[["render",n],["__scopeId","data-v-5bd61aad"]]);export{c as default};
