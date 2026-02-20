@@ -8,9 +8,12 @@
     "generate": "nuxi generate",
     "generate:github": "DEPLOY_ENV=GH_PAGES nuxt generate",
     "preview": "nuxi preview",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "@commitlint/cli": "^20.4.2",
+    "@commitlint/config-conventional": "^20.4.2",
     "@nuxt-themes/docus": "^1.15.1",
     "@nuxt/content": "^2.13.4",
     "@nuxt/devtools": "^1.7.0",
@@ -18,6 +21,8 @@
     "@nuxtjs/tailwindcss": "^6.14.0",
     "@types/node": "^20.19.20",
     "eslint": "^8.57.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
     "nuxt": "^3.19.3"
   },
   "dependencies": {
@@ -30,5 +35,8 @@
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
     "zod": "^3.25.76"
+  },
+  "lint-staged": {
+    "*.{js,ts,vue}": "eslint --fix"
   }
 }
