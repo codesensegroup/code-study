@@ -11,3 +11,4 @@ sw.*
 .env
 .output
 backup
+settings.local.json

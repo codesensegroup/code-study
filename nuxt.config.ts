@@ -30,6 +30,9 @@ export default defineNuxtConfig({
     },
   },
   content: {
+    navigation: {
+      fields: ['icon', 'titleTemplate', 'header', 'main', 'aside', 'footer', 'group']
+    },
     markdown: {
       remarkPlugins: ['remark-math'],
       rehypePlugins: ['rehype-katex'],
