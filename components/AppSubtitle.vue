@@ -12,11 +12,15 @@ const contributors = reactive<string[]>([]);
 const title = ref("");
 
 onMounted(() => {
-  title.value = page.value && page.value.pageTitle ? page.value.pageTitle : "";
+  if (!page.value) return;
+
+  title.value = page.value.pageTitle ? page.value.pageTitle : "";
 
   if (Array.isArray(page.value.contributors)) {
     contributors.push(...page.value.contributors);
   }
+
+  if (!page.value.body) return;
 
   const contentArray = Array.isArray(page.value.body.children)
     ? page.value.body.children
@@ -58,9 +62,9 @@ onMounted(() => {
         閱讀時長：{{ Math.ceil(readTime.minutes) }} 分鐘
       </span>
       <span class="mx-1">|</span>
-      <span class="text-xs md:text-sm" id="busuanzi_container_page_pv">
+      <span id="busuanzi_container_page_pv" class="text-xs md:text-sm">
         <span>閱讀次數：</span>
-        <span id="busuanzi_value_page_pv"></span>
+        <span id="busuanzi_value_page_pv" />
         次
       </span>
     </div>

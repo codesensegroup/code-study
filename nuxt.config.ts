@@ -30,6 +30,7 @@ export default defineNuxtConfig({
     },
   },
   content: {
+    ignores: ['AGENTS\\.md$', 'CLAUDE\\.md$'],
     navigation: {
       fields: ['icon', 'titleTemplate', 'header', 'main', 'aside', 'footer', 'group']
     },
