@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Code Hook 深度互動模擬器</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        beige: '#F8F8F5',
+                        dark: '#1A1A1A',
+                        caramel: '#C88A64',
+                        danger: '#ef4444',
+                        success: '#22c55e',
+                        warning: '#eab308'
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        body { background-color: #F8F8F5; color: #1A1A1A; }
+        
+        /* Interactive Elements styling */
+        .glass-panel { background: #FFFFFF; border: 2px solid #1A1A1A; box-shadow: 6px 6px 0px #C88A64; transition: transform 0.1s, box-shadow 0.1s; }
+        .glass-panel:active { transform: translate(2px, 2px); box-shadow: 4px 4px 0px #C88A64; }
+        
+        .code-block { background: #1A1A1A; color: #F8F8F5; }
+
+        /* Routing Animation Paths */
+        .path-line { stroke-dasharray: 8 8; animation: movePath 0.8s linear infinite reverse; }
+        @keyframes movePath { to { stroke-dashoffset: 16; } }
+        
+        /* Terminal Blinking Cursor */
+        .cursor-blink { animation: blink 1s step-end infinite; border-left: 8px solid #C88A64; margin-left: 2px;}
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        /* Custom Textarea for Code Editor */
+        #user-code-input {
+            background: transparent;
+            color: #C88A64;
+            caret-color: #C88A64;
+            resize: none;
+            outline: none;
+            field-sizing: content;
+            min-height: 24px;
+        }
+        #user-code-input::selection { background: #C88A64; color: #1A1A1A; }
+
+        /* Checklist Animations */
+        .check-item { transition: all 0.3s ease; }
+        .check-item.done { opacity: 0.5; text-decoration: line-through; }
+        .check-item.done .box { background-color: #22c55e; border-color: #22c55e; }
+    </style>
+</head>
+<body class="antialiased selection:bg-caramel selection:text-white pb-32">
+
+    <!-- Header -->
+    <header class="bg-dark text-beige py-12 px-6 border-b-8 border-caramel relative overflow-hidden">
+        <div class="max-w-6xl mx-auto relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div>
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-caramel bg-caramel/20 text-caramel text-sm font-mono mb-4 font-bold tracking-widest">
+                    INTERACTIVE LAB v2.2
+                </div>
+                <h1 class="text-4xl md:text-5xl font-black mb-2">Claude Code: Hook 機制深度模擬器</h1>
+                <p class="text-beige/70 text-lg max-w-2xl">不要只看文件，動手搞壞它。透過親自配置路由、編寫攔截邏輯與體驗重啟陷阱，真正掌握 PreToolUse Hook 的底層原理與邊界防護。</p>
+            </div>
+            <!-- Progress Tracker -->
+            <div class="flex gap-2">
+                <div id="badge-1" class="w-10 h-10 rounded-full border-2 border-beige/30 flex items-center justify-center font-mono font-bold text-beige/30 transition-all">1</div>
+                <div id="badge-2" class="w-10 h-10 rounded-full border-2 border-beige/30 flex items-center justify-center font-mono font-bold text-beige/30 transition-all">2</div>
+                <div id="badge-3" class="w-10 h-10 rounded-full border-2 border-beige/30 flex items-center justify-center font-mono font-bold text-beige/30 transition-all">3</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 mt-12 space-y-24">
+
+        <!-- Module 1: The Matcher Router -->
+        <section id="module-1" class="scroll-mt-12">
+            <div class="mb-6 flex justify-between items-end">
+                <div>
+                    <h2 class="text-3xl font-black mb-2 flex items-center gap-3">
+                        <span class="w-10 h-10 rounded bg-dark text-white flex items-center justify-center font-mono text-xl shadow-[4px_4px_0_#C88A64]">1</span>
+                        動態路由模擬：Matcher 是第一道閘門
+                    </h2>
+                    <p class="text-dark/80 max-w-3xl">Claude Code 會根據 `settings.local.json` 中的 `matcher` 決定是否要將 Tool 請求拋給你的 Node.js 腳本。如果 Matcher 沒對到，你的腳本連執行的機會都沒有。請嘗試不同的組合！</p>
+                </div>
+            </div>
+
+            <div class="w-full overflow-x-auto no-scrollbar">
+                <div class="min-w-[900px] bg-white border-2 border-dark rounded-2xl p-8 relative flex flex-col items-center">
+                    <!-- Controls -->
+                    <div class="flex justify-between w-full mb-12 relative z-10 gap-8">
+                        <!-- Left: Claude Request -->
+                        <div class="w-1/3 bg-beige border-2 border-dark p-4 rounded-xl">
+                            <div class="text-xs font-mono font-bold text-dark/50 mb-2">Claude 想要執行...</div>
+                            <select id="router-tool-select" class="w-full bg-white border-2 border-dark rounded p-2 font-mono font-bold text-lg outline-none focus:border-caramel">
+                                <option value="Read">Read (.env)</option>
+                                <option value="Grep">Grep (API_KEY)</option>
+                                <option value="Bash">Bash (cat .env)</option>
+                            </select>
+                        </div>
+
+                        <!-- Center: Matcher Config -->
+                        <div class="w-1/3 bg-dark text-beige p-4 rounded-xl shadow-[4px_4px_0_#C88A64] z-20">
+                            <div class="text-xs font-mono font-bold text-caramel mb-2">你的 settings.json Matcher</div>
+                            <select id="router-matcher-select" class="w-full bg-[#2A2A2A] border-2 border-caramel rounded p-2 font-mono font-bold text-lg text-white outline-none">
+                                <option value="Read">"Read"</option>
+                                <option value="Read|Grep">"Read|Grep"</option>
+                                <option value="*">"*" (All Tools)</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Right: Action -->
+                        <div class="w-1/3 flex items-center justify-end">
+                            <button id="btn-fire-route" class="glass-panel bg-caramel text-dark font-black px-8 py-4 text-xl rounded-xl w-full">
+                                發送請求 (Fire!)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Visual Pipeline -->
+                    <div class="relative w-full h-48 bg-beige/50 border-2 border-dark/10 rounded-xl overflow-hidden flex items-center justify-between px-12">
+                        <svg class="absolute inset-0 w-full h-full" style="z-index: 0;">
+                            <path d="M 50 96 L 400 96" stroke="#1A1A1A" stroke-width="4" stroke-opacity="0.1" fill="none" />
+                            <path id="svg-path-hook" d="M 400 96 L 400 160 L 700 160" stroke="#1A1A1A" stroke-width="4" stroke-opacity="0.1" fill="none" />
+                            <path id="svg-path-bypass" d="M 400 96 L 400 30 L 700 30" stroke="#1A1A1A" stroke-width="4" stroke-opacity="0.1" fill="none" />
+                        </svg>
+                        <svg class="absolute inset-0 w-full h-full pointer-events-none" style="z-index: 1;">
+                            <path id="anim-path-main" d="M 50 96 L 400 96" stroke="#C88A64" stroke-width="6" fill="none" class="opacity-0 path-line" />
+                            <path id="anim-path-hook" d="M 400 96 L 400 160 L 680 160" stroke="#C88A64" stroke-width="6" fill="none" class="opacity-0 path-line" />
+                            <path id="anim-path-bypass" d="M 400 96 L 400 30 L 680 30" stroke="#ef4444" stroke-width="6" fill="none" class="opacity-0 path-line" />
+                        </svg>
+
+                        <div class="z-10 bg-dark text-white font-mono font-bold px-4 py-2 rounded shadow-lg">Claude</div>
+                        <div class="z-10 absolute left-[380px] top-[76px] w-10 h-10 bg-dark rounded-full border-4 border-caramel flex items-center justify-center text-caramel font-bold shadow-[0_0_15px_#C88A64]" id="node-matcher">?</div>
+                        <div class="z-10 flex flex-col gap-[75px] items-end absolute right-[50px] top-[10px]">
+                            <div class="bg-danger/10 border-2 border-danger text-danger font-bold px-4 py-2 rounded-lg text-sm flex items-center gap-2" id="dest-bypass">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                Bypass (危險: 直通作業系統)
+                            </div>
+                            <div class="bg-dark text-beige border-2 border-caramel font-bold px-4 py-2 rounded-lg text-sm flex items-center gap-2" id="dest-hook">
+                                <svg class="w-5 h-5 text-caramel" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                Node.js Hook 腳本
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="router-result" class="mt-6 font-mono font-bold text-lg h-8 text-center w-full"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Module 2: Live Code Executor -->
+        <section id="module-2" class="scroll-mt-12 opacity-50 transition-opacity duration-500 pointer-events-none">
+            <div class="mb-6 flex justify-between items-end">
+                <div>
+                    <h2 class="text-3xl font-black mb-2 flex items-center gap-3">
+                        <span class="w-10 h-10 rounded bg-dark text-white flex items-center justify-center font-mono text-xl shadow-[4px_4px_0_#C88A64]">2</span>
+                        Live Code 驗證台：為何單一腳本不可靠？
+                    </h2>
+                    <p class="text-dark/80 max-w-3xl">這是一個真正的 JavaScript 執行器。教材提到不同工具有不同的 Payload (Data Schema)。**請親自修改下方的 IF 判斷式**，然後點擊「執行測試」，看看你的防護邏輯能不能完美擋下三種工具的攻擊。</p>
+                </div>
+            </div>
+
+            <div class="w-full overflow-x-auto no-scrollbar">
+                <div class="min-w-[1000px] grid grid-cols-2 gap-6">
+                    <!-- Left: Code Editor -->
+                    <div class="code-block rounded-2xl p-6 shadow-2xl flex flex-col relative">
+                        <div class="absolute top-0 left-6 bg-caramel text-dark text-xs font-bold px-3 py-1 rounded-b-lg font-mono">read_hook.js</div>
+                        <div class="mt-6 flex-1 font-mono text-sm leading-relaxed overflow-y-auto">
+                            <div class="text-white/40">// 從 STDIN 取得 JSON 並解析</div>
+                            <div>const toolArgs = JSON.parse(input);</div>
+                            <div class="text-white/40 mt-4">// 你的安全攔截邏輯寫在這裡：</div>
+                            
+                            <div class="bg-white/5 border border-white/10 rounded-lg p-4 mt-2 mb-4 relative group">
+                                <div class="absolute -left-3 top-4 text-caramel opacity-0 group-hover:opacity-100 transition-opacity">▶</div>
+                                <span class="text-[#cc7832]">if</span> (
+                                <textarea id="user-code-input" class="w-full bg-dark/50 border border-caramel/50 p-2 rounded block my-1 font-mono text-sm" rows="1" spellcheck="false">toolArgs.tool_input.file_path.includes('.env')</textarea>
+                                ) {<br>
+                                &nbsp;&nbsp;<span class="text-[#cc7832]">console</span>.error(<span class="text-[#6a8759]">"攔截！"</span>);<br>
+                                &nbsp;&nbsp;<span class="text-[#cc7832]">process</span>.exit(<span class="text-[#6897bb]">2</span>);<br>
+                                } <span class="text-[#cc7832]">else</span> {<br>
+                                &nbsp;&nbsp;<span class="text-[#cc7832]">process</span>.exit(<span class="text-[#6897bb]">0</span>); <span class="text-white/40">// 放行</span><br>
+                                }
+                            </div>
+                        </div>
+                        <button id="btn-run-code" class="mt-4 w-full glass-panel bg-white text-dark border-2 border-dark font-black py-3 rounded-lg flex justify-center items-center gap-2 hover:bg-beige transition-colors">
+                            <svg class="w-5 h-5 text-caramel" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            執行測試 (對抗三種 Payload)
+                        </button>
+                    </div>
+
+                    <!-- Right: Execution Results -->
+                    <div class="bg-white border-2 border-dark rounded-2xl p-6 shadow-xl flex flex-col">
+                        <h3 class="font-bold text-lg mb-4 border-b-2 border-dark/10 pb-2">執行結果面板</h3>
+                        <div class="space-y-4 flex-1" id="test-results-container">
+                            <div class="p-4 rounded-xl border-2 border-dark/10 bg-beige transition-all" id="res-read">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="font-mono font-bold text-dark">測試 1: Read 工具</span>
+                                    <span class="badge px-2 py-1 rounded text-xs font-bold bg-dark/10 text-dark/50">等待測試...</span>
+                                </div>
+                                <div class="text-xs font-mono bg-dark/5 p-2 rounded text-dark/70 truncate">Payload: {"tool_input": {"file_path": ".env"}}</div>
+                                <div class="msg text-sm font-bold mt-2 h-5"></div>
+                            </div>
+                            <div class="p-4 rounded-xl border-2 border-dark/10 bg-beige transition-all" id="res-grep">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="font-mono font-bold text-dark">測試 2: Grep 工具</span>
+                                    <span class="badge px-2 py-1 rounded text-xs font-bold bg-dark/10 text-dark/50">等待測試...</span>
+                                </div>
+                                <div class="text-xs font-mono bg-dark/5 p-2 rounded text-dark/70 truncate">Payload: {"tool_input": {"pattern": "API", "path": "/"}}</div>
+                                <div class="msg text-sm font-bold mt-2 h-5"></div>
+                            </div>
+                            <div class="p-4 rounded-xl border-2 border-dark/10 bg-beige transition-all" id="res-bash">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="font-mono font-bold text-dark">測試 3: Bash 工具</span>
+                                    <span class="badge px-2 py-1 rounded text-xs font-bold bg-dark/10 text-dark/50">等待測試...</span>
+                                </div>
+                                <div class="text-xs font-mono bg-dark/5 p-2 rounded text-dark/70 truncate">Payload: {"tool_input": {"command": "cat .env"}}</div>
+                                <div class="msg text-sm font-bold mt-2 h-5"></div>
+                            </div>
+                        </div>
+                        <div id="module-2-conclusion" class="mt-4 p-4 bg-caramel/20 border-l-4 border-caramel rounded-r text-sm font-bold text-dark hidden">
+                            看到了嗎？只要有一個 Schema 不合，你的 Hook 就會崩潰或漏接。這就是為什麼 Senior 教材強烈建議：**不要用單一 Hook 處理所有工具，請愛用原生的 `permissions.deny` 進行全域封鎖。**
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Module 3: Terminal Gotcha Escape Room (REFACTORED V2) -->
+        <section id="module-3" class="scroll-mt-12 opacity-50 transition-opacity duration-500 pointer-events-none relative">
+            <div class="mb-6 flex justify-between items-end border-b-2 border-dark/10 pb-6">
+                <div>
+                    <h2 class="text-3xl font-black mb-2 flex items-center gap-3">
+                        <span class="w-10 h-10 rounded bg-dark text-white flex items-center justify-center font-mono text-xl shadow-[4px_4px_0_#C88A64]">3</span>
+                        DX 狀態機：重啟陷阱密室逃脫
+                    </h2>
+                    <p class="text-dark/80 max-w-3xl">這是實務上最多人踩的坑。**修改 Hook 檔案後如果沒有重啟 Claude Code，設定是不會生效的！** 請跟隨右方的「任務清單」指示，一步步體驗並破解這個地雷。</p>
+                </div>
+                
+                <button id="btn-reset-m3" class="bg-white border-2 border-dark text-dark px-4 py-2 rounded-lg font-bold hover:bg-dark hover:text-white transition-colors flex items-center gap-2 text-sm shadow-[4px_4px_0_#1A1A1A] active:translate-y-1 active:translate-x-1 active:shadow-none">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    重新挑戰
+                </button>
+            </div>
+
+            <!-- GUIDED CHECKLIST - REFINED -->
+            <div class="mb-6 bg-white border-2 border-dark rounded-xl p-5 shadow-sm flex flex-col md:flex-row gap-6 items-center">
+                <div class="font-bold text-dark w-full md:w-auto text-lg whitespace-nowrap">🎯 逃脫任務：</div>
+                <div class="flex-1 flex flex-col md:flex-row gap-4 text-sm font-bold text-dark/60 w-full justify-between">
+                    <div id="task-1" class="check-item flex items-center gap-2">
+                        <div class="box w-5 h-5 rounded border-2 border-dark/30 flex items-center justify-center text-white text-xs"></div>
+                        1. 輸入 <code class="bg-dark/10 px-1 rounded text-dark font-mono">read .env</code> 觸發漏洞
+                    </div>
+                    <div id="task-2" class="check-item flex items-center gap-2">
+                        <div class="box w-5 h-5 rounded border-2 border-dark/30 flex items-center justify-center text-white text-xs"></div>
+                        2. 修改設定檔並點擊「重啟按鈕」
+                    </div>
+                    <div id="task-3" class="check-item flex items-center gap-2">
+                        <div class="box w-5 h-5 rounded border-2 border-dark/30 flex items-center justify-center text-white text-xs"></div>
+                        3. 再次輸入 <code class="bg-dark/10 px-1 rounded text-dark font-mono">read .env</code> 驗證攔截
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full overflow-x-auto no-scrollbar">
+                <div class="min-w-[1000px] bg-[#1E1E1E] rounded-2xl border-4 border-dark overflow-hidden shadow-[8px_8px_0_#C88A64] flex flex-col relative pb-0 mb-4">
+                    
+                    <div class="bg-dark px-4 py-2 flex justify-between items-center border-b-2 border-black">
+                        <div class="text-beige/50 font-mono text-xs">Sandbox Engine v1.1</div>
+                        <div id="sync-status" class="flex items-center gap-2 px-3 py-1 rounded-full bg-success/20 border border-success/30 text-success text-xs font-bold transition-colors">
+                            <div class="w-2 h-2 rounded-full bg-success"></div>
+                            狀態同步：磁碟設定與記憶體一致
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-12 gap-0 flex-1">
+                        <!-- Left: VS Code Config Editor -->
+                        <div class="col-span-5 bg-[#252526] border-r border-black/50 flex flex-col relative">
+                            <div class="bg-[#2D2D2D] px-4 py-2 flex items-center text-white/50 text-xs font-sans gap-2 justify-between">
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-[#F34B7D]" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h16v16H4V4zm2 2v12h12V6H6z"/></svg>
+                                    settings.local.json
+                                </div>
+                            </div>
+                            
+                            <div class="p-6 font-mono text-[13px] text-[#D4D4D4] flex-1 leading-loose relative">
+                                {<br>
+                                &nbsp;&nbsp;"hooks": {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;"PreToolUse": [<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"matcher": <span class="text-[#CE9178]">"Read"</span>,<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"command": 
+                                <button id="btn-edit-config" class="bg-[#3A3D41] hover:bg-[#4A4D51] text-[#CE9178] border border-[#5A5D61] px-2 py-0.5 rounded transition-all active:scale-95 group relative ml-1 inline-flex items-center gap-2">
+                                    <span id="config-text">"true"</span>
+                                    <svg class="w-3 h-3 text-[#D4D4D4] group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                    
+                                    <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-caramel text-dark text-xs font-bold px-2 py-1 rounded whitespace-nowrap opacity-100 animate-bounce pointer-events-none" id="edit-hint">
+                                        點擊掛載 Hook 腳本 ↓
+                                    </div>
+                                </button>
+                                <br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;]<br>
+                                &nbsp;&nbsp;}<br>
+                                }
+                                
+                                <div id="file-saved-toast" class="absolute bottom-4 right-4 bg-success/20 border border-success/50 text-success font-bold text-xs px-3 py-1.5 rounded opacity-0 transition-opacity flex items-center gap-1">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                    檔案已修改
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Claude Code Terminal -->
+                        <div class="col-span-7 bg-[#1E1E1E] flex flex-col relative">
+                            <!-- Toolbar -->
+                            <div class="bg-[#2D2D2D] px-4 py-3 flex items-center justify-between border-b border-black/50">
+                                <div class="flex gap-1.5">
+                                    <div class="w-3 h-3 rounded-full bg-[#FF5F56]"></div>
+                                    <div class="w-3 h-3 rounded-full bg-[#FFBD2E]"></div>
+                                    <div class="w-3 h-3 rounded-full bg-[#27C93F]"></div>
+                                </div>
+                                
+                                <div class="flex gap-4 items-center">
+                                    <div class="text-xs font-mono text-white/50 flex items-center gap-1">
+                                        Claude 記憶體載入狀態: 
+                                        <span id="mem-state-indicator" class="text-danger font-bold bg-danger/10 px-1 rounded border border-danger/30">"true" (無防護)</span>
+                                    </div>
+                                    <button id="btn-term-restart" class="bg-caramel hover:bg-caramel/90 text-dark text-xs px-3 py-1.5 rounded font-bold transition-colors shadow-sm flex items-center gap-1 relative overflow-hidden group">
+                                        <span class="relative z-10">🔄 重啟 Claude Code</span>
+                                        <div class="absolute inset-0 bg-white/20 -translate-x-full group-hover:animate-[shimmer_1s_infinite] skew-x-12"></div>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Terminal Output -->
+                            <div class="p-6 font-mono text-sm h-[320px] overflow-y-auto scroll-smooth pb-16" id="term-container">
+                                <div class="text-[#58A6FF] mb-4 border-l-2 border-[#58A6FF] pl-2">
+                                    Welcome to Claude Code Sandbox.<br>
+                                    Tip: Type <span class="bg-white/10 px-1 rounded text-white font-bold">read .env</span> to test security.
+                                </div>
+                                <div id="term-history" class="space-y-1"></div>
+                                
+                                <div class="flex items-center mt-2" id="term-input-line">
+                                    <span class="text-[#27C93F] mr-2">➜</span>
+                                    <input type="text" id="term-input" class="bg-transparent border-none outline-none text-white flex-1 min-w-[50px] font-mono" autocomplete="off" spellcheck="false" placeholder="Enter command...">
+                                </div>
+                            </div>
+                            
+                            <!-- Success Overlay -->
+                            <div id="puzzle-success" class="absolute inset-0 bg-success/95 z-50 flex flex-col items-center justify-center text-white p-8 opacity-0 pointer-events-none transition-opacity duration-500 backdrop-blur-sm">
+                                <svg class="w-20 h-20 mb-4 animate-bounce drop-shadow-lg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <h2 class="text-4xl font-black mb-3 drop-shadow">密室逃脫成功！</h2>
+                                <p class="text-center font-bold text-lg max-w-md text-white/90">
+                                    完美體會了「修改 → 重啟 → 驗證」的正確開發循環。<br>在實際開發中，永遠記得重啟你的 CLI！
+                                </p>
+                                <button class="mt-6 border-2 border-white text-white px-6 py-2 rounded-full font-bold hover:bg-white hover:text-success transition-colors cursor-pointer" onclick="document.getElementById('btn-reset-m3').click()">再玩一次</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // --- Global Progress State ---
+        let unlocked = { m2: false, m3: false };
+
+        function unlockModule(modNum) {
+            if(modNum === 2 && !unlocked.m2) {
+                unlocked.m2 = true;
+                document.getElementById('module-2').classList.remove('opacity-50', 'pointer-events-none');
+                document.getElementById('badge-1').classList.replace('border-beige/30', 'bg-success');
+                document.getElementById('badge-1').classList.replace('text-beige/30', 'text-white');
+                document.getElementById('badge-1').innerHTML = '✓';
+                document.getElementById('badge-2').classList.replace('border-beige/30', 'border-caramel');
+                document.getElementById('badge-2').classList.replace('text-beige/30', 'text-caramel');
+                setTimeout(() => document.getElementById('module-2').scrollIntoView({behavior: 'smooth'}), 500);
+            }
+            if(modNum === 3 && !unlocked.m3) {
+                unlocked.m3 = true;
+                document.getElementById('module-3').classList.remove('opacity-50', 'pointer-events-none');
+                document.getElementById('badge-2').classList.replace('border-caramel', 'bg-success');
+                document.getElementById('badge-2').classList.replace('text-caramel', 'text-white');
+                document.getElementById('badge-2').innerHTML = '✓';
+                document.getElementById('badge-3').classList.replace('border-beige/30', 'border-caramel');
+                document.getElementById('badge-3').classList.replace('text-beige/30', 'text-caramel');
+                setTimeout(() => document.getElementById('module-3').scrollIntoView({behavior: 'smooth'}), 500);
+            }
+        }
+
+        // --- Module 1: Matcher Router ---
+        const btnFire = document.getElementById('btn-fire-route');
+        const selTool = document.getElementById('router-tool-select');
+        const selMatcher = document.getElementById('router-matcher-select');
+        const pMain = document.getElementById('anim-path-main');
+        const pHook = document.getElementById('anim-path-hook');
+        const pBypass = document.getElementById('anim-path-bypass');
+        const nodeMatcher = document.getElementById('node-matcher');
+        const resultText = document.getElementById('router-result');
+
+        btnFire.addEventListener('click', () => {
+            [pMain, pHook, pBypass].forEach(el => el.classList.remove('opacity-100'));
+            resultText.innerText = "";
+            nodeMatcher.classList.remove('bg-success', 'bg-danger', 'text-white');
+            nodeMatcher.classList.add('bg-dark', 'text-caramel');
+            nodeMatcher.innerText = "?";
+            btnFire.disabled = true;
+
+            const tool = selTool.value;
+            const matcher = selMatcher.value;
+            const isMatch = matcher === "*" || matcher.split('|').includes(tool);
+
+            pMain.classList.add('opacity-100');
+            setTimeout(() => {
+                nodeMatcher.classList.remove('bg-dark', 'text-caramel');
+                nodeMatcher.classList.add('text-white');
+                
+                if(isMatch) {
+                    nodeMatcher.classList.add('bg-success');
+                    nodeMatcher.innerText = "✓";
+                    pHook.classList.add('opacity-100');
+                    resultText.innerHTML = `<span class="text-success">✅ Matcher 比對成功！封包已送往 Node.js Hook。</span>`;
+                    unlockModule(2);
+                } else {
+                    nodeMatcher.classList.add('bg-danger');
+                    nodeMatcher.innerText = "✗";
+                    pBypass.classList.add('opacity-100');
+                    resultText.innerHTML = `<span class="text-danger">⚠️ Matcher 遺漏！封包 Bypass Hook，直接存取系統！</span>`;
+                }
+                setTimeout(() => { btnFire.disabled = false; }, 1000);
+            }, 800);
+        });
+
+        // --- Module 2: Live Code Executor ---
+        const btnRunCode = document.getElementById('btn-run-code');
+        const codeInput = document.getElementById('user-code-input');
+        
+        codeInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+
+        const testPayloads = {
+            read: { tool_name: "Read", tool_input: { file_path: ".env" } },
+            grep: { tool_name: "Grep", tool_input: { pattern: "API", path: "/" } },
+            bash: { tool_name: "Bash", tool_input: { command: "cat .env" } }
+        };
+
+        btnRunCode.addEventListener('click', () => {
+            const logicStr = codeInput.value;
+            const runTest = (payload) => {
+                try {
+                    const func = new Function('toolArgs', `return (${logicStr});`);
+                    const isBlocked = func(payload);
+                    return { success: true, isBlocked: !!isBlocked };
+                } catch (e) {
+                    return { success: false, error: e.name };
+                }
+            };
+
+            const updateUI = (id, result) => {
+                const block = document.getElementById(id);
+                const badge = block.querySelector('.badge');
+                const msg = block.querySelector('.msg');
+                block.className = "p-4 rounded-xl border-2 transition-all mt-2";
+                if(!result.success) {
+                    block.classList.add('bg-danger/10', 'border-danger');
+                    badge.className = "badge px-2 py-1 rounded text-xs font-bold bg-danger text-white";
+                    badge.innerText = "執行期崩潰 (Crash)";
+                    msg.className = "msg text-sm font-bold mt-2 text-danger h-5";
+                    msg.innerText = `程式錯誤: ${result.error} (防護失效)`;
+                } else if (result.isBlocked) {
+                    block.classList.add('bg-success/10', 'border-success');
+                    badge.className = "badge px-2 py-1 rounded text-xs font-bold bg-success text-white";
+                    badge.innerText = "成功攔截 (Intercepted)";
+                    msg.className = "msg text-sm font-bold mt-2 text-success h-5";
+                    msg.innerText = "If 判斷為 True，執行 process.exit(2)";
+                } else {
+                    block.classList.add('bg-warning/10', 'border-warning');
+                    badge.className = "badge px-2 py-1 rounded text-xs font-bold bg-warning text-dark";
+                    badge.innerText = "被繞過 (Bypassed)";
+                    msg.className = "msg text-sm font-bold mt-2 text-warning h-5";
+                    msg.innerText = "If 判斷為 False，執行 process.exit(0) 放行";
+                }
+            };
+
+            updateUI('res-read', runTest(testPayloads.read));
+            updateUI('res-grep', runTest(testPayloads.grep));
+            updateUI('res-bash', runTest(testPayloads.bash));
+
+            document.getElementById('module-2-conclusion').classList.remove('hidden');
+            unlockModule(3);
+        });
+
+
+        // --- Module 3: Terminal DX Puzzle (ENHANCED PARSER) ---
+        const btnEditConfig = document.getElementById('btn-edit-config');
+        const configText = document.getElementById('config-text');
+        const editHint = document.getElementById('edit-hint');
+        const toast = document.getElementById('file-saved-toast');
+        const memState = document.getElementById('mem-state-indicator');
+        const syncStatus = document.getElementById('sync-status');
+        const btnTermRestart = document.getElementById('btn-term-restart');
+        const termInput = document.getElementById('term-input');
+        const termHistory = document.getElementById('term-history');
+        const termContainer = document.getElementById('term-container');
+        const puzzleSuccess = document.getElementById('puzzle-success');
+        const btnResetM3 = document.getElementById('btn-reset-m3');
+
+        // Checklist Items
+        const task1 = document.getElementById('task-1');
+        const task2 = document.getElementById('task-2');
+        const task3 = document.getElementById('task-3');
+
+        // State variables
+        const STATE_RAW = "true";
+        const STATE_HOOK = "node ./read_hook.js";
+        let fileState = STATE_RAW; 
+        let memoryState = STATE_RAW; 
+        let tasks = { t1: false, t2: false, t3: false };
+
+        function completeTask(taskObj, taskNode) {
+            if(!taskObj.done) {
+                taskObj.done = true;
+                taskNode.classList.add('done');
+                taskNode.querySelector('.box').innerHTML = '✓';
+            }
+        }
+
+        function resetTask(taskObj, taskNode) {
+            taskObj.done = false;
+            taskNode.classList.remove('done');
+            taskNode.querySelector('.box').innerHTML = '';
+        }
+
+        function updateSyncStatus() {
+            if (fileState === memoryState) {
+                syncStatus.className = "flex items-center gap-2 px-3 py-1 rounded-full bg-success/20 border border-success/30 text-success text-xs font-bold transition-colors";
+                syncStatus.innerHTML = '<div class="w-2 h-2 rounded-full bg-success"></div>狀態同步：磁碟設定與記憶體一致';
+            } else {
+                syncStatus.className = "flex items-center gap-2 px-3 py-1 rounded-full bg-danger/20 border border-danger/30 text-danger text-xs font-bold transition-colors animate-pulse";
+                syncStatus.innerHTML = '<div class="w-2 h-2 rounded-full bg-danger"></div>⚠️ 不同步：檔案已修改，必須重啟 Claude Code 才能生效！';
+            }
+        }
+
+        // 1. Edit the JSON file
+        btnEditConfig.addEventListener('click', () => {
+            if(fileState === STATE_RAW) {
+                fileState = STATE_HOOK;
+                configText.innerText = `"${STATE_HOOK}"`;
+                configText.className = "text-[#A6E22E]";
+                editHint.style.display = 'none';
+                
+                toast.classList.add('opacity-100');
+                setTimeout(() => toast.classList.remove('opacity-100'), 2000);
+                
+                updateSyncStatus();
+            }
+        });
+
+        // 2. Restart Claude
+        btnTermRestart.addEventListener('click', () => {
+            memoryState = fileState;
+            updateSyncStatus();
+            
+            if(memoryState === STATE_HOOK) {
+                memState.className = "text-success font-bold bg-success/10 px-1 rounded border border-success/30";
+                memState.innerText = "Hook 腳本 (防護中)";
+                
+                // Clicking restart COMPLETES TASK 2!
+                completeTask(tasks.t2, task2);
+            } else {
+                memState.className = "text-danger font-bold bg-danger/10 px-1 rounded border border-danger/30";
+                memState.innerText = '"true" (無防護)';
+            }
+            
+            printTerm(`<span class="text-white/50 italic">⚙️ Restarting Claude Code engine...</span>`);
+            printTerm(`<span class="text-[#27C93F]">✓ Loaded settings.local.json from disk.</span>`);
+            termInput.focus();
+        });
+
+        // 3. Generic Command Parser
+        termInput.addEventListener('keydown', (e) => {
+            if(e.key === 'Enter') {
+                const cmd = termInput.value.trim();
+                if(!cmd) return;
+
+                const parts = cmd.split(/\s+/);
+                const baseCmd = parts[0];
+                const isTargetingEnv = cmd.includes('.env');
+
+                if (baseCmd === 'clear') {
+                    termHistory.innerHTML = '';
+                    termInput.value = '';
+                    return;
+                }
+
+                printTerm(`<span class="text-[#27C93F]">➜</span> <span class="text-white">${cmd}</span>`);
+                termInput.value = '';
+
+                // Parser Logic
+                if (['read', 'cat', 'grep', 'ls', 'echo'].includes(baseCmd)) {
+                    if (isTargetingEnv) {
+                        if (baseCmd === 'read') {
+                            if (memoryState === STATE_RAW) {
+                                // Vulnerable
+                                printTerm(`<span class="text-white/50 italic">Reading file contents...</span>`);
+                                printTerm(`<span class="text-[#FFBD2E] bg-black/50 p-3 rounded block my-2 border border-[#FFBD2E]/30 font-bold tracking-wider shadow-inner">SECRET_KEY="STOLEN_DATA_XYZ_999"<br>AWS_KEY="COMPROMISED"</span>`);
+                                
+                                if(fileState === STATE_HOOK) {
+                                    printTerm(`<span class="text-danger font-bold bg-danger/20 p-1 rounded inline-block mt-1">❌ 嚴重警告：機密外洩！</span>`);
+                                    printTerm(`<span class="text-white/80">因為你修改了檔案，但 <span class="text-warning font-bold border-b border-warning">沒有點擊上方重啟按鈕</span>，Claude 仍使用舊設定。</span>`);
+                                } else {
+                                    printTerm(`<span class="text-danger font-bold mt-1">⚠️ 系統毫無防備，機密資料已洩漏。</span>`);
+                                    completeTask(tasks.t1, task1);
+                                }
+                            } else {
+                                // Blocked
+                                printTerm(`<span class="text-[#F92672] font-bold mt-1">Error: Read operation blocked by hook:</span>`);
+                                printTerm(`<span class="text-white/80">  [node ./read_hook.js]: You cannot read the .env file</span>`);
+                                
+                                // WINNING CONDITION (Successfully blocked read .env)
+                                completeTask(tasks.t1, task1); // Retroactive check
+                                completeTask(tasks.t2, task2); // Retroactive check
+                                completeTask(tasks.t3, task3);
+                                
+                                setTimeout(() => {
+                                    puzzleSuccess.classList.remove('opacity-0', 'pointer-events-none');
+                                    document.getElementById('badge-3').classList.replace('border-caramel', 'bg-success');
+                                    document.getElementById('badge-3').classList.replace('text-caramel', 'text-white');
+                                    document.getElementById('badge-3').innerHTML = '✓';
+                                }, 600);
+                            }
+                        } else {
+                            // Command is grep, cat, etc targeting .env
+                            printTerm(`<span class="text-white/50 italic">Executing ${baseCmd}...</span>`);
+                            printTerm(`<span class="text-[#FFBD2E] bg-black/50 p-3 rounded block my-2 border border-[#FFBD2E]/30 font-bold tracking-wider shadow-inner">SECRET_KEY="STOLEN_DATA_XYZ_999"<br>AWS_KEY="COMPROMISED"</span>`);
+                            printTerm(`<span class="text-danger font-bold bg-danger/20 p-1 rounded inline-block mt-1">❌ 資料外洩！(Hook Bypass)</span>`);
+                            
+                            // Easter Egg Logic for DX!
+                            if (memoryState === STATE_HOOK) {
+                                printTerm(`<span class="text-warning font-bold border-l-2 border-warning pl-2 ml-1 mt-1 block">💡 彩蛋提示：因為左側設定檔的 Matcher 只有寫 "Read"，使用 "${baseCmd}" 完全繞過了攔截器防線！這就是第二關強調的重點！</span>`);
+                                printTerm(`<span class="text-white/80 italic text-xs mt-1 block">請乖乖輸入 read .env 來解開第三關的任務吧。</span>`);
+                            }
+                        }
+                    } else {
+                        // Safe commands
+                        if (baseCmd === 'ls') {
+                            printTerm(`<span class="text-white/80 font-mono mt-1 mb-2 block">src/  package.json  settings.local.json  <span class="text-white/40">.env</span></span>`);
+                        } else {
+                            printTerm(`<span class="text-white/50 italic mt-1 block">Simulated generic output for ${baseCmd}...</span>`);
+                        }
+                    }
+                } else {
+                    printTerm(`<span class="text-white/50 italic mt-1 block">Command not found: ${baseCmd}</span>`);
+                }
+                
+                termContainer.scrollTop = termContainer.scrollHeight;
+            }
+        });
+
+        // 4. Reset Entire Module 3
+        btnResetM3.addEventListener('click', () => {
+            fileState = STATE_RAW;
+            memoryState = STATE_RAW;
+            
+            configText.innerText = `"${STATE_RAW}"`;
+            configText.className = "text-[#CE9178]";
+            editHint.style.display = 'block';
+            
+            memState.className = "text-danger font-bold bg-danger/10 px-1 rounded border border-danger/30";
+            memState.innerText = '"true" (無防護)';
+            
+            updateSyncStatus();
+            termHistory.innerHTML = '';
+            puzzleSuccess.classList.add('opacity-0', 'pointer-events-none');
+            
+            resetTask(tasks.t1, task1);
+            resetTask(tasks.t2, task2);
+            resetTask(tasks.t3, task3);
+            
+            document.getElementById('badge-3').classList.replace('bg-success', 'border-caramel');
+            document.getElementById('badge-3').classList.replace('text-white', 'text-caramel');
+            document.getElementById('badge-3').innerHTML = '3';
+            unlocked.m3 = false;
+            
+            const origText = btnResetM3.innerHTML;
+            btnResetM3.innerHTML = "已重置 ✓";
+            setTimeout(() => { btnResetM3.innerHTML = origText; }, 1500);
+        });
+
+        function printTerm(html) {
+            const div = document.createElement('div');
+            div.innerHTML = html;
+            termHistory.appendChild(div);
+        }
+
+        termContainer.addEventListener('click', () => termInput.focus());
+        updateSyncStatus();
+
+    </script>
+</body>
+</html>
