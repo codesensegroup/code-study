@@ -41,9 +41,10 @@
 
 - 遵守專案根目錄 `AGENT.md` 的 Conventional Commits 規範（header ≤ 150 字、body line ≤ 200 字）。
 - scope 建議使用 `8.2026-plan` 或 `section3`。
+- emoji 必須放在 `type(scope):` **之後**，不能放開頭（commitlint 會 fail）。
 - 範例：
-  - `✨ feat(section3): add introducing-hooks note`
-  - `📝 docs(section3): refine overview learning objectives`
+  - `feat(section3): ✨ add introducing-hooks note`
+  - `docs(section3): 📝 refine overview learning objectives`
 
 ## 不要做的事
 
