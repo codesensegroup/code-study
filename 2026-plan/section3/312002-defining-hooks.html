@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Code Hooks | 終極實戰大師班</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #F8F8F5;
+            --brand-dark: #1A1A1A;
+            --brand-accent: #C88A64;
+            --brand-accent-hover: #b57a55;
+        }
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--brand-dark);
+            -webkit-font-smoothing: antialiased;
+        }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        
+        /* 隱藏捲軸但保持可捲動 (手機端橫向滑動救星) */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Term Scrollbar */
+        .term-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+        .term-scroll::-webkit-scrollbar-track { background: transparent; }
+        .term-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+        .term-scroll::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
+
+        /* 動畫 */
+        .fade-in { animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .pulse-soft { animation: pulseSoft 2s infinite; }
+        @keyframes pulseSoft { 
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* 終端機閃爍游標 */
+        .caret-blink { animation: blink 1s step-end infinite; }
+        @keyframes blink { 50% { border-color: transparent; } }
+
+        /* 自訂選取反白顏色 */
+        ::selection { background: var(--brand-accent); color: white; }
+
+        /* 現代感卡片陰影 */
+        .card-shadow { box-shadow: 0 4px 24px -6px rgba(0, 0, 0, 0.08), 0 0 1px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body class="p-4 md:p-8 selection:bg-[#C88A64] selection:text-white">
+
+    <main class="max-w-6xl mx-auto space-y-24 pb-32">
+        
+        <!-- Hero Section -->
+        <header class="pt-16 pb-12 border-b border-gray-200 relative">
+            <div class="inline-flex items-center gap-2 bg-gray-100 border border-gray-200 text-gray-800 px-3 py-1 rounded-full text-xs font-bold tracking-widest uppercase mb-6">
+                <span class="w-2 h-2 rounded-full bg-[#C88A64] pulse-soft"></span>
+                Developer Advocate Deep Dive
+            </div>
+            <h1 class="text-5xl md:text-7xl font-black text-[#1A1A1A] leading-tight tracking-tight mb-6">
+                Claude Code Hooks<br>
+                <span class="text-[#C88A64]">底層機制與防禦實戰</span>
+            </h1>
+            <p class="text-xl text-gray-600 max-w-3xl leading-relaxed font-medium mb-10">
+                這是一份不妥協的技術指南。我們將徹底解析 <code class="bg-gray-200 px-1.5 py-0.5 rounded text-sm font-mono text-[#1A1A1A]">queries.zip</code> 專案中，如何撰寫堅不可摧的 Hooks 來阻擋 Claude 讀取機密檔案。拋棄死板的教學，請直接在下方的模擬器中驗證你的邏輯。
+            </p>
+            
+            <!-- Context Box -->
+            <div class="bg-white card-shadow rounded-2xl p-6 border border-gray-100 flex flex-col md:flex-row gap-6 items-center">
+                <div class="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center flex-shrink-0 border border-red-100">
+                    <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                </div>
+                <div>
+                    <h3 class="font-bold text-[#1A1A1A] text-lg mb-1">防禦標靶：機密檔案 .env</h3>
+                    <p class="text-gray-600 text-sm">目標環境中存在 <code class="font-mono text-red-500">SECRET_API_KEY="SUPER SECRET"</code>。我們的唯一任務，就是實作完美無瑕的 Hook 邏輯，在 Claude 觸碰它之前將其攔截。</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Step 1: Pre vs Post Lifecycle -->
+        <section class="space-y-8">
+            <div class="flex items-start gap-4">
+                <div class="w-12 h-12 bg-[#1A1A1A] text-white rounded-2xl flex items-center justify-center font-black text-2xl shadow-lg shrink-0">1</div>
+                <div>
+                    <h2 class="text-3xl font-bold mb-2">時機決定命運：Pre vs Post</h2>
+                    <p class="text-gray-600 text-lg max-w-3xl leading-relaxed">
+                        防護檔案的鐵則：<strong>必須在操作發生前攔截。</strong> 許多開發者誤用 <code>PostToolUse</code> 紀錄日誌並回傳錯誤碼，卻不知道此時檔案早已被 Claude 讀取完畢。
+                    </p>
+                </div>
+            </div>
+
+            <div class="w-full overflow-x-auto no-scrollbar ml-0 md:ml-16">
+                <div class="min-w-[800px] bg-white rounded-3xl card-shadow border border-gray-100 p-2 flex gap-2">
+                    
+                    <!-- Controls -->
+                    <div class="w-1/3 p-6 flex flex-col gap-3">
+                        <div class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-2">Hook Lifecycle</div>
+                        <button onclick="runStep1('pre')" id="s1-btn-pre" class="w-full text-left px-5 py-4 bg-[#1A1A1A] text-white rounded-xl font-bold shadow-md ring-2 ring-[#C88A64] ring-offset-2 transition-all">
+                            PreToolUse
+                            <span class="block text-xs font-normal text-gray-400 mt-1">執行前觸發 (可阻擋)</span>
+                        </button>
+                        <button onclick="runStep1('post')" id="s1-btn-post" class="w-full text-left px-5 py-4 bg-gray-50 text-gray-600 hover:bg-gray-100 rounded-xl font-bold border border-gray-200 transition-all">
+                            PostToolUse
+                            <span class="block text-xs font-normal text-gray-400 mt-1">執行後觸發 (僅能報錯)</span>
+                        </button>
+                        <div class="mt-auto pt-6 border-t border-gray-100">
+                            <button onclick="playStep1()" class="w-full bg-[#C88A64] hover:bg-opacity-90 text-white py-3 rounded-xl font-bold shadow transition-transform active:scale-95 flex items-center justify-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                模擬 Claude 讀取檔案
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Animation Canvas -->
+                    <div class="w-2/3 bg-[#F8F8F5] rounded-2xl border border-gray-200 relative overflow-hidden flex flex-col items-center py-10 px-8">
+                        
+                        <div class="w-full flex justify-between items-center z-10 px-8">
+                            <div class="text-center">
+                                <div class="w-16 h-16 bg-[#1A1A1A] text-white rounded-2xl flex items-center justify-center shadow-lg mx-auto mb-3">
+                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                </div>
+                                <span class="font-mono font-bold text-sm">Claude Engine</span>
+                            </div>
+
+                            <!-- Dynamic Hook Wall -->
+                            <div id="s1-hook-wall" class="absolute left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 flex flex-col items-center transition-all duration-700 ease-in-out z-20">
+                                <div id="s1-shield" class="w-20 h-24 bg-[#C88A64] rounded-xl flex items-center justify-center shadow-2xl border-4 border-white">
+                                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                                </div>
+                                <div class="bg-[#1A1A1A] text-white text-xs font-mono px-3 py-1 rounded-full mt-2 font-bold shadow-md" id="s1-hook-label">PreToolUse</div>
+                            </div>
+
+                            <div class="text-center relative">
+                                <div id="s1-target-file" class="w-16 h-16 bg-white border-2 border-gray-300 text-gray-500 rounded-2xl flex items-center justify-center shadow-sm mx-auto mb-3 transition-colors duration-300">
+                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                </div>
+                                <span class="font-mono font-bold text-sm">.env</span>
+                            </div>
+                        </div>
+
+                        <!-- Data Track -->
+                        <div class="absolute top-1/2 left-24 right-24 h-[2px] bg-gray-200 -translate-y-1/2 z-0"></div>
+                        
+                        <!-- Moving Packet -->
+                        <div id="s1-packet" class="absolute top-1/2 left-24 w-4 h-4 rounded-full bg-[#1A1A1A] -translate-y-1/2 -ml-2 opacity-0 z-10 transition-all duration-[800ms] ease-in-out shadow-[0_0_10px_rgba(26,26,26,0.5)]"></div>
+
+                        <!-- Verdict Feedback -->
+                        <div id="s1-feedback" class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white px-6 py-3 rounded-xl shadow-xl border border-gray-100 text-sm font-bold opacity-0 transition-opacity flex items-center gap-2">
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 2: Determine Tools (Dynamic MCP) -->
+        <section class="space-y-8">
+            <div class="flex items-start gap-4">
+                <div class="w-12 h-12 bg-[#1A1A1A] text-white rounded-2xl flex items-center justify-center font-black text-2xl shadow-lg shrink-0">2</div>
+                <div>
+                    <h2 class="text-3xl font-bold mb-2">鎖定目標工具：隱蔽的 Grep 與動態 MCP</h2>
+                    <p class="text-gray-600 text-lg max-w-3xl leading-relaxed">
+                        防禦網的第二步是定義要攔截的 <code>tool_name</code>。除了直覺的 <code>Read</code>，開發者極常漏掉 <strong><code>Grep</code></strong>（搜尋內容等同讀取內容）。另外，由於 MCP Servers 會動態注入工具，最佳實踐是直接透過終端機探測。
+                    </p>
+                </div>
+            </div>
+
+            <div class="w-full overflow-x-auto no-scrollbar ml-0 md:ml-16">
+                <div class="min-w-[900px] flex gap-6">
+                    
+                    <!-- Code/Table Hybrid -->
+                    <div class="w-[45%] bg-white rounded-3xl card-shadow border border-gray-100 overflow-hidden flex flex-col">
+                        <div class="bg-[#1A1A1A] px-5 py-4 text-white font-mono text-sm flex justify-between items-center">
+                            <span>Target Tools (Watchlist)</span>
+                            <span class="bg-red-500 bg-opacity-20 text-red-300 px-2 py-0.5 rounded text-xs">High Risk</span>
+                        </div>
+                        <div class="p-6 flex-1 bg-gray-50">
+                            <ul class="space-y-4 font-mono text-sm">
+                                <li class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm flex justify-between items-start border-l-4 border-l-red-500">
+                                    <div>
+                                        <div class="font-bold text-red-600 mb-1">"Read"</div>
+                                        <div class="text-gray-500 text-xs font-sans">直接讀取指定檔案的所有內容。</div>
+                                    </div>
+                                    <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                </li>
+                                <li class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm flex justify-between items-start border-l-4 border-l-red-500">
+                                    <div>
+                                        <div class="font-bold text-red-600 mb-1">"Grep"</div>
+                                        <div class="text-gray-500 text-xs font-sans">搜尋檔案內容。<strong class="text-red-500">邊緣案例：</strong> 若 Claude 搜尋 <code>API_KEY</code>，一樣會把機密回傳給 LLM。</div>
+                                    </div>
+                                    <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                </li>
+                                <li class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm flex justify-between items-center opacity-60">
+                                    <div class="font-bold text-gray-700">"Bash", "Glob", "Edit"...</div>
+                                    <div class="text-gray-400 text-xs font-sans">(根據需求決定是否攔截)</div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Terminal Emulator -->
+                    <div class="w-[55%] bg-[#1A1A1A] rounded-3xl card-shadow border border-gray-800 flex flex-col overflow-hidden">
+                        <div class="bg-black bg-opacity-40 px-4 py-3 flex items-center gap-2 border-b border-gray-800">
+                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            <span class="ml-4 text-xs font-mono text-gray-500">探測動態工具清單</span>
+                        </div>
+                        <div class="p-6 font-mono text-sm text-gray-300 flex-1 overflow-y-auto term-scroll" id="s2-term">
+                            <div class="text-green-400 mb-2">➜ queries git:(dev) ✗ <span class="text-white">claude</span></div>
+                            <div class="mb-6"><span class="text-[#C88A64]">></span> <span class="text-gray-500 border-b border-gray-500 border-dotted cursor-pointer hover:text-white transition-colors" onclick="runS2Term()">點擊此處自動輸入探測指令</span><span class="border-r-2 border-white ml-0.5 caret-blink"></span></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 3: Parse Standard In -->
+        <section class="space-y-8">
+            <div class="flex items-start gap-4">
+                <div class="w-12 h-12 bg-[#1A1A1A] text-white rounded-2xl flex items-center justify-center font-black text-2xl shadow-lg shrink-0">3</div>
+                <div>
+                    <h2 class="text-3xl font-bold mb-2">解析 Standard In (JSON Payload Diff)</h2>
+                    <p class="text-gray-600 text-lg max-w-3xl leading-relaxed">
+                        Hook 觸發時，Claude 會將 JSON 資料注入到腳本的 <code>Standard In (stdin)</code>。防禦腳本最常犯的錯就是**沒有正確處理屬性差異**。比較下方 <code>Read</code> 與 <code>Grep</code> 的結構差異。
+                    </p>
+                </div>
+            </div>
+
+            <div class="w-full overflow-x-auto no-scrollbar ml-0 md:ml-16">
+                <div class="min-w-[900px] bg-[#1A1A1A] rounded-3xl card-shadow border border-gray-800 overflow-hidden flex flex-col">
+                    
+                    <!-- Diff Tabs -->
+                    <div class="flex bg-black bg-opacity-50 border-b border-gray-800">
+                        <button onclick="setDiff('read')" id="btn-diff-read" class="px-6 py-4 font-mono text-sm font-bold text-white border-b-2 border-[#C88A64] transition-colors">
+                            Read Payload (常規)
+                        </button>
+                        <button onclick="setDiff('grep')" id="btn-diff-grep" class="px-6 py-4 font-mono text-sm font-bold text-gray-500 border-b-2 border-transparent hover:text-gray-300 transition-colors">
+                            Grep Payload (邊緣案例)
+                        </button>
+                    </div>
+
+                    <!-- Diff Content -->
+                    <div class="p-8 font-mono text-sm leading-relaxed relative min-h-[280px]">
+                        <!-- Common part -->
+                        <div class="text-gray-400">{</div>
+                        <div class="text-gray-400 pl-4">"session_id": "2d6a1e4d-6...",</div>
+                        <div class="text-gray-400 pl-4">"hook_event_name": "PreToolUse",</div>
+                        
+                        <!-- Changing part wrapper -->
+                        <div id="diff-content" class="transition-all duration-300">
+                            <!-- Injected by JS -->
+                        </div>
+
+                        <div class="text-gray-400">}</div>
+                        
+                        <!-- Note -->
+                        <div class="absolute bottom-6 right-8 bg-[#C88A64] bg-opacity-10 border border-[#C88A64] text-[#C88A64] px-4 py-3 rounded-xl text-xs max-w-sm flex gap-3 items-start">
+                            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <p id="diff-note">你的解析器必須擷取 <code>file_path</code> 來檢查是否為敏感檔案。</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 4: Exit Codes & Logic Builder -->
+        <section class="space-y-8">
+            <div class="flex items-start gap-4">
+                <div class="w-12 h-12 bg-[#C88A64] text-white rounded-2xl flex items-center justify-center font-black text-2xl shadow-lg shrink-0">4</div>
+                <div class="flex-1">
+                    <h2 class="text-3xl font-bold mb-2">決策與反饋：防禦腳本編譯與測試實驗室</h2>
+                    <p class="text-gray-600 text-lg max-w-3xl leading-relaxed mb-6">
+                        之前的設計確實違反直覺，因為它把「寫腳本」跟「執行測試」混在一起了！<br>
+                        好的開發者體驗應該是：<strong>先設定好你的防禦邏輯 (Script Builder)，再丟入不同的檔案來進行測試 (Test Lab)。</strong>
+                    </p>
+                    
+                    <div class="w-full overflow-x-auto no-scrollbar flex flex-col gap-6">
+                        
+                        <!-- Top: Script Builder -->
+                        <div class="min-w-[950px] bg-white rounded-3xl card-shadow border border-gray-200 flex overflow-hidden">
+                            <!-- Left: Configuration Panel -->
+                            <div class="w-[45%] bg-gray-50 border-r border-gray-200 flex flex-col">
+                                <div class="px-6 py-4 border-b border-gray-200 bg-white font-bold text-gray-800 flex items-center justify-between">
+                                    <span>1. 腳本邏輯設定 (Script Builder)</span>
+                                </div>
+                                <div class="p-6 flex-1 space-y-6">
+                                    
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-2">A. 攔截條件 (If matches):</label>
+                                        <select id="s4-if-cond" onchange="updateScriptPreview()" class="w-full bg-white border-2 border-gray-200 rounded-xl px-4 py-3 text-sm font-mono focus:border-[#C88A64] outline-none">
+                                            <option value="env">*".env"* (僅攔截機密檔案)</option>
+                                            <option value="all">"*" (攔截所有檔案)</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-2">B. 條件成立時的動作 (Action):</label>
+                                        <div class="flex bg-white border-2 border-gray-200 rounded-xl overflow-hidden text-sm font-mono">
+                                            <button id="s4-btn-exit2" onclick="setIfExit(2)" class="flex-1 py-3 bg-red-50 text-red-700 font-bold border-r-2 border-gray-200 transition-colors">Exit 2 (Block)</button>
+                                            <button id="s4-btn-exit0" onclick="setIfExit(0)" class="flex-1 py-3 text-gray-500 hover:bg-gray-50 transition-colors">Exit 0 (Allow)</button>
+                                        </div>
+                                    </div>
+
+                                    <div id="s4-stderr-container">
+                                        <label class="block text-sm font-bold text-gray-700 mb-2">C. 拒絕理由 (Stderr feedback):</label>
+                                        <input type="text" id="s4-stderr" value="Access Denied: .env files are restricted." onkeyup="updateScriptPreview()" class="w-full bg-white border-2 border-gray-200 rounded-xl px-4 py-3 text-sm font-mono focus:border-[#C88A64] outline-none">
+                                    </div>
+
+                                    <div class="pt-4 border-t border-gray-200">
+                                        <label class="block text-sm font-bold text-gray-700 mb-2">D. 預設行為 (Default Action):</label>
+                                        <select id="s4-def-exit" onchange="updateScriptPreview()" class="w-full bg-white border-2 border-gray-200 rounded-xl px-4 py-3 text-sm font-mono focus:border-[#C88A64] outline-none">
+                                            <option value="0">Exit 0 (預設放行其餘檔案)</option>
+                                            <option value="2">Exit 2 (預設全面封殺)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right: Live Code Preview -->
+                            <div class="w-[55%] flex flex-col bg-[#1A1A1A] text-gray-300 font-mono text-[13px]">
+                                <div class="px-5 py-3 border-b border-gray-800 flex justify-between bg-black bg-opacity-40">
+                                    <span class="text-gray-400">hook_script.sh (即時編譯)</span>
+                                    <span class="text-[#C88A64]">Bash</span>
+                                </div>
+                                <div class="p-6 flex-1 bg-[#1A1A1A] leading-relaxed relative">
+                                    <div class="text-gray-500 italic mb-4"># Extract path from stdin</div>
+                                    <div class="text-blue-400">TARGET_PATH<span class="text-white">=</span><span class="text-gray-400">$(cat - | jq -r '.tool_input.file_path')</span></div>
+                                    <br>
+                                    
+                                    <!-- Dynamic IF Block -->
+                                    <div class="relative">
+                                        <div id="live-if-strip" class="absolute -left-4 top-0 bottom-0 w-1 bg-[#C88A64] opacity-50 rounded-r"></div>
+                                        <div class="text-purple-400">if <span class="text-white">[[</span> <span class="text-gray-300">"$TARGET_PATH"</span> <span class="text-white">==</span> <span class="text-green-300" id="live-if-cond">*".env"*</span> <span class="text-white">]];</span> then</div>
+                                        <div id="live-stderr-block" class="pl-4 mt-1">
+                                            <span class="text-blue-300">echo</span> <span class="text-green-300">"<span id="live-stderr-text">Access Denied: .env files are restricted.</span>"</span> <span class="text-red-400">>&2</span>
+                                        </div>
+                                        <div class="pl-4 mt-1">
+                                            <span class="text-blue-300">exit</span> <span id="live-if-exit" class="text-red-400 font-bold">2</span>
+                                        </div>
+                                        <div class="text-purple-400">fi</div>
+                                    </div>
+
+                                    <br>
+                                    <div class="text-gray-500 italic"># Default behavior</div>
+                                    <div class="text-blue-300">exit <span id="live-def-exit" class="text-green-400 font-bold">0</span></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bottom: Test Lab -->
+                        <div class="min-w-[950px] bg-[#1A1A1A] rounded-3xl card-shadow border border-gray-800 overflow-hidden flex flex-col">
+                            <div class="bg-gray-900 px-6 py-4 border-b border-gray-800 flex items-center justify-between">
+                                <span class="font-bold text-white">2. 測試實驗室 (Test Lab)</span>
+                            </div>
+                            <div class="flex p-6 gap-6">
+                                <div class="w-1/3 flex flex-col gap-4">
+                                    <div class="text-sm font-mono text-gray-400 mb-2">請選擇模擬輸入檔案：</div>
+                                    <button onclick="runTest('danger')" class="w-full bg-red-900 bg-opacity-20 hover:bg-opacity-40 border border-red-800 text-red-300 font-bold py-4 rounded-xl transition-all text-sm font-mono flex flex-col items-center gap-1">
+                                        <span>[ 測試讀取 .env ]</span>
+                                        <span class="text-[10px] font-normal text-red-400/60">應觸發攔截規則</span>
+                                    </button>
+                                    <button onclick="runTest('safe')" class="w-full bg-green-900 bg-opacity-20 hover:bg-opacity-40 border border-green-800 text-green-300 font-bold py-4 rounded-xl transition-all text-sm font-mono flex flex-col items-center gap-1">
+                                        <span>[ 測試讀取 package.json ]</span>
+                                        <span class="text-[10px] font-normal text-green-400/60">應觸發預設規則</span>
+                                    </button>
+                                </div>
+                                <div class="w-2/3 bg-black rounded-xl border border-gray-800 flex flex-col">
+                                    <div class="px-4 py-2 text-[11px] text-gray-500 border-b border-gray-800 uppercase tracking-widest">Claude Context Engine Output</div>
+                                    <div id="s4-term-out" class="p-4 overflow-y-auto term-scroll flex-1 text-xs font-mono space-y-1.5 h-48">
+                                        <div class="text-gray-600">等待測試觸發...</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // --- Step 1: Pre vs Post Animation ---
+        let s1Type = 'pre';
+        function runStep1(type) {
+            s1Type = type;
+            const btnPre = document.getElementById('s1-btn-pre');
+            const btnPost = document.getElementById('s1-btn-post');
+            const hookWall = document.getElementById('s1-hook-wall');
+            const shield = document.getElementById('s1-shield');
+            const label = document.getElementById('s1-hook-label');
+            const targetFile = document.getElementById('s1-target-file');
+
+            // Reset UI
+            targetFile.className = 'w-16 h-16 bg-white border-2 border-gray-300 text-gray-500 rounded-2xl flex items-center justify-center shadow-sm mx-auto mb-3 transition-colors duration-300';
+            document.getElementById('s1-packet').style.opacity = '0';
+            document.getElementById('s1-packet').style.left = '24px';
+            const feedback = document.getElementById('s1-feedback');
+            feedback.style.opacity = '0';
+            feedback.className = 'absolute bottom-6 left-1/2 -translate-x-1/2 bg-white px-6 py-3 rounded-xl shadow-xl border border-gray-100 text-sm font-bold opacity-0 transition-opacity flex items-center gap-2';
+
+
+            if(type === 'pre') {
+                btnPre.className = 'w-full text-left px-5 py-4 bg-[#1A1A1A] text-white rounded-xl font-bold shadow-md ring-2 ring-[#C88A64] ring-offset-2 transition-all';
+                btnPost.className = 'w-full text-left px-5 py-4 bg-gray-50 text-gray-600 hover:bg-gray-100 rounded-xl font-bold border border-gray-200 transition-all';
+                
+                // Position wall in the middle
+                hookWall.style.left = '50%';
+                shield.className = 'w-20 h-24 bg-[#C88A64] rounded-xl flex items-center justify-center shadow-2xl border-4 border-white transition-colors duration-300';
+                label.innerText = 'PreToolUse';
+            } else {
+                btnPost.className = 'w-full text-left px-5 py-4 bg-[#1A1A1A] text-white rounded-xl font-bold shadow-md ring-2 ring-[#C88A64] ring-offset-2 transition-all';
+                btnPre.className = 'w-full text-left px-5 py-4 bg-gray-50 text-gray-600 hover:bg-gray-100 rounded-xl font-bold border border-gray-200 transition-all';
+                
+                // Position wall AFTER the file
+                hookWall.style.left = '85%';
+                shield.className = 'w-20 h-24 bg-gray-400 rounded-xl flex items-center justify-center shadow-2xl border-4 border-white transition-colors duration-300';
+                label.innerText = 'PostToolUse';
+            }
+        }
+
+        function playStep1() {
+            const packet = document.getElementById('s1-packet');
+            const targetFile = document.getElementById('s1-target-file');
+            const feedback = document.getElementById('s1-feedback');
+            const shield = document.getElementById('s1-shield');
+            
+            // Reset
+            packet.style.transition = 'none';
+            packet.style.left = '10%';
+            packet.style.opacity = '1';
+            feedback.style.opacity = '0';
+            targetFile.className = 'w-16 h-16 bg-white border-2 border-gray-300 text-gray-500 rounded-2xl flex items-center justify-center shadow-sm mx-auto mb-3 transition-colors duration-300';
+
+            // Trigger reflow
+            void packet.offsetWidth;
+            packet.style.transition = 'all 800ms ease-in-out';
+
+            if(s1Type === 'pre') {
+                packet.style.left = '45%'; // hits the wall
+                setTimeout(() => {
+                    shield.classList.replace('bg-[#C88A64]', 'bg-red-500');
+                    setTimeout(() => shield.classList.replace('bg-red-500', 'bg-[#C88A64]'), 500);
+                    
+                    feedback.innerHTML = '<span class="w-3 h-3 rounded-full bg-green-500"></span><span class="text-green-600">成功在讀取前攔截操作！檔案安全。</span>';
+                    feedback.style.opacity = '1';
+                    packet.style.opacity = '0';
+                }, 800);
+            } else {
+                packet.style.left = '100%'; // passes through
+                setTimeout(() => {
+                    targetFile.classList.replace('border-gray-300', 'border-red-500');
+                    targetFile.classList.replace('text-gray-500', 'text-red-500');
+                    targetFile.classList.add('bg-red-50');
+                }, 500); // changes color as packet passes
+
+                setTimeout(() => {
+                    shield.classList.replace('bg-gray-400', 'bg-red-500');
+                    setTimeout(() => shield.classList.replace('bg-red-500', 'bg-gray-400'), 500);
+
+                    feedback.innerHTML = '<span class="w-3 h-3 rounded-full bg-red-500"></span><span class="text-red-600">嚴重：檔案已被讀取！PostToolUse 攔截無效。</span>';
+                    feedback.style.opacity = '1';
+                    packet.style.opacity = '0';
+                }, 800);
+            }
+        }
+        runStep1('pre'); // Init
+
+
+        // --- Step 2: Terminal Typing ---
+        let s2IsTyping = false;
+        async function runS2Term() {
+            if(s2IsTyping) return;
+            s2IsTyping = true;
+            const term = document.getElementById('s2-term');
+            term.innerHTML = '<div class="text-green-400 mb-2">➜ queries git:(dev) ✗ <span class="text-white">claude</span></div>';
+            
+            const promptLine = document.createElement('div');
+            promptLine.className = 'mb-4 text-white';
+            promptLine.innerHTML = '<span class="text-[#C88A64]">></span> <span id="s2-type-target"></span><span class="border-r-2 border-white ml-0.5 caret-blink"></span>';
+            term.appendChild(promptLine);
+
+            const target = document.getElementById('s2-type-target');
+            const msg = "List out the names of all the tools you have access to, bullet point list.";
+            for(let i=0; i<msg.length; i++){
+                target.innerHTML += msg[i];
+                await new Promise(r => setTimeout(r, 20)); // typing speed
+            }
+
+            const thinkingLine = document.createElement('div');
+            thinkingLine.className = 'text-gray-500 italic mb-4 mt-2';
+            thinkingLine.innerText = '* Imagining...';
+            term.appendChild(thinkingLine);
+            await new Promise(r => setTimeout(r, 600));
+            thinkingLine.remove();
+
+            const output = document.createElement('div');
+            output.className = 'text-gray-300 fade-in space-y-2 pb-6';
+            output.innerHTML = `
+                <p>Here are the tools I have access to:</p>
+                <ul class="list-disc pl-5 font-mono">
+                    <li>Bash</li>
+                    <li class="bg-red-900 bg-opacity-30 text-red-200 inline-block px-1 rounded my-1 font-bold">Grep  <span class="text-xs font-normal text-red-400 ml-2">&lt;- ⚠️ Danger: File Access</span></li>
+                    <br>
+                    <li>Edit</li>
+                    <li class="bg-[#C88A64] bg-opacity-20 text-[#C88A64] inline-block px-1 rounded my-1 font-bold">Read  <span class="text-xs font-normal text-[#C88A64] ml-2">&lt;- 🎯 Target: File Access</span></li>
+                    <br>
+                    <li>Write</li>
+                    <li class="text-purple-400">MCP_Server_GitSearch</li>
+                    <li class="text-purple-400">MCP_Server_DBQuery</li>
+                </ul>
+                <p class="text-gray-500 text-xs mt-4 border-t border-gray-800 pt-2">/* 工具清單是動態的，依賴你掛載的 MCP Servers */</p>
+            `;
+            term.appendChild(output);
+            term.scrollTop = term.scrollHeight;
+            s2IsTyping = false;
+        }
+
+        // --- Step 3: JSON Diff ---
+        const diffPayloads = {
+            read: `
+<div class="text-[#C88A64] pl-4 font-bold">"tool_name": <span class="text-yellow-300">"Read"</span>,</div>
+<div class="text-[#C88A64] pl-4 font-bold">"tool_input": {</div>
+<div class="pl-8 bg-[#1A1A1A] border-l-2 border-[#C88A64] py-1 my-1 flex items-center">
+    <span class="text-blue-300">"file_path"</span><span class="text-gray-400">: </span><span class="text-green-300">"/code/queries/.env"</span>
+</div>
+<div class="text-[#C88A64] pl-4 font-bold">}</div>`,
+            grep: `
+<div class="text-[#C88A64] pl-4 font-bold">"tool_name": <span class="text-yellow-300">"Grep"</span>,</div>
+<div class="text-[#C88A64] pl-4 font-bold">"tool_input": {</div>
+<div class="pl-8 py-1"><span class="text-blue-300">"pattern"</span><span class="text-gray-400">: </span><span class="text-green-300">"SECRET"</span>,</div>
+<div class="pl-8 bg-[#1A1A1A] border-l-2 border-red-500 py-1 my-1 flex items-center">
+    <span class="text-blue-300">"target_path"</span><span class="text-gray-400">: </span><span class="text-green-300">"/code/queries/.env"</span>
+</div>
+<div class="text-[#C88A64] pl-4 font-bold">}</div>`
+        };
+
+        function setDiff(type) {
+            const btnR = document.getElementById('btn-diff-read');
+            const btnG = document.getElementById('btn-diff-grep');
+            const content = document.getElementById('diff-content');
+            const note = document.getElementById('diff-note');
+
+            content.classList.remove('fade-in');
+            void content.offsetWidth; // trigger reflow
+
+            if(type === 'read') {
+                btnR.className = 'px-6 py-4 font-mono text-sm font-bold text-white border-b-2 border-[#C88A64] transition-colors';
+                btnG.className = 'px-6 py-4 font-mono text-sm font-bold text-gray-500 border-b-2 border-transparent hover:text-gray-300 transition-colors';
+                note.innerHTML = '解析器必須擷取 <code>file_path</code> 來檢查是否為敏感檔案。';
+            } else {
+                btnG.className = 'px-6 py-4 font-mono text-sm font-bold text-white border-b-2 border-red-500 transition-colors';
+                btnR.className = 'px-6 py-4 font-mono text-sm font-bold text-gray-500 border-b-2 border-transparent hover:text-gray-300 transition-colors';
+                note.innerHTML = '<strong>陷阱！</strong> 在 Grep 工具中，路徑屬性變成了 <code>target_path</code>，而非 <code>file_path</code>。腳本必須相容處理。';
+            }
+
+            content.innerHTML = diffPayloads[type];
+            content.classList.add('fade-in');
+        }
+        setDiff('read'); // Init
+
+        // --- Step 4: Logic Builder & Execution ---
+        let currentIfExit = 2;
+        
+        function setIfExit(code) {
+            currentIfExit = code;
+            const btn2 = document.getElementById('s4-btn-exit2');
+            const btn0 = document.getElementById('s4-btn-exit0');
+            const stderrContainer = document.getElementById('s4-stderr-container');
+
+            if(code === 2) {
+                btn2.className = 'flex-1 py-3 bg-red-50 text-red-700 font-bold border-r-2 border-gray-200 transition-colors';
+                btn0.className = 'flex-1 py-3 text-gray-500 hover:bg-gray-50 transition-colors';
+                stderrContainer.style.opacity = '1';
+                stderrContainer.style.pointerEvents = 'auto';
+            } else {
+                btn0.className = 'flex-1 py-3 bg-gray-200 text-gray-800 font-bold transition-colors';
+                btn2.className = 'flex-1 py-3 text-gray-500 hover:bg-gray-50 border-r-2 border-gray-200 transition-colors';
+                stderrContainer.style.opacity = '0.4';
+                stderrContainer.style.pointerEvents = 'none';
+            }
+            updateScriptPreview();
+        }
+
+        function updateScriptPreview() {
+            const ifCond = document.getElementById('s4-if-cond').value;
+            const stderrVal = document.getElementById('s4-stderr').value;
+            const defExit = document.getElementById('s4-def-exit').value;
+
+            // Cond
+            document.getElementById('live-if-cond').innerText = ifCond === 'env' ? '*".env"*' : '"*"';
+            
+            // Exit in IF
+            const liveIfExit = document.getElementById('live-if-exit');
+            const liveStderrBlock = document.getElementById('live-stderr-block');
+            const liveIfStrip = document.getElementById('live-if-strip');
+
+            document.getElementById('live-stderr-text').innerText = stderrVal;
+
+            if (currentIfExit === 2) {
+                liveIfExit.innerText = '2';
+                liveIfExit.className = 'text-red-400 font-bold';
+                liveStderrBlock.style.opacity = '1';
+                liveIfStrip.className = 'absolute -left-4 top-0 bottom-0 w-1 bg-[#C88A64] opacity-50 rounded-r';
+            } else {
+                liveIfExit.innerText = '0';
+                liveIfExit.className = 'text-green-400 font-bold';
+                liveStderrBlock.style.opacity = '0.3';
+                liveIfStrip.className = 'absolute -left-4 top-0 bottom-0 w-1 bg-yellow-500 opacity-50 rounded-r';
+            }
+
+            // Default Exit
+            const liveDefExit = document.getElementById('live-def-exit');
+            liveDefExit.innerText = defExit;
+            liveDefExit.className = defExit === '0' ? 'text-green-400 font-bold' : 'text-red-400 font-bold';
+        }
+
+        function runTest(testType) {
+            const ifCond = document.getElementById('s4-if-cond').value;
+            const defExit = document.getElementById('s4-def-exit').value;
+            const stderrVal = document.getElementById('s4-stderr').value;
+            
+            const targetPath = testType === 'danger' ? '/code/queries/.env' : '/code/queries/package.json';
+            const term = document.getElementById('s4-term-out');
+            
+            term.innerHTML = '';
+            const log = (html, delay) => {
+                setTimeout(() => {
+                    const el = document.createElement('div');
+                    el.innerHTML = html;
+                    el.className = 'fade-in';
+                    term.appendChild(el);
+                    term.scrollTop = term.scrollHeight;
+                }, delay);
+            }
+
+            log('<span class="text-blue-400">></span> 注入輸入：<code>TARGET_PATH="' + targetPath + '"</code>', 100);
+            log('<span class="text-gray-500">></span> 執行腳本檢測...', 400);
+
+            let isMatch = false;
+            if (ifCond === 'all') {
+                isMatch = true;
+            } else if (ifCond === 'env' && testType === 'danger') {
+                isMatch = true;
+            }
+
+            if (isMatch) {
+                log('<span class="text-purple-400">> 條件成立，進入 if 區塊。</span>', 800);
+                
+                if (currentIfExit === 2) {
+                    log('<span class="text-red-400">> 觸發 exit 2 (中斷)</span>', 1200);
+                    log('<div class="mt-2 bg-red-900/30 border border-red-800 p-2 rounded text-red-200 font-bold">[TOOL BLOCKED] Claude 操作已被成功阻擋！</div>', 1600);
+                    log('<div class="mt-1 text-[#C88A64]">Claude 收到回饋: <span class="text-gray-300">"' + stderrVal + '"</span></div>', 1800);
+                } else {
+                    log('<span class="text-green-400">> 觸發 exit 0 (放行)</span>', 1200);
+                    log('<div class="mt-2 bg-yellow-900/30 border border-yellow-800 p-2 rounded text-yellow-200 font-bold">⚠️ [邏輯漏洞] 你攔截了檔案卻設定放行！</div>', 1600);
+                    log('<div class="mt-1 text-green-400 font-bold">[ALL IS WELL] Claude 成功讀取檔案。 (可能導致機密外洩)</div>', 1800);
+                }
+            } else {
+                log('<span class="text-gray-500">> 條件不成立，跳過 if 區塊。</span>', 800);
+                
+                if (defExit === '0') {
+                    log('<span class="text-green-400">> 腳本結束，觸發預設 exit 0</span>', 1200);
+                    log('<div class="mt-2 bg-green-900/20 border border-green-800 p-2 rounded text-green-400 font-bold">[ALL IS WELL] 正常檔案已被放行，操作繼續。</div>', 1600);
+                } else {
+                    log('<span class="text-red-400">> 腳本結束，觸發預設 exit 2</span>', 1200);
+                    log('<div class="mt-2 bg-red-900/30 border border-red-800 p-2 rounded text-red-200 font-bold">[TOOL BLOCKED] 檔案被預設防禦規則阻擋。</div>', 1600);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
