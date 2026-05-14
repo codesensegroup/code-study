@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Code: 進階掛鉤與資料流解析</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bgMain: '#F8F8F5',
+                        darkMain: '#1A1A1A',
+                        accentPrimary: '#C88A64',
+                        codeBg: '#242424',
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* 隱藏捲軸，保護橫向滑動區塊 */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        body { background-color: #F8F8F5; color: #1A1A1A; }
+        
+        /* 程式碼高亮基礎樣式 */
+        .json-key { color: #C88A64; }
+        .json-string { color: #A3BE8C; }
+        .json-number { color: #D08770; }
+        .json-boolean { color: #B48EAD; }
+
+        .fade-in { animation: fadeIn 0.4s ease-in-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .flow-path {
+            stroke-dasharray: 10;
+            animation: dash 20s linear infinite;
+        }
+        @keyframes dash { to { stroke-dashoffset: -1000; } }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen py-10 px-4 md:px-12 selection:bg-accentPrimary selection:text-white">
+
+    <!-- Header -->
+    <header class="max-w-6xl mx-auto mb-16 fade-in">
+        <div class="flex items-center gap-4 mb-4">
+            <div class="bg-darkMain text-bgMain p-3 rounded-xl">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            </div>
+            <div>
+                <p class="text-accentPrimary font-bold tracking-widest text-sm uppercase">Claude Code In Action</p>
+                <h1 class="text-4xl md:text-5xl font-black text-darkMain">進階 Hooks 與多型態資料流</h1>
+            </div>
+        </div>
+        <p class="text-lg md:text-xl font-medium max-w-3xl leading-relaxed text-gray-700">
+            超越 `PreToolUse` 與 `PostToolUse`，掌握 Claude Agent 的全生命週期。本指南將剖析多型態 `stdin` 的資料結構陷阱，並實作攔截除錯模式。
+        </p>
+    </header>
+
+    <!-- Module 1: Lifecycle Radar -->
+    <section class="max-w-6xl mx-auto mb-20 fade-in" style="animation-delay: 0.1s;">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold text-darkMain flex items-center gap-3">
+                <svg class="w-6 h-6 text-accentPrimary" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path></svg>
+                模組一：Agent 生命週期事件探測
+            </h2>
+        </div>
+        
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden relative">
+            <div class="w-full overflow-x-auto no-scrollbar p-8 bg-darkMain relative">
+                <div class="min-w-[800px] flex justify-between items-center relative py-12">
+                    <!-- Base connecting line -->
+                    <div class="absolute left-10 right-10 top-1/2 h-1 bg-gray-700 -translate-y-1/2 z-0"></div>
+                    
+                    <!-- Nodes -->
+                    <div id="nodes-container" class="w-full flex justify-between relative z-10 px-4">
+                        <!-- JS injected nodes here -->
+                    </div>
+                </div>
+            </div>
+            
+            <div id="lifecycle-details" class="p-8 bg-white min-h-[160px] border-t-4 border-accentPrimary transition-all duration-300">
+                <h3 class="text-2xl font-bold text-darkMain mb-2">請點擊上方事件節點</h3>
+                <p class="text-gray-600 text-lg">了解各個 Hook 在 Claude Code 運作過程中的確切攔截時機與情境。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Module 2: Polymorphic Payload Mutator -->
+    <section class="max-w-6xl mx-auto mb-20 fade-in" style="animation-delay: 0.2s;">
+        <h2 class="text-2xl font-bold text-darkMain flex items-center gap-3 mb-6">
+            <svg class="w-6 h-6 text-accentPrimary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+            模組二：多型態 Stdin 資料流模擬器
+        </h2>
+        <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-200">
+            <div class="mb-6">
+                <h3 class="text-xl font-bold text-darkMain mb-2 border-l-4 border-accentPrimary pl-3">最令人困惑的痛點 (The Confusing Part)</h3>
+                <p class="text-gray-700 leading-relaxed">
+                    開發 Hook 最大的挑戰在於：輸入到命令 (`stdin`) 的結構，會根據 <span class="bg-gray-100 px-2 py-1 rounded text-darkMain font-mono font-bold text-sm">Hook 類型</span> 與 <span class="bg-gray-100 px-2 py-1 rounded text-darkMain font-mono font-bold text-sm">執行的 Tool</span> 發生劇烈變化。在未確認結構前撰寫解析邏輯，極易導致腳本崩潰。
+                </p>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-6">
+                <!-- Selectors -->
+                <div class="w-full lg:w-1/3 space-y-3">
+                    <p class="font-bold text-gray-500 uppercase text-xs tracking-wider mb-4">Select Payload Scenario</p>
+                    
+                    <button onclick="setPayload('post-todo')" class="payload-btn w-full text-left p-4 rounded-xl border-2 border-darkMain bg-darkMain text-white font-medium flex justify-between items-center transition-all group">
+                        <div>
+                            <div class="text-xs text-gray-400 font-mono mb-1">PostToolUse</div>
+                            <div>工具：TodoWrite</div>
+                        </div>
+                        <svg class="w-5 h-5 text-accentPrimary opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                    
+                    <button onclick="setPayload('stop')" class="payload-btn w-full text-left p-4 rounded-xl border-2 border-gray-200 hover:border-accentPrimary hover:bg-[#FDF8F5] text-darkMain font-medium flex justify-between items-center transition-all group">
+                        <div>
+                            <div class="text-xs text-gray-500 font-mono mb-1">Stop</div>
+                            <div>狀態：回應結束</div>
+                        </div>
+                        <svg class="w-5 h-5 text-gray-400 group-hover:text-accentPrimary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+
+                    <button onclick="setPayload('notification')" class="payload-btn w-full text-left p-4 rounded-xl border-2 border-gray-200 hover:border-accentPrimary hover:bg-[#FDF8F5] text-darkMain font-medium flex justify-between items-center transition-all group">
+                        <div>
+                            <div class="text-xs text-gray-500 font-mono mb-1">Notification</div>
+                            <div>情境：閒置/請求權限</div>
+                        </div>
+                        <svg class="w-5 h-5 text-gray-400 group-hover:text-accentPrimary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </div>
+
+                <!-- Code Terminal (Scrollable Safe Area) -->
+                <div class="w-full lg:w-2/3 w-full overflow-x-auto no-scrollbar rounded-xl bg-codeBg shadow-inner border border-gray-800">
+                    <div class="min-w-[500px]">
+                        <div class="flex items-center px-4 py-2 bg-black border-b border-gray-800">
+                            <div class="flex gap-2">
+                                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            </div>
+                            <div class="mx-auto text-xs text-gray-400 font-mono">stdin_payload_viewer.json</div>
+                        </div>
+                        <div class="p-4 relative">
+                            <pre id="json-viewer" class="font-mono text-sm leading-relaxed overflow-hidden transition-all duration-300"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Module 3: JQ Interceptor Sandbox -->
+    <section class="max-w-6xl mx-auto mb-20 fade-in" style="animation-delay: 0.3s;">
+        <h2 class="text-2xl font-bold text-darkMain flex items-center gap-3 mb-6">
+            <svg class="w-6 h-6 text-accentPrimary" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path></svg>
+            模組三：萬用除錯攔截器 (The Helper Hook)
+        </h2>
+        <div class="bg-darkMain text-white rounded-2xl p-6 md:p-8 shadow-xl">
+            <p class="text-gray-300 mb-8 text-lg">
+                為了克服未知的資料結構，官方推薦了一個防禦性開發技巧：設定 <code class="bg-black text-accentPrimary px-2 py-1 rounded mx-1">"matcher": "*"</code> 並利用 <code class="bg-black text-accentPrimary px-2 py-1 rounded mx-1">jq</code> 將資料流導出。體驗下方的攔截管線：
+            </p>
+
+            <div class="w-full overflow-x-auto no-scrollbar">
+                <div class="min-w-[800px] bg-[#141414] rounded-xl p-6 flex items-center justify-between border border-gray-700">
+                    <!-- Config Block -->
+                    <div class="w-1/3 bg-codeBg border border-gray-700 rounded-lg p-4 font-mono text-sm relative">
+                        <div class="text-accentPrimary mb-2">// config.json</div>
+                        <div><span class="text-[#B48EAD]">"PostToolUse"</span>: [</div>
+                        <div class="ml-4">{</div>
+                        <div class="ml-8"><span class="text-[#B48EAD]">"matcher"</span>: <span class="text-[#A3BE8C]">"*"</span>,</div>
+                        <div class="ml-8"><span class="text-[#B48EAD]">"hooks"</span>: [{</div>
+                        <div class="ml-12"><span class="text-[#B48EAD]">"type"</span>: <span class="text-[#A3BE8C]">"command"</span>,</div>
+                        <div class="ml-12 border border-accentPrimary bg-[#2A1D16] p-1 rounded my-1"><span class="text-[#B48EAD]">"command"</span>: <span class="text-[#A3BE8C]">"jq . > post-log.json"</span></div>
+                        <div class="ml-8">}]</div>
+                        <div class="ml-4">}</div>
+                        <div>]</div>
+                    </div>
+
+                    <!-- Pipeline Animation -->
+                    <div class="w-1/4 flex flex-col items-center justify-center relative">
+                        <button id="trigger-btn" onclick="fireInterceptor()" class="bg-accentPrimary hover:bg-[#b07856] text-darkMain font-bold py-3 px-6 rounded-full transition-all active:scale-95 shadow-[0_0_15px_rgba(200,138,100,0.5)] relative z-10">
+                            觸發攔截指令
+                        </button>
+                        
+                        <svg class="absolute top-1/2 left-0 w-full h-10 -translate-y-1/2 z-0" viewBox="0 0 100 20" preserveAspectRatio="none">
+                            <line x1="0" y1="10" x2="100" y2="10" stroke="#333" stroke-width="2"/>
+                            <circle id="data-packet" cx="0" cy="10" r="3" fill="#C88A64" class="opacity-0"/>
+                        </svg>
+                    </div>
+
+                    <!-- Output File -->
+                    <div class="w-1/3 bg-codeBg border border-gray-700 rounded-lg overflow-hidden flex flex-col h-[260px]">
+                        <div class="bg-[#1A1A1A] p-2 flex items-center justify-between border-b border-gray-700">
+                            <span class="text-xs text-gray-400 font-mono flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                post-log.json
+                            </span>
+                            <span id="file-status" class="text-xs text-gray-500">等待寫入...</span>
+                        </div>
+                        <div id="file-content" class="p-4 font-mono text-xs text-gray-500 flex-1 overflow-y-auto no-scrollbar flex items-center justify-center">
+                            無資料
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p class="text-sm text-gray-400 mt-4 text-center">💡 透過這層輔助 Hook，我們就能明確檢視當前環境的 JSON 結構，再回頭撰寫精確的解析邏輯，避免直接踩雷。</p>
+        </div>
+    </section>
+
+    <footer class="max-w-6xl mx-auto py-8 border-t border-gray-200 text-center text-gray-500 font-mono text-sm mt-12">
+        Claude Code Deep Dive Simulator // Designed for Senior Developers // Offline Ready
+    </footer>
+
+    <!-- Logic / JavaScript -->
+    <script>
+        // --- Syntax Highlighting Utility ---
+        function syntaxHighlight(json) {
+            if (typeof json != 'string') { json = JSON.stringify(json, undefined, 2); }
+            json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+                var cls = 'json-number';
+                if (/^"/.test(match)) {
+                    if (/:$/.test(match)) { cls = 'json-key'; } 
+                    else { cls = 'json-string'; }
+                } else if (/true|false/.test(match)) { cls = 'json-boolean'; } 
+                else if (/null/.test(match)) { cls = 'json-boolean'; }
+                return '<span class="' + cls + '">' + match + '</span>';
+            });
+        }
+
+        // --- Module 1: Lifecycle Radar ---
+        const lifecycleNodes = [
+            { id: 'SessionStart', label: 'SessionStart', desc: '啟動或恢復一個會話。適合初始化環境配置。' },
+            { id: 'UserPrompt', label: 'UserPromptSubmit', desc: '使用者送出提示，但 Claude 尚未開始處理前。適合做敏感詞過濾或 PII 遮蔽。' },
+            { id: 'PreTool', label: 'PreToolUse', desc: '準備呼叫 Tool 之前。可用於請求審查或前置驗證。' },
+            { id: 'PostTool', label: 'PostToolUse', desc: 'Tool 執行完成後。極度常用，可根據 tool_response 決定是否觸發後續的 CI/CD 或狀態同步。' },
+            { id: 'Notification', label: 'Notification', desc: '當 Claude 閒置超過 60 秒或需要權限使用工具時觸發。非常適合串接 Slack/Discord 警報。' },
+            { id: 'PreCompact', label: 'PreCompact', desc: '當對話過長觸發壓縮前。可在此時執行腳本，備份完整的對話脈絡 (Session Context)。' },
+            { id: 'Stop', label: 'Stop', desc: 'Claude 處理完畢，停止回應。適合觸發單元測試或資源釋放。' }
+        ];
+
+        const nodesContainer = document.getElementById('nodes-container');
+        const detailBox = document.getElementById('lifecycle-details');
+
+        function renderNodes() {
+            nodesContainer.innerHTML = '';
+            lifecycleNodes.forEach((node, index) => {
+                const el = document.createElement('div');
+                el.className = 'relative flex flex-col items-center group cursor-pointer';
+                el.onclick = () => selectNode(index);
+                
+                // Node UI
+                el.innerHTML = `
+                    <div class="node-dot w-6 h-6 rounded-full bg-gray-700 border-4 border-darkMain z-10 transition-all duration-300 group-hover:bg-accentPrimary"></div>
+                    <div class="mt-4 text-xs font-mono font-bold text-gray-400 group-hover:text-accentPrimary rotate-45 md:rotate-0 origin-left md:origin-center text-left md:text-center absolute top-8 whitespace-nowrap transition-colors">
+                        ${node.label}
+                    </div>
+                `;
+                nodesContainer.appendChild(el);
+            });
+        }
+
+        function selectNode(index) {
+            const node = lifecycleNodes[index];
+            // Reset styles
+            document.querySelectorAll('.node-dot').forEach(dot => {
+                dot.classList.remove('bg-accentPrimary', 'scale-150');
+                dot.classList.add('bg-gray-700');
+            });
+            // Set active
+            const activeDot = nodesContainer.children[index].querySelector('.node-dot');
+            activeDot.classList.remove('bg-gray-700');
+            activeDot.classList.add('bg-accentPrimary', 'scale-150');
+            
+            // Update Details
+            detailBox.innerHTML = `
+                <h3 class="text-2xl font-mono font-bold text-darkMain mb-2 flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-accentPrimary inline-block"></span>
+                    ${node.label}
+                </h3>
+                <p class="text-gray-700 text-lg leading-relaxed">${node.desc}</p>
+                <div class="mt-4 inline-block bg-gray-100 px-3 py-1 rounded text-sm font-mono text-gray-500">Event Index: ${index + 1} / ${lifecycleNodes.length}</div>
+            `;
+            
+            // Add subtle flash animation
+            detailBox.classList.remove('fade-in');
+            void detailBox.offsetWidth; // trigger reflow
+            detailBox.classList.add('fade-in');
+        }
+        
+        renderNodes();
+        selectNode(3); // Default to PostToolUse
+
+        // --- Module 2: Payload Mutator ---
+        const payloads = {
+            'post-todo': {
+                "session_id": "9ecf22fa-edf8-4332-ae85-b6d5456eda64",
+                "transcript_path": "/var/log/claude/transcript.json",
+                "hook_event_name": "PostToolUse",
+                "tool_name": "TodoWrite",
+                "tool_input": {
+                    "todos": [{ "content": "write a readme", "status": "pending", "id": "1" }]
+                },
+                "tool_response": {
+                    "oldTodos": [],
+                    "newTodos": [{ "content": "write a readme", "status": "pending", "id": "1" }]
+                }
+            },
+            'stop': {
+                "session_id": "af9f50b6-f042-4773-b3e2-c3a4814765ce",
+                "transcript_path": "/var/log/claude/transcript.json",
+                "hook_event_name": "Stop",
+                "stop_hook_active": false
+            },
+            'notification': {
+                "session_id": "c1f8a8b1-1234-4567-89ab-cdef12345678",
+                "hook_event_name": "Notification",
+                "notification_type": "IdleTimeout",
+                "message": "Claude Code has been idle for 60 seconds.",
+                "requires_permission": false
+            }
+        };
+
+        function setPayload(type) {
+            // Update buttons visually
+            document.querySelectorAll('.payload-btn').forEach(btn => {
+                btn.classList.remove('bg-darkMain', 'text-white', 'border-darkMain');
+                btn.classList.add('bg-transparent', 'text-darkMain', 'border-gray-200');
+                btn.querySelector('svg').classList.remove('text-accentPrimary');
+                btn.querySelector('svg').classList.add('text-gray-400');
+                const title = btn.querySelector('.text-xs');
+                title.classList.remove('text-gray-400');
+                title.classList.add('text-gray-500');
+            });
+            
+            const activeBtn = document.querySelector(`.payload-btn[onclick="setPayload('${type}')"]`);
+            activeBtn.classList.add('bg-darkMain', 'text-white', 'border-darkMain');
+            activeBtn.classList.remove('bg-transparent', 'text-darkMain', 'border-gray-200', 'hover:border-accentPrimary', 'hover:bg-[#FDF8F5]');
+            activeBtn.querySelector('svg').classList.add('text-accentPrimary');
+            activeBtn.querySelector('svg').classList.remove('text-gray-400');
+            const title = activeBtn.querySelector('.text-xs');
+            title.classList.add('text-gray-400');
+            title.classList.remove('text-gray-500');
+
+            // Render JSON
+            const viewer = document.getElementById('json-viewer');
+            viewer.innerHTML = syntaxHighlight(payloads[type]);
+            
+            // Animation
+            viewer.classList.remove('fade-in');
+            void viewer.offsetWidth;
+            viewer.classList.add('fade-in');
+        }
+
+        // Init Module 2
+        setPayload('post-todo');
+
+        // --- Module 3: Interceptor Pipeline ---
+        function fireInterceptor() {
+            const btn = document.getElementById('trigger-btn');
+            const packet = document.getElementById('data-packet');
+            const status = document.getElementById('file-status');
+            const content = document.getElementById('file-content');
+            
+            if(btn.disabled) return;
+            
+            // Reset
+            btn.disabled = true;
+            btn.innerText = '攔截處理中...';
+            content.innerHTML = '';
+            status.innerText = '寫入中...';
+            status.classList.add('text-accentPrimary');
+            
+            // Animate Packet
+            packet.classList.remove('opacity-0');
+            packet.animate([
+                { cx: '0', opacity: 1 },
+                { cx: '50', opacity: 1, offset: 0.8 },
+                { cx: '100', opacity: 0 }
+            ], {
+                duration: 1000,
+                easing: 'ease-in-out'
+            }).onfinish = () => {
+                packet.classList.add('opacity-0');
+                
+                // Show Result
+                const dummyData = {
+                    "timestamp": new Date().toISOString(),
+                    "hook_event_name": "PostToolUse",
+                    "intercepted": true,
+                    "raw_stdin": payloads['post-todo']
+                };
+                
+                content.classList.remove('flex', 'items-center', 'justify-center', 'text-gray-500');
+                content.classList.add('text-left');
+                content.innerHTML = `<pre class="text-[10px] sm:text-xs">` + syntaxHighlight(dummyData) + `</pre>`;
+                
+                status.innerText = '寫入完成！';
+                status.classList.remove('text-accentPrimary');
+                status.classList.add('text-green-500');
+                
+                btn.innerText = '再次觸發攔截';
+                btn.disabled = false;
+            };
+        }
+    </script>
+</body>
+</html>
