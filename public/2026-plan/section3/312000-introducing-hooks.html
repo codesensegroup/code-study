@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Code Hooks 沉浸式教學指南</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #F4F4F0;
+            color: #2D2D2D;
+            line-height: 1.6;
+        }
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* 終端機打字游標動畫 */
+        .cursor-blink {
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* 淡入動畫 */
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        @keyframes fadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 漸層文字與卡片 */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        /* 檔案樹選取狀態 */
+        .file-active {
+            background-color: #E5E7EB;
+            border-left: 4px solid #D97742;
+            font-weight: 700;
+        }
+        .file-inactive {
+            border-left: 4px solid transparent;
+        }
+        .file-inactive:hover {
+            background-color: #F3F4F6;
+        }
+    </style>
+</head>
+<body class="antialiased pb-24">
+
+    <!-- Header -->
+    <header class="bg-[#111111] text-white py-20 px-6 shadow-2xl relative overflow-hidden border-b-[6px] border-[#D97742]">
+        <div class="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9IiNmZmYiLz48L3N2Zz4=')]"></div>
+        <div class="max-w-5xl mx-auto relative z-10">
+            <span class="inline-block px-3 py-1 bg-white/10 text-gray-300 text-sm font-mono rounded-full mb-6 border border-white/20">
+                > learning_module --topic="Hooks"
+            </span>
+            <h1 class="text-4xl md:text-6xl font-bold mb-6 tracking-tight">掌控 Claude 的行動：<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-[#FFB085] to-[#D97742]">Hooks 攔截與自動化機制</span></h1>
+            <p class="text-lg md:text-xl text-gray-400 max-w-2xl leading-relaxed">
+                你不必總是讓 AI 自主決定一切。透過設定 Hooks，你可以在 Claude 執行工具的「事前 (Pre)」強制踩煞車，或在「事後 (Post)」觸發程式碼檢查並回傳修正建議。
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-6 mt-16 space-y-20">
+
+        <!-- 模組 1：終端機模擬器 (情境體驗) -->
+        <section>
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-gray-900 flex items-center">
+                    <svg class="w-8 h-8 mr-3 text-[#D97742]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    1. 為什麼需要 Hooks？(實境模擬)
+                </h2>
+                <p class="text-gray-600 mt-2 text-lg">與其用文字解釋，不如直接看看沒有 Hook 和有 Hook 時，Claude Code 在終端機裡的真實反應。</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- 模擬器控制面板 -->
+                <div class="glass-panel p-8 rounded-2xl shadow-sm flex flex-col justify-center">
+                    <h3 class="text-xl font-bold mb-4">情境：Claude 試圖讀取機密檔案 <code>.env</code></h3>
+                    <p class="text-gray-600 mb-8">專案中的 <code>.env</code> 包含了資料庫密碼與 API Key。身為工程師，你希望絕對禁止 AI 讀取它。</p>
+                    
+                    <div class="space-y-4">
+                        <button onclick="runTerminal('no-hook')" class="w-full text-left px-6 py-4 rounded-xl border-2 border-gray-300 hover:border-gray-500 hover:bg-gray-50 transition-all font-bold text-gray-700 flex justify-between items-center group">
+                            <span>▶ 模擬：無防護狀態 (No Hooks)</span>
+                            <span class="text-gray-400 group-hover:text-gray-600">➔</span>
+                        </button>
+                        <button onclick="runTerminal('pre-hook')" class="w-full text-left px-6 py-4 rounded-xl border-2 border-[#D97742] bg-[#FFF5F0] hover:bg-[#FFEAE0] transition-all font-bold text-[#A64E1B] flex justify-between items-center group shadow-md">
+                            <span>▶ 模擬：啟用 PreToolUse 攔截</span>
+                            <span class="text-[#D97742] group-hover:text-[#A64E1B]">➔</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 終端機 UI -->
+                <div class="bg-[#1E1E1E] rounded-2xl shadow-2xl overflow-hidden border border-gray-700 flex flex-col h-[400px]">
+                    <div class="bg-[#2D2D2D] px-4 py-3 flex items-center gap-2 shrink-0">
+                        <div class="w-3 h-3 rounded-full bg-[#FF5F56]"></div>
+                        <div class="w-3 h-3 rounded-full bg-[#FFBD2E]"></div>
+                        <div class="w-3 h-3 rounded-full bg-[#27C93F]"></div>
+                        <span class="ml-4 text-xs text-gray-400 font-mono">claude-code-terminal</span>
+                    </div>
+                    <div id="terminal-content" class="p-5 font-mono text-sm leading-relaxed overflow-y-auto flex-grow text-gray-300 no-scrollbar">
+                        <div class="text-gray-500 mb-4"># 點擊左側按鈕開始模擬...</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 模組 2：運作機制 (互動時序圖回歸) -->
+        <section>
+            <div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900 flex items-center">
+                        <svg class="w-8 h-8 mr-3 text-[#D97742]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        2. 完整運作機制與介入時機
+                    </h2>
+                    <p class="text-gray-600 mt-2 text-lg">除了單純的阻擋，透過點擊「下一步」來演練 Claude 呼叫工具的完整生命週期與回饋迴圈。</p>
+                </div>
+                <div class="flex gap-3 shrink-0">
+                    <button onclick="resetFlow()" class="px-5 py-2.5 text-sm font-medium text-gray-600 bg-white hover:bg-gray-100 border border-gray-300 rounded-lg transition-colors shadow-sm">重置流程</button>
+                    <button id="nextBtn" onclick="nextFlowStep()" class="px-5 py-2.5 text-sm font-bold text-white bg-[#111] hover:bg-gray-800 rounded-lg transition-colors shadow-md flex items-center">
+                        下一步 <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-4 md:p-8">
+                <!-- 動態畫布區：外層加入 overflow-x-auto，確保手機版可以橫向捲動 -->
+                <div class="w-full overflow-x-auto no-scrollbar shadow-inner border border-gray-200 rounded-xl bg-[#F9F9F7]">
+                    <!-- 內部畫布：強制最小寬度 800px，防止擠壓 -->
+                    <div class="relative min-w-[800px] p-6 min-h-[500px]">
+                        <!-- 參與者 Header -->
+                        <div class="flex justify-between relative z-10 mb-10">
+                            <div class="w-1/3 text-center"><span class="bg-white border-2 border-gray-300 rounded-lg px-6 py-3 font-bold shadow-sm text-gray-800">使用者 (You)</span></div>
+                            <div class="w-1/3 text-center"><span class="bg-white border-2 border-[#D97742] rounded-lg px-6 py-3 font-bold shadow-sm text-[#D97742]">本機端 Claude Code</span></div>
+                            <div class="w-1/3 text-center"><span class="bg-[#111] border-2 border-[#111] rounded-lg px-6 py-3 font-bold shadow-sm text-white flex items-center justify-center mx-auto w-fit">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                                Claude 雲端模型
+                            </span></div>
+                        </div>
+
+                        <!-- 垂直軌道線 (相對於 800px 畫布絕對定位) -->
+                        <div class="absolute top-16 bottom-0 left-[16.66%] w-px border-l-2 border-dashed border-gray-300"></div>
+                        <div class="absolute top-16 bottom-0 left-[50%] w-px border-l-2 border-dashed border-[#D97742] opacity-50"></div>
+                        <div class="absolute top-16 bottom-0 left-[83.33%] w-px border-l-2 border-dashed border-gray-300"></div>
+
+                        <!-- 步驟容器 -->
+                        <div id="flowContainer" class="relative space-y-10 mt-12 z-20">
+                            <!-- JS 動態注入步驟 -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 教學提詞機 -->
+                <div class="mt-6 p-4 md:p-5 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg shadow-sm transition-opacity duration-300" id="flowExplanationBox">
+                    <h4 class="font-bold text-blue-900 mb-1 flex items-center text-sm md:text-base">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        教學重點說明
+                    </h4>
+                    <div id="flowExplanation" class="text-blue-800 md:text-lg">
+                        請點擊右上角的「下一步」開始演練流程。如果是手機版，請左右滑動上方圖表觀看。
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 模組 3：設定檔在哪裡？(互動檔案樹) -->
+        <section>
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-gray-900 flex items-center">
+                    <svg class="w-8 h-8 mr-3 text-[#D97742]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    3. Hook 的註冊位置 (設定檔層級)
+                </h2>
+                <p class="text-gray-600 mt-2 text-lg">除了在對話框輸入 <code>/hooks</code> 指令，你也可以手動編輯設定檔。Claude 支援三種層級的配置檔。</p>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-6 bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                <!-- 檔案樹 (左側) -->
+                <div class="lg:w-1/3 bg-[#F9FAFB] border-r border-gray-200 p-4">
+                    <div class="text-xs font-bold text-gray-400 mb-4 uppercase tracking-wider pl-2">設定檔目錄 (Config Files)</div>
+                    <ul class="space-y-1 font-mono text-sm">
+                        <li id="file-global" onclick="selectFile('global')" class="file-active p-3 rounded-lg cursor-pointer flex items-center transition-colors">
+                            <svg class="w-5 h-5 mr-3 text-blue-500" fill="currentColor" viewBox="0 0 24 24"><path d="M3 5a2 2 0 012-2h4l2 2h10a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"></path></svg>
+                            ~/.claude/settings.json
+                        </li>
+                        <li id="file-project" onclick="selectFile('project')" class="file-inactive p-3 rounded-lg cursor-pointer flex items-center transition-colors text-gray-600">
+                            <svg class="w-5 h-5 mr-3 text-yellow-500" fill="currentColor" viewBox="0 0 24 24"><path d="M3 5a2 2 0 012-2h4l2 2h10a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"></path></svg>
+                            .claude/settings.json
+                        </li>
+                        <li id="file-local" onclick="selectFile('local')" class="file-inactive p-3 rounded-lg cursor-pointer flex items-center transition-colors text-gray-600">
+                            <svg class="w-5 h-5 mr-3 text-gray-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8V7z"></path></svg>
+                            .claude/settings.local.json
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- 檔案說明與內容 (右側) -->
+                <div class="lg:w-2/3 p-8 flex flex-col justify-center min-h-[300px]">
+                    <div id="file-content-global">
+                        <span class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full border border-blue-200">Global (全域)</span>
+                        <h3 class="text-2xl font-bold mt-4 mb-2">影響你電腦上的所有專案</h3>
+                        <p class="text-gray-600 mb-4">放在 User 的 Home 目錄下。適合設定你個人的防護習慣，例如：「永遠禁止讀取任何名為 .env 的檔案」。這對你機器上執行的所有 Claude Code 專案都有效。</p>
+                    </div>
+                    <div id="file-content-project" class="hidden">
+                        <span class="bg-yellow-100 text-yellow-800 text-xs font-bold px-3 py-1 rounded-full border border-yellow-200">Project (專案共用)</span>
+                        <h3 class="text-2xl font-bold mt-4 mb-2">團隊共享的規範</h3>
+                        <p class="text-gray-600 mb-4">放在專案資料夾內，<strong>應該被 Commit 到 Git 中</strong>。適合設定團隊共同的規範，例如：「只要編輯過 JS 檔，就統一執行專案裡的 <code>npm run format</code>」。這樣團隊中任何使用 Claude Code 的人，都會遵守這個規範。</p>
+                    </div>
+                    <div id="file-content-local" class="hidden">
+                        <span class="bg-gray-100 text-gray-800 text-xs font-bold px-3 py-1 rounded-full border border-gray-300">Local (本機不提交)</span>
+                        <h3 class="text-2xl font-bold mt-4 mb-2">專屬你的個人覆寫</h3>
+                        <p class="text-gray-600 mb-4">放在專案資料夾內，但<strong>必須加入 <code>.gitignore</code> 中不提交</strong>。適合你在本地端開發時，想加上一些只對你個人有用的 Hook 測試或暫時性的除錯指令。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 模組 4：動態 JSON 建構器 -->
+        <section>
+            <div class="mb-8 border-b-2 border-gray-200 pb-4">
+                <h2 class="text-3xl font-bold text-gray-900 flex items-center">
+                    <svg class="w-8 h-8 mr-3 text-[#D97742]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                    4. 實戰：編寫 Hook 規則
+                </h2>
+                <p class="text-gray-600 mt-2 text-lg">除了在命令列輸入 <code>/hooks</code>，了解 JSON 結構能讓你寫出更強大的正則攔截條件。</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- 設定面板 -->
+                <div class="space-y-6 bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-800 mb-2">觸發階段 (Hook Type)</label>
+                        <select id="config-type" class="w-full p-3 border border-gray-300 rounded-lg bg-[#F9F9F7] focus:ring-2 focus:ring-[#D97742] outline-none" onchange="generateJson()">
+                            <option value="PreToolUse">PreToolUse (事前阻擋)</option>
+                            <option value="PostToolUse">PostToolUse (事後加工/回饋)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-800 mb-1">目標工具 (Matcher Regex)</label>
+                        <p class="text-xs text-gray-500 mb-2">支援正則表達式，例如攔截所有寫入操作：Write|Edit|MultiEdit</p>
+                        <input type="text" id="config-matcher" value="Read" class="w-full p-3 border border-gray-300 rounded-lg bg-[#F9F9F7] font-mono text-sm focus:ring-2 focus:ring-[#D97742] outline-none" oninput="generateJson()">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-800 mb-1">執行指令 (Command)</label>
+                        <input type="text" id="config-command" value="node check_auth.js" class="w-full p-3 border border-gray-300 rounded-lg bg-[#F9F9F7] font-mono text-sm text-blue-700 focus:ring-2 focus:ring-[#D97742] outline-none" oninput="generateJson()">
+                    </div>
+                    <div class="pt-4 border-t border-gray-200">
+                        <span class="text-sm font-bold text-gray-700 block mb-3">一鍵載入實務範例：</span>
+                        <div class="flex flex-col gap-2">
+                            <button onclick="applyPreset('block')" class="text-left px-3 py-2 bg-red-50 text-red-700 border border-red-200 rounded-lg hover:bg-red-100 transition-colors text-sm font-medium">
+                                🛑 事前阻擋讀取特定檔案
+                            </button>
+                            <button onclick="applyPreset('format')" class="text-left px-3 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium">
+                                📝 編輯後自動執行 Formatter
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 程式碼輸出 -->
+                <div class="bg-[#1E1E1E] rounded-2xl shadow-xl flex flex-col w-full overflow-hidden border border-gray-700">
+                    <div class="bg-[#2D2D2D] px-4 py-3 flex items-center gap-2 border-b border-gray-700 shrink-0">
+                        <div class="w-3 h-3 rounded-full bg-[#FF5F56]"></div>
+                        <div class="w-3 h-3 rounded-full bg-[#FFBD2E]"></div>
+                        <div class="w-3 h-3 rounded-full bg-[#27C93F]"></div>
+                        <span class="ml-4 text-sm text-gray-300 font-mono">settings.json</span>
+                    </div>
+                    <div class="w-full overflow-x-auto no-scrollbar p-6">
+                        <pre class="text-sm text-[#D4D4D4] font-mono leading-relaxed"><code id="json-output"></code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center text-gray-500 text-sm mt-20 py-10 border-t border-gray-200 bg-white">
+        <p>這是一份沉浸式互動教學教材，旨在透過模擬與圖解，徹底釐清 Claude Code Hooks 架構。</p>
+    </footer>
+
+    <script>
+        // --- 模組 1: 終端機模擬器 ---
+        const terminalOutput = document.getElementById('terminal-content');
+        let isSimulating = false;
+
+        async function typeText(text, colorClass = "text-gray-300", delayMs = 30) {
+            const line = document.createElement('div');
+            line.className = `${colorClass} mb-1`;
+            terminalOutput.appendChild(line);
+            
+            for (let i = 0; i < text.length; i++) {
+                line.innerHTML += text.charAt(i);
+                terminalOutput.scrollTop = terminalOutput.scrollHeight;
+                await new Promise(r => setTimeout(r, delayMs));
+            }
+        }
+
+        async function insertStaticLine(text, colorClass = "text-gray-300") {
+            const line = document.createElement('div');
+            line.className = `${colorClass} mb-1`;
+            line.innerHTML = text;
+            terminalOutput.appendChild(line);
+            terminalOutput.scrollTop = terminalOutput.scrollHeight;
+        }
+
+        async function runTerminal(mode) {
+            if (isSimulating) return;
+            isSimulating = true;
+            terminalOutput.innerHTML = ''; // Clear
+
+            await typeText("> claude \"請讀取 .env 檔案並告訴我資料庫密碼\"", "text-green-400 font-bold");
+            await new Promise(r => setTimeout(r, 600));
+            
+            await insertStaticLine("🤖 Claude 正在思考...", "text-blue-400 italic");
+            await new Promise(r => setTimeout(r, 800));
+            
+            await insertStaticLine("⚙️ Claude 決定調用工具: <span class='text-purple-400'>ReadFile('.env')</span>");
+            await new Promise(r => setTimeout(r, 800));
+
+            if (mode === 'no-hook') {
+                await insertStaticLine("🔓 [警告] 未偵測到 PreToolUse Hook，准許存取。", "text-yellow-500");
+                await new Promise(r => setTimeout(r, 600));
+                await insertStaticLine("📄 讀取檔案成功。內容: DB_PASS=super_secret_123");
+                await new Promise(r => setTimeout(r, 800));
+                await typeText("🤖 Claude: 資料庫密碼是 super_secret_123。", "text-white font-bold");
+            } else {
+                await insertStaticLine("⚡ 觸發 PreToolUse Hook (Matcher: Read)...", "text-yellow-400 font-bold");
+                await new Promise(r => setTimeout(r, 800));
+                await typeText("執行: node block_env.js", "text-gray-500");
+                await new Promise(r => setTimeout(r, 600));
+                
+                await insertStaticLine("❌ [錯誤] PreToolUse 腳本拒絕了此操作！回傳錯誤訊息至 Claude。", "text-red-500 font-bold bg-red-900/20 p-2 rounded");
+                await new Promise(r => setTimeout(r, 1000));
+                
+                await insertStaticLine("🤖 Claude 收到錯誤回饋，修正思考...", "text-blue-400 italic");
+                await new Promise(r => setTimeout(r, 800));
+                await typeText("🤖 Claude: 抱歉，我被系統阻擋，無法讀取 .env 機密檔案。", "text-white font-bold");
+            }
+
+            await new Promise(r => setTimeout(r, 500));
+            await insertStaticLine("<br>✨ 模擬結束。", "text-gray-500");
+            isSimulating = false;
+        }
+
+        // --- 模組 2: 互動式時序圖與回饋迴圈 ---
+        const flowSteps = [
+            {
+                html: `<div class="w-[33%] ml-[16.66%] border-t-[3px] border-gray-800 relative fade-in">
+                        <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap text-sm font-bold text-gray-800 bg-white border border-gray-200 px-3 py-1 rounded shadow-sm">"幫我檢查並排版 main.go"</div>
+                        <div class="absolute right-[-2px] top-[-7px] w-3 h-3 border-t-[3px] border-r-[3px] border-gray-800 transform rotate-45"></div>
+                       </div>`,
+                desc: "<strong>Step 1：</strong> 使用者向本機端的 Claude Code 送出需求，這個請求被轉發到雲端的 Claude 模型。"
+            },
+            {
+                html: `<div class="w-[33%] border-t-[3px] border-gray-400 border-dashed relative ml-[50%] fade-in">
+                        <div class="absolute -top-10 left-1/2 transform -translate-x-1/2 whitespace-nowrap text-sm text-gray-700 bg-gray-100 border border-gray-300 px-3 py-1 rounded shadow-sm text-center">決定呼叫工具<br/><span class="font-mono text-purple-600 font-bold">EditFile("main.go")</span></div>
+                        <div class="absolute left-[-2px] top-[-7px] w-3 h-3 border-b-[3px] border-l-[3px] border-gray-400 transform rotate-45"></div>
+                       </div>`,
+                desc: "<strong>Step 2：</strong> 模型判斷需要修改檔案，因此回傳一個<strong>工具調用請求 (Tool Use Request)</strong> 給本機準備執行。"
+            },
+            {
+                html: `<div class="flex justify-center z-10 fade-in">
+                        <div class="bg-red-500 text-white px-8 py-3 rounded-xl shadow-xl font-bold border-2 border-red-700 w-72 text-center transform scale-105">
+                            ⚡ 觸發 PreToolUse Hook
+                            <div class="text-xs font-normal mt-1 opacity-90">檢查權限：允許或阻擋 (Block)</div>
+                        </div>
+                       </div>`,
+                desc: "<strong>Step 3 (核心防護)：</strong> 檔案被修改前，<strong class='text-red-600'>PreToolUse</strong> 啟動。這裡可以執行安全腳本。如果腳本拒絕，流程終止並回傳錯誤給模型。"
+            },
+            {
+                html: `<div class="flex justify-center z-10 fade-in">
+                        <div class="bg-[#111] text-white px-8 py-3 rounded-xl shadow-md font-bold w-72 text-center border border-gray-800">
+                            💻 Claude Code 實際編輯檔案
+                            <div class="text-xs font-normal mt-1 text-gray-400">寫入修改內容至 main.go</div>
+                        </div>
+                       </div>`,
+                desc: "<strong>Step 4：</strong> 若未被阻擋，Claude Code 就會真正在本機執行寫入動作。"
+            },
+            {
+                html: `<div class="flex justify-center z-10 fade-in">
+                        <div class="bg-blue-500 text-white px-8 py-3 rounded-xl shadow-xl font-bold border-2 border-blue-700 w-72 text-center transform scale-105">
+                            ⚡ 觸發 PostToolUse Hook
+                            <div class="text-xs font-normal mt-1 opacity-90">加工與檢查 (如 Linter / Formatter)</div>
+                        </div>
+                       </div>`,
+                desc: "<strong>Step 5 (回饋迴圈起點)：</strong> 檔案已修改。觸發 <strong class='text-blue-600'>PostToolUse</strong>。此時無法阻擋剛才的操作，但你可以自動執行排版工具，或是跑測試。"
+            },
+            {
+                html: `<div class="w-[33%] ml-[50%] border-t-[3px] border-[#D97742] relative fade-in">
+                        <div class="absolute -top-10 left-1/2 transform -translate-x-1/2 whitespace-nowrap text-sm font-bold text-[#A64E1B] bg-[#FFF5F0] border border-[#D97742] px-3 py-1 rounded shadow-sm text-center">回傳工具執行結果<br/><span class="text-xs font-normal">+ Post Hook 的測試/檢查回饋</span></div>
+                        <div class="absolute right-[-2px] top-[-7px] w-3 h-3 border-t-[3px] border-r-[3px] border-[#D97742] transform rotate-45"></div>
+                       </div>`,
+                desc: "<strong>Step 6 (完成迴圈)：</strong> Claude Code 將執行結果，連同剛才 PostToolUse 產生的任何錯誤 Log 或回饋，一起打包送回給雲端的模型，讓模型知道是否需要根據回饋進行二次修改。"
+            }
+        ];
+
+        let currentStep = 0;
+        const container = document.getElementById('flowContainer');
+        const explanation = document.getElementById('flowExplanation');
+        const explanationBox = document.getElementById('flowExplanationBox');
+        const nextBtn = document.getElementById('nextBtn');
+
+        function nextFlowStep() {
+            if (currentStep < flowSteps.length) {
+                const stepData = flowSteps[currentStep];
+                
+                const stepDiv = document.createElement('div');
+                stepDiv.innerHTML = stepData.html;
+                container.appendChild(stepDiv.firstElementChild);
+                
+                // 更新提詞機說明 (加入淡出淡入動畫)
+                explanationBox.style.opacity = 0;
+                setTimeout(() => {
+                    explanation.innerHTML = stepData.desc;
+                    explanationBox.style.opacity = 1;
+                }, 200);
+                
+                currentStep++;
+                
+                if (currentStep === flowSteps.length) {
+                    nextBtn.disabled = true;
+                    nextBtn.classList.replace('bg-[#111]', 'bg-gray-300');
+                    nextBtn.classList.replace('hover:bg-gray-800', 'hover:bg-gray-300');
+                    nextBtn.classList.add('cursor-not-allowed');
+                    nextBtn.innerHTML = "演練完成 ✓";
+                }
+            }
+        }
+
+        function resetFlow() {
+            container.innerHTML = '';
+            currentStep = 0;
+            explanationBox.style.opacity = 0;
+            setTimeout(() => {
+                explanation.innerHTML = '請點擊右上角的「下一步」開始演練流程。如果是手機版，請左右滑動上方圖表觀看。';
+                explanationBox.style.opacity = 1;
+            }, 200);
+            
+            nextBtn.disabled = false;
+            nextBtn.classList.replace('bg-gray-300', 'bg-[#111]');
+            nextBtn.classList.replace('hover:bg-gray-300', 'hover:bg-gray-800');
+            nextBtn.classList.remove('cursor-not-allowed');
+            nextBtn.innerHTML = `下一步 <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>`;
+        }
+
+        // --- 模組 3: 檔案樹互動 ---
+        function selectFile(type) {
+            const types = ['global', 'project', 'local'];
+            
+            types.forEach(t => {
+                const navEl = document.getElementById(`file-${t}`);
+                const contentEl = document.getElementById(`file-content-${t}`);
+                
+                if (t === type) {
+                    navEl.className = 'file-active p-3 rounded-lg cursor-pointer flex items-center transition-colors text-gray-900';
+                    contentEl.classList.remove('hidden');
+                    contentEl.classList.add('fade-in');
+                } else {
+                    navEl.className = 'file-inactive p-3 rounded-lg cursor-pointer flex items-center transition-colors text-gray-600';
+                    contentEl.classList.add('hidden');
+                    contentEl.classList.remove('fade-in');
+                }
+            });
+        }
+
+        // --- 模組 4: JSON Builder 邏輯 ---
+        function generateJson() {
+            const type = document.getElementById('config-type').value;
+            const matcher = document.getElementById('config-matcher').value || "Read";
+            const command = document.getElementById('config-command').value || "echo 'hook running'";
+
+            const typeColor = type === 'PreToolUse' ? 'text-[#D16969]' : 'text-[#569CD6]';
+            const strColor = 'text-[#CE9178]';
+            const keyColor = 'text-[#9CDCFE]';
+
+            const blockContent = `
+    <span class="${typeColor}">"${type}"</span>: [
+      {
+        <span class="${keyColor}">"matcher"</span>: <span class="${strColor}">"${matcher}"</span>,
+        <span class="${keyColor}">"hooks"</span>: [
+          {
+            <span class="${keyColor}">"type"</span>: <span class="${strColor}">"command"</span>,
+            <span class="${keyColor}">"command"</span>: <span class="${strColor}">"${command}"</span>
+          }
+        ]
+      }
+    ]`;
+
+            document.getElementById('json-output').innerHTML = `{
+  <span class="${keyColor}">"hooks"</span>: {${blockContent}
+  }
+}`;
+        }
+        
+        function applyPreset(preset) {
+            const typeEl = document.getElementById('config-type');
+            const matcherEl = document.getElementById('config-matcher');
+            const commandEl = document.getElementById('config-command');
+
+            if (preset === 'block') {
+                typeEl.value = 'PreToolUse';
+                matcherEl.value = 'Read|Write|Edit';
+                commandEl.value = 'node ./scripts/block_sensitive_files.js';
+            } else if (preset === 'format') {
+                typeEl.value = 'PostToolUse';
+                matcherEl.value = 'Write|Edit';
+                commandEl.value = 'npm run prettier --write';
+            }
+            
+            [typeEl, matcherEl, commandEl].forEach(el => {
+                el.classList.add('ring-2', 'ring-[#D97742]', 'bg-[#FFF5F0]');
+                setTimeout(() => el.classList.remove('ring-2', 'ring-[#D97742]', 'bg-[#FFF5F0]'), 500);
+            });
+
+            generateJson();
+        }
+        
+        // 初始載入
+        generateJson();
+    </script>
+</body>
+</html>

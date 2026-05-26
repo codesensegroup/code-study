@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>馴服 AI 實習生：Claude Code Hooks 指南</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        base: '#F8F8F5',   // 米白色 (背景)
+                        dark: '#1A1A1A',   // 深色 (標題/區塊/按鈕)
+                        accent: '#C88A64', // 焦糖色 (核心點綴)
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #F8F8F5; color: #1A1A1A; }
+        
+        /* 強制隱藏捲軸但保留捲動功能 (行動版救星) */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* 動畫效果 */
+        .fade-in { animation: fadeIn 0.5s ease-in forwards; }
+        .slide-up { animation: slideUp 0.5s ease-out forwards; }
+        .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        /* 程式碼高亮質感 */
+        .code-highlight { color: #C88A64; font-weight: bold; background: rgba(200, 138, 100, 0.1); padding: 0 4px; border-radius: 4px; }
+        .error-underline { border-bottom: 2px dashed #C88A64; }
+    </style>
+</head>
+<body class="antialiased font-sans leading-relaxed selection:bg-accent selection:text-base">
+
+    <!-- Header -->
+    <header class="bg-dark text-base py-16 px-6 relative overflow-hidden">
+        <!-- 裝飾性背景網格 -->
+        <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(#C88A64 1.5px, transparent 1.5px); background-size: 24px 24px;"></div>
+        
+        <div class="max-w-4xl mx-auto relative z-10 text-center">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 border-2 border-accent text-accent rounded-full text-sm font-bold mb-6">
+                <svg class="w-5 h-5" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8zm1-13h-2v4H7v2h4v4h2v-4h4v-2h-4z"/></svg>
+                Developer Advocate 深度解析
+            </div>
+            <h1 class="text-4xl md:text-5xl font-black mb-6 tracking-tight leading-tight">
+                馴服 AI 實習生：<br>
+                <span class="text-accent">Claude Code Hooks 實戰指南</span>
+            </h1>
+            <p class="text-lg opacity-80 max-w-2xl mx-auto font-light">
+                別把專案丟給 AI 就以為沒事了！專案越大，AI 越容易迷路。讓我們透過「自動化 Hooks 機制」，為這位打字極快但有點粗心的實習生戴上護欄。
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-6 py-16 space-y-32">
+
+        <!-- Module 1: Post-tool-use Simulator -->
+        <section>
+            <div class="mb-8 max-w-3xl">
+                <h2 class="text-3xl font-black flex items-center gap-3 mb-4">
+                    <span class="w-10 h-10 rounded-xl bg-accent text-dark flex items-center justify-center text-xl shadow-lg">1</span>
+                    事後檢驗 (Post-tool-use)：專治「改 A 忘 B」
+                </h2>
+                <p class="text-lg text-gray-600 font-medium">
+                    情境：你請實習生修改一個核心功能，他改好了，卻忘記去更新其他呼叫這個功能的地方，導致系統崩潰。<br>
+                    解法：在他存檔後，自動觸發 <code>tsc --noEmit</code> 語法檢查，把報錯砸在他臉上逼他修好！
+                </p>
+            </div>
+
+            <!-- Interactive Area (Horizontal Scroll Safeguard) -->
+            <div class="w-full overflow-x-auto no-scrollbar bg-white rounded-2xl border-4 border-dark shadow-[8px_8px_0px_#1A1A1A]">
+                <div class="min-w-[800px] p-8 flex flex-col gap-8">
+                    
+                    <!-- 互動按鈕區 -->
+                    <div class="flex items-center justify-between border-b-2 border-gray-200 pb-4">
+                        <div class="font-bold text-lg flex items-center gap-2">
+                            <svg class="w-6 h-6 text-accent" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 9h-2V7h-2v5H6v-2H4v4c0 2.76 2.24 5 5 5h2v-2h2v2h2c2.76 0 5-2.24 5-5v-4h-2v2h-2v-5h-2v5z"/></svg>
+                            實習生辦公桌模擬器
+                        </div>
+                        <div class="flex gap-3">
+                            <button id="m1-btn-1" class="px-5 py-2.5 bg-dark text-base rounded-xl font-bold hover:bg-accent transition-colors flex items-center gap-2">
+                                1. 派任務：去修改 Schema
+                            </button>
+                            <button id="m1-btn-2" class="px-5 py-2.5 bg-gray-200 text-gray-400 rounded-xl font-bold cursor-not-allowed transition-colors flex items-center gap-2" disabled>
+                                2. 觸發 Post-Hook (語法檢查)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 程式碼與終端機對比區 -->
+                    <div class="grid grid-cols-2 gap-6">
+                        <!-- Left: Code Editor -->
+                        <div class="bg-base rounded-xl border-2 border-dark p-5 relative">
+                            <div class="absolute -top-3 left-4 bg-dark text-base px-3 py-1 rounded-full text-xs font-bold font-mono">schema.ts (實習生修改中)</div>
+                            <pre class="font-mono text-sm mt-2 text-gray-700 leading-relaxed"><code id="m1-code-schema">export async function createSchema(
+  db: Database
+) {
+  // 建立資料庫結構...
+}</code></pre>
+                            <div class="mt-6 border-t-2 border-dashed border-gray-300 pt-4"></div>
+                            <div class="absolute top-[48%] left-4 bg-dark text-base px-3 py-1 rounded-full text-xs font-bold font-mono">main.ts (被遺忘的檔案)</div>
+                            <pre class="font-mono text-sm mt-6 text-gray-700 leading-relaxed"><code id="m1-code-main">import { createSchema } from './schema';
+
+async function main() {
+  const db = await openDb();
+  <span id="m1-code-error" class="transition-all duration-300">await createSchema(db);</span>
+}</code></pre>
+                        </div>
+
+                        <!-- Right: System Terminal -->
+                        <div class="bg-dark rounded-xl p-5 text-base font-mono text-sm shadow-inner flex flex-col">
+                            <div class="text-accent font-bold mb-4 border-b border-gray-700 pb-2">> 系統終端機 (Hook 監控中)</div>
+                            <div id="m1-terminal" class="flex-1 space-y-2 text-gray-400">
+                                等待實習生寫扣...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Module 2: Pre-tool-use Simulator -->
+        <section>
+            <div class="mb-8 max-w-3xl">
+                <h2 class="text-3xl font-black flex items-center gap-3 mb-4">
+                    <span class="w-10 h-10 rounded-xl bg-accent text-dark flex items-center justify-center text-xl shadow-lg">2</span>
+                    事前防禦 (Pre-tool-use)：專治「重複造輪子」
+                </h2>
+                <p class="text-lg text-gray-600 font-medium">
+                    情境：你給實習生一個大任務，他為了貪快，直接寫了一個全新的資料庫查詢，無視公司早就寫好的舊功能。<br>
+                    解法：在存檔前攔截！喚醒「第二個 AI（資深審查員）」去掃描資料夾，發現重複就直接退件 (Exit Code 2)！
+                </p>
+            </div>
+
+            <!-- Interactive Area (Horizontal Scroll Safeguard) -->
+            <div class="w-full overflow-x-auto no-scrollbar bg-dark text-base rounded-2xl border-4 border-accent shadow-[8px_8px_0px_#C88A64]">
+                <div class="min-w-[850px] p-8 flex flex-col gap-8">
+                    
+                    <div class="flex items-center justify-between border-b-2 border-gray-700 pb-4">
+                        <div class="font-bold text-lg flex items-center gap-2 text-accent">
+                            <svg class="w-6 h-6" viewBox="0 0 24 24"><path fill="currentColor" d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+                            雙 AI 審查防禦矩陣 (Agent SDK)
+                        </div>
+                        <button id="m2-btn-start" class="px-6 py-2.5 bg-accent text-dark rounded-xl font-bold hover:bg-base transition-colors">
+                            發包大任務：寫 Slack 訂單通知
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-6">
+                        <!-- Folder Structure -->
+                        <div class="col-span-1 bg-[#222] rounded-xl p-5 border border-gray-700">
+                            <div class="text-accent font-mono text-xs font-bold mb-4 uppercase tracking-widest">📂 公司專案 /queries</div>
+                            <ul class="space-y-3 font-mono text-sm text-gray-400">
+                                <li class="flex items-center gap-2"><svg class="w-4 h-4 text-gray-500" viewBox="0 0 24 24"><path fill="currentColor" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg> user_queries.ts</li>
+                                <li class="flex items-center gap-2 text-base">
+                                    <svg class="w-4 h-4 text-accent" viewBox="0 0 24 24"><path fill="currentColor" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg> 
+                                    order_queries.ts
+                                </li>
+                                <li class="pl-6 text-xs text-accent opacity-80 border-l-2 border-gray-700 ml-2">↳ getPendingOrders() // 前輩寫好的</li>
+                                
+                                <!-- Dynamic File -->
+                                <li id="m2-new-file" class="flex items-center gap-2 text-base font-bold opacity-0 transition-opacity duration-300 mt-4 bg-gray-800 p-2 rounded">
+                                    <svg class="w-4 h-4 text-white" viewBox="0 0 24 24"><path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                                    slack_alerts.ts (實習生新建)
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- AI Interaction -->
+                        <div class="col-span-2 flex flex-col gap-4">
+                            <!-- Intern AI -->
+                            <div class="bg-base text-dark rounded-xl p-5 relative border-l-8 border-gray-400">
+                                <div class="font-bold mb-2 flex items-center gap-2">
+                                    <span class="bg-gray-200 px-2 py-1 rounded text-xs font-mono">實習生 Claude</span>
+                                </div>
+                                <div id="m2-intern-text" class="text-sm font-mono text-gray-600">正在喝咖啡，等待任務...</div>
+                            </div>
+
+                            <!-- Senior AI (Hook) -->
+                            <div id="m2-senior-box" class="bg-transparent border-2 border-dashed border-gray-600 text-gray-500 rounded-xl p-5 relative transition-all duration-500">
+                                <div class="font-bold mb-2 flex items-center gap-2">
+                                    <span class="bg-gray-700 text-base px-2 py-1 rounded text-xs font-mono" id="m2-senior-badge">資深審查員 Claude (Pre-Hook)</span>
+                                </div>
+                                <div id="m2-senior-text" class="text-sm font-mono">睡覺中。只有當實習生試圖存檔時才會醒來。</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6 bg-accent text-dark p-5 rounded-xl font-bold flex items-center gap-4 shadow-md">
+                <svg class="w-8 h-8 flex-shrink-0" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                <p class="text-sm leading-relaxed">
+                    <strong>架構師的 Trade-off 警告：</strong> 喚醒第二個 AI 來審查，就像請資深工程師幫實習生 Code Review，會消耗昂貴的 Token 與時間。<strong>絕對不要全域啟用！</strong>只把這個 Hook 綁定在最核心的目錄（如 <code>./queries</code>）才是最佳實踐。
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-dark text-base py-10 text-center opacity-90 font-mono text-sm border-t-4 border-accent">
+        <p>Designed for Claude Code Advanced Mastery | 體驗取代閱讀的技術指南</p>
+    </footer>
+
+    <!-- Interactive Logic -->
+    <script>
+        /* --- Module 1 Logic --- */
+        const m1Btn1 = document.getElementById('m1-btn-1');
+        const m1Btn2 = document.getElementById('m1-btn-2');
+        const m1Schema = document.getElementById('m1-code-schema');
+        const m1Main = document.getElementById('m1-code-main');
+        const m1Error = document.getElementById('m1-code-error');
+        const m1Terminal = document.getElementById('m1-terminal');
+
+        m1Btn1.addEventListener('click', () => {
+            // 實習生修改 Schema
+            m1Schema.innerHTML = `export async function createSchema(
+  db: Database,
+  <span class="code-highlight">verbose: boolean</span> // 實習生加了這個
+) {
+  // 建立資料庫結構...
+}`;
+            m1Terminal.innerHTML = `<span class="text-base">> 實習生已修改 schema.ts 並存檔。</span><br><span class="text-gray-500">（但他完全忘記去檢查 main.ts）</span>`;
+            
+            // 按鈕狀態切換
+            m1Btn1.disabled = true;
+            m1Btn1.classList.replace('bg-dark', 'bg-gray-200');
+            m1Btn1.classList.replace('text-base', 'text-gray-400');
+            
+            m1Btn2.disabled = false;
+            m1Btn2.classList.replace('bg-gray-200', 'bg-accent');
+            m1Btn2.classList.replace('text-gray-400', 'text-dark');
+            m1Btn2.classList.replace('cursor-not-allowed', 'cursor-pointer');
+        });
+
+        m1Btn2.addEventListener('click', () => {
+            m1Btn2.disabled = true;
+            m1Btn2.classList.replace('bg-accent', 'bg-gray-200');
+            m1Btn2.classList.replace('text-dark', 'text-gray-400');
+            m1Btn2.classList.replace('cursor-pointer', 'cursor-not-allowed');
+
+            m1Terminal.innerHTML += `<br><br><span class="text-accent">> 觸發 Post-tool-use Hook...</span>`;
+            m1Terminal.innerHTML += `<br><span class="text-accent">> 執行 tsc --noEmit</span>`;
+            
+            setTimeout(() => {
+                // 系統報錯
+                m1Error.classList.add('error-underline', 'text-accent', 'font-bold');
+                m1Terminal.innerHTML += `<br><span class="text-base bg-accent px-1 text-dark font-bold mt-1 inline-block">Error TS2554:</span> <span class="text-base">Expected 2 arguments, but got 1.</span>`;
+                m1Terminal.innerHTML += `<br><span class="text-gray-400">> 已將報錯砸在實習生臉上 (回傳 stderr)</span>`;
+                
+                // 實習生自我修正
+                setTimeout(() => {
+                    m1Terminal.innerHTML += `<br><br><span class="text-base">> 實習生收到報錯，驚醒！自動尋找並修正 main.ts...</span>`;
+                    m1Error.classList.remove('error-underline', 'text-accent');
+                    m1Error.innerHTML = `await createSchema(db, <span class="code-highlight">true</span>);`;
+                    
+                    setTimeout(() => {
+                        m1Btn1.innerText = "重置模擬器";
+                        m1Btn1.disabled = false;
+                        m1Btn1.classList.replace('bg-gray-200', 'bg-dark');
+                        m1Btn1.classList.replace('text-gray-400', 'text-base');
+                        // Reset event listener logic handled simply by reloading for demo purity, 
+                        // but let's just do a soft reset.
+                        m1Btn1.onclick = () => location.reload();
+                    }, 1000);
+                }, 2000);
+            }, 1000);
+        });
+
+        /* --- Module 2 Logic --- */
+        const m2BtnStart = document.getElementById('m2-btn-start');
+        const m2InternText = document.getElementById('m2-intern-text');
+        const m2SeniorBox = document.getElementById('m2-senior-box');
+        const m2SeniorBadge = document.getElementById('m2-senior-badge');
+        const m2SeniorText = document.getElementById('m2-senior-text');
+        const m2NewFile = document.getElementById('m2-new-file');
+
+        m2BtnStart.addEventListener('click', () => {
+            m2BtnStart.disabled = true;
+            m2BtnStart.classList.add('opacity-50', 'cursor-not-allowed');
+            
+            // Step 1: Intern acts
+            m2InternText.innerHTML = `好的老闆！為了達成 Slack 通知，我直接寫一個全新的 <span class="code-highlight">slack_alerts.ts</span>，裡面包含我親手寫的全新資料庫查詢邏輯！準備存檔！`;
+            m2InternText.parentElement.classList.replace('border-gray-400', 'border-dark');
+            m2NewFile.classList.remove('opacity-0');
+            m2NewFile.classList.add('slide-up');
+            
+            // Step 2: Pre-Hook intercepts
+            setTimeout(() => {
+                // Wake up senior AI
+                m2SeniorBox.classList.replace('border-gray-600', 'border-accent');
+                m2SeniorBox.classList.replace('border-dashed', 'border-solid');
+                m2SeniorBox.classList.replace('text-gray-500', 'text-base');
+                m2SeniorBox.classList.add('bg-dark', 'shake');
+                m2SeniorBadge.classList.replace('bg-gray-700', 'bg-accent');
+                m2SeniorBadge.classList.replace('text-base', 'text-dark');
+                
+                m2SeniorText.innerHTML = `<span class="text-accent font-bold">【攔截存檔動作】啟動 Agent SDK 掃描目錄...</span><br><br>退件！我看到你寫了新的查詢邏輯。但 <code>order_queries.ts</code> 裡早就有一支 <code>getPendingOrders()</code> 可以用了。<br><br><span class="bg-accent text-dark px-1 font-bold">回傳 Exit Code 2 (拒絕寫入)</span> 並附上重構建議！`;
+                
+                // Step 3: Intern corrects
+                setTimeout(() => {
+                    m2InternText.innerHTML = `收到資深審查員的退件通知... 😭<br><br>刪除新寫的廢扣，改為 <span class="code-highlight">import { getPendingOrders }</span> 來完成 Slack 通知功能。重新提交！`;
+                    m2NewFile.classList.remove('slide-up');
+                    m2NewFile.classList.add('opacity-0');
+                    
+                    setTimeout(() => {
+                        // Senior goes to sleep
+                        m2SeniorText.innerHTML = `審查通過，沒有重複造輪子。繼續睡覺。`;
+                        m2SeniorBox.classList.replace('bg-dark', 'bg-transparent');
+                        m2SeniorBox.classList.replace('border-solid', 'border-dashed');
+                        m2SeniorBox.classList.replace('border-accent', 'border-gray-600');
+                        m2SeniorBox.classList.replace('text-base', 'text-gray-500');
+                        m2SeniorBadge.classList.replace('bg-accent', 'bg-gray-700');
+                        m2SeniorBadge.classList.replace('text-dark', 'text-base');
+                        
+                        m2BtnStart.innerText = "再玩一次";
+                        m2BtnStart.disabled = false;
+                        m2BtnStart.classList.remove('opacity-50', 'cursor-not-allowed');
+                        m2BtnStart.onclick = () => location.reload();
+                    }, 2500);
+                }, 3000);
+            }, 1500);
+        });
+    </script>
+</body>
+</html>

@@ -11,3 +11,5 @@ sw.*
 .env
 .output
 backup
+settings.local.json
+content/8.2026-plan/section3/downloads/

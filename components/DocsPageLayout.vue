@@ -2,6 +2,7 @@
 const { page } = useContent();
 const { config, tree } = useDocus();
 const route = useRoute();
+const { isReadingMode } = useReadingMode();
 
 const fallbackValue = (value: string, fallback = true) => {
   if (typeof page.value?.[value] !== "undefined") {
@@ -74,6 +75,7 @@ onBeforeUnmount(() => {
       fluid: config?.main?.fluid,
       'has-toc': hasToc,
       'has-aside': hasAside,
+      'reading-mode': isReadingMode,
     }"
   >
     <!-- Aside -->
@@ -113,6 +115,9 @@ onBeforeUnmount(() => {
         </div>
       </div>
     </div>
+
+    <!-- Reading Mode Toggle Button -->
+    <ReadingModeToggle />
   </Container>
 </template>
 
@@ -141,10 +146,17 @@ css({
         gridTemplateColumns: 'minmax(250px, 250px) minmax(320px, 1fr) minmax(250px, 250px)'
       }
     },
+    // Reading mode: single column layout for full width content
+    '&.reading-mode': {
+      '@lg': {
+        gridTemplateColumns: '1fr !important',
+      }
+    },
   },
   '.aside-nav': {
     display: 'none',
     overflowY: 'auto',
+    transition: 'transform 400ms cubic-bezier(0.4, 0, 0.2, 1)',
     '@lg': {
       display: 'block',
       position: 'sticky',
@@ -157,6 +169,20 @@ css({
       '.fluid &&': {
         borderRight: '1px solid {elements.border.primary.static}',
       }
+    },
+    // Reading mode: hide aside
+    '.reading-mode &&': {
+      '@lg': {
+        transform: 'translateX(-100%)',
+        position: 'fixed',
+        zIndex: 100,
+        backgroundColor: '{elements.backdrop.background}',
+        backdropFilter: '{elements.backdrop.filter}',
+        borderRight: '1px solid {elements.border.primary.static}',
+        '&:hover': {
+          transform: 'translateX(0)',
+        }
+      }
     }
   },
   '.page-body': {
@@ -168,6 +194,8 @@ css({
     width: '100%',
     // maxWidth: '{docus.readableLine}',
     mx: 'auto',
+    transition: 'transform 400ms cubic-bezier(0.4, 0, 0.2, 1), max-width 400ms cubic-bezier(0.4, 0, 0.2, 1)',
+    transformOrigin: 'center center',
     '.has-toc &&': {
       paddingTop: '{space.12}',
       '@lg': {
@@ -177,6 +205,16 @@ css({
     '@lg': {
       marginTop: 0,
       // gridColumnStart: 2,
+    },
+    // Reading mode: improve readability with larger font
+    '.reading-mode &&': {
+      '@lg': {
+        maxWidth: '100%',
+        paddingLeft: '{space.24}',
+        paddingRight: '{space.24}',
+        fontSize: '115%',
+        lineHeight: '1.8',
+      }
     },
     // `.not-prose` can be useful if creating <h1> with a component (404 page is an example)
     ':deep(h1:not(.not-prose):first-child)': {
@@ -223,6 +261,7 @@ css({
     mx: 'calc(0px - {space.4})',
     overflow: 'auto',
     borderBottom: '1px solid {elements.border.primary.static}',
+    transition: 'transform 400ms cubic-bezier(0.4, 0, 0.2, 1)',
     '@sm': {
       mx: 'calc(0px - {space.6})',
     },
@@ -236,6 +275,21 @@ css({
       borderBottom: 'none',
       '.fluid &&': {
         borderLeft: '1px solid {elements.border.primary.static}',
+      }
+    },
+    // Reading mode: slide out TOC, show on hover
+    '.reading-mode &&': {
+      '@lg': {
+        transform: 'translateX(calc(100% - 20px))',
+        position: 'fixed',
+        right: 0,
+        zIndex: 100,
+        backgroundColor: '{elements.backdrop.background}',
+        backdropFilter: '{elements.backdrop.filter}',
+        borderLeft: '1px solid {elements.border.primary.static}',
+        '&:hover': {
+          transform: 'translateX(0)',
+        }
       }
     },
     '.toc-wrapper': {

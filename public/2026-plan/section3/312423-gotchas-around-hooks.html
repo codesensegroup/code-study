@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Code Hooks: 資安與協作架構深度解析</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            bg: '#F8F8F5',   /* 米白背景 */
+                            dark: '#1A1A1A', /* 深色主調 */
+                            accent: '#C88A64'/* 焦糖色點綴 */
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #F8F8F5; color: #1A1A1A; }
+        /* 隱藏捲軸但保持可捲動 */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .code-block { background-color: #1A1A1A; color: #F8F8F5; }
+        .highlight-text { color: #C88A64; }
+        
+        /* 動畫效果 */
+        .fade-in { animation: fadeIn 0.4s ease-in-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .slide-right { animation: slideRight 0.5s ease-in-out forwards; }
+        @keyframes slideRight {
+            from { transform: translateX(0); }
+            to { transform: translateX(100%); }
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen pb-20">
+
+    <!-- Header -->
+    <header class="bg-brand-dark text-brand-bg py-16 px-6 mb-12 shadow-xl">
+        <div class="max-w-5xl mx-auto">
+            <div class="flex items-center gap-4 mb-4">
+                <svg class="w-8 h-8 text-brand-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8V7a4 4 0 00-8 0v4h8z"></path></svg>
+                <span class="text-brand-accent font-mono font-bold tracking-widest text-sm uppercase">Claude Code in Action</span>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-black mb-6 leading-tight">Gotchas around Hooks:<br>資安邊界與協作悖論</h1>
+            <p class="text-lg opacity-80 max-w-3xl font-light">
+                在設定 Claude Code hooks 時，官方祭出了極度嚴格的資安規範，尤其是強制使用「絕對路徑」。這項政策雖然封死了路徑劫持攻擊，卻也直接摧毀了團隊間透過 Git 共享設定檔的可能性。<br><br>
+                身為工程師，我們如何利用動態初始化腳本，優雅地解決這個架構衝突？
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-6 space-y-24">
+
+        <!-- Section 1: 資安規範 -->
+        <section>
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold border-l-4 border-brand-accent pl-4 mb-4">第一層解析：Hooks 資安護城河</h2>
+                <p class="text-gray-700 leading-relaxed">
+                    在編寫給 LLM 或自動化工具調用的 Hooks 腳本時，任何模糊地帶都可能成為攻擊載體。官方點名了 5 大核心防禦機制。請操作下方的漏洞掃描器，觀察不安全的腳本如何被修補。
+                </p>
+            </div>
+
+            <!-- Module 1: Security Linter -->
+            <div class="w-full overflow-x-auto no-scrollbar bg-white rounded-2xl shadow-lg border border-gray-200">
+                <div class="min-w-[800px] p-8 flex gap-8">
+                    <!-- 左側：規則面板 -->
+                    <div class="w-1/3 flex flex-col gap-3">
+                        <h3 class="font-bold text-lg mb-2 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-brand-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                            修補動作
+                        </h3>
+                        <button onclick="fixRule(1)" id="btn-rule-1" class="text-left p-3 rounded-lg border border-gray-300 hover:border-brand-accent hover:bg-orange-50 transition-colors flex justify-between items-center group">
+                            <span class="font-medium text-sm">1. 過濾輸入 (Sanitize)</span>
+                            <span class="w-3 h-3 rounded-full bg-red-500 indicator"></span>
+                        </button>
+                        <button onclick="fixRule(2)" id="btn-rule-2" class="text-left p-3 rounded-lg border border-gray-300 hover:border-brand-accent hover:bg-orange-50 transition-colors flex justify-between items-center group">
+                            <span class="font-medium text-sm">2. 變數加引號 (Quote Vars)</span>
+                            <span class="w-3 h-3 rounded-full bg-red-500 indicator"></span>
+                        </button>
+                        <button onclick="fixRule(3)" id="btn-rule-3" class="text-left p-3 rounded-lg border border-gray-300 hover:border-brand-accent hover:bg-orange-50 transition-colors flex justify-between items-center group">
+                            <span class="font-medium text-sm">3. 阻擋遍歷 (Block `..`)</span>
+                            <span class="w-3 h-3 rounded-full bg-red-500 indicator"></span>
+                        </button>
+                        <button onclick="fixRule(4)" id="btn-rule-4" class="text-left p-3 rounded-lg border-gray-300 border-2 border-brand-accent bg-orange-50 transition-colors flex justify-between items-center shadow-md relative">
+                            <span class="font-bold text-sm text-brand-dark">4. 絕對路徑 (Absolute Path)</span>
+                            <span class="w-3 h-3 rounded-full bg-red-500 indicator animate-pulse"></span>
+                            <div class="absolute -right-3 -top-3 bg-brand-accent text-white text-[10px] font-bold px-2 py-1 rounded-full">核心痛點</div>
+                        </button>
+                        <button onclick="fixRule(5)" id="btn-rule-5" class="text-left p-3 rounded-lg border border-gray-300 hover:border-brand-accent hover:bg-orange-50 transition-colors flex justify-between items-center group">
+                            <span class="font-medium text-sm">5. 略過敏感檔 (Skip Secrets)</span>
+                            <span class="w-3 h-3 rounded-full bg-red-500 indicator"></span>
+                        </button>
+                    </div>
+
+                    <!-- 右側：程式碼編輯器 -->
+                    <div class="w-2/3 code-block rounded-xl p-6 font-mono text-sm leading-relaxed relative">
+                        <div class="absolute top-0 left-0 w-full px-4 py-2 bg-black/40 rounded-t-xl text-xs text-gray-400 flex justify-between">
+                            <span>hooks/pre-commit.sh</span>
+                            <span id="security-score" class="text-red-400 font-bold">安全評分: 0%</span>
+                        </div>
+                        <div class="mt-8 space-y-2">
+                            <!-- Rule 1 -->
+                            <div id="code-line-1">
+                                <span class="text-gray-400"># 處理輸入</span><br>
+                                <span class="text-blue-400">USER_INPUT</span>=<span class="text-green-300">$1</span>
+                            </div>
+                            <!-- Rule 2 -->
+                            <div id="code-line-2">
+                                <span class="text-gray-400"># 執行使用者傳入的指令</span><br>
+                                <span class="text-red-400 font-bold bg-red-900/30 px-1">echo $USER_INPUT</span>
+                            </div>
+                            <!-- Rule 3 -->
+                            <div id="code-line-3">
+                                <span class="text-gray-400"># 讀取路徑配置</span><br>
+                                <span class="text-blue-400">TARGET_DIR</span>=<span class="text-red-400 font-bold bg-red-900/30 px-1">"../../config/"</span>
+                            </div>
+                            <!-- Rule 4 (Core) -->
+                            <div id="code-line-4" class="p-2 border border-brand-accent/50 rounded bg-brand-accent/10">
+                                <span class="text-gray-400"># 執行子腳本 (易受 Path Interception 攻擊)</span><br>
+                                <span class="text-red-400 font-bold bg-red-900/30 px-1">./scripts/format.sh</span>
+                            </div>
+                            <!-- Rule 5 -->
+                            <div id="code-line-5">
+                                <span class="text-gray-400"># 載入環境變數</span><br>
+                                <span class="text-red-400 font-bold bg-red-900/30 px-1">source .env</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p class="text-sm text-gray-500 mt-4 text-center">💡 點擊左側規則，觀察腳本如何防禦常見的 Injection 與 Planting 攻擊。</p>
+        </section>
+
+        <!-- Section 2: 協作災難 -->
+        <section>
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold border-l-4 border-brand-accent pl-4 mb-4">第二層解析：絕對路徑帶來的「協作悖論」</h2>
+                <p class="text-gray-700 leading-relaxed">
+                    為了滿足規則 4 的防禦機制，我們必須在 `.claude/settings.json` 中將 Hook 腳本寫死為絕對路徑。但這個「安全」的決定，在團隊協作中卻是災難。
+                </p>
+            </div>
+
+            <!-- Module 2: Collaboration Sandbox -->
+            <div class="w-full overflow-x-auto no-scrollbar bg-brand-dark rounded-2xl shadow-xl p-8 text-brand-bg">
+                <div class="min-w-[800px]">
+                    <div class="flex justify-between items-center mb-8 relative">
+                        <!-- Alice -->
+                        <div class="w-1/3 bg-white/10 rounded-xl p-4 border border-white/20">
+                            <div class="flex items-center gap-2 mb-3">
+                                <div class="w-8 h-8 rounded-full bg-brand-accent flex items-center justify-center font-bold text-brand-dark">A</div>
+                                <span class="font-mono font-bold">Alice 的 Mac</span>
+                            </div>
+                            <div class="bg-black/50 p-3 rounded font-mono text-xs text-green-400 mb-2 border border-green-500/30">
+                                ✓ 執行成功
+                            </div>
+                            <code class="text-xs text-gray-300 block break-all">/Users/alice/dev/claude-hooks/script.sh</code>
+                        </div>
+
+                        <!-- Git Flow Center -->
+                        <div class="w-1/3 flex flex-col items-center justify-center relative px-4">
+                            <div class="text-center font-mono text-xs text-brand-accent mb-2">Git Repository</div>
+                            <div id="git-file" class="bg-white text-brand-dark px-4 py-2 rounded shadow-lg font-mono text-[10px] w-full text-center border-2 border-brand-accent relative z-10 transition-all duration-500">
+                                settings.json<br>
+                                <span class="text-gray-500">"hook": "/Users/alice/dev..."</span>
+                            </div>
+                            
+                            <!-- 互動按鈕 -->
+                            <button onclick="simulateGitPull()" id="btn-pull" class="mt-6 bg-brand-accent text-brand-dark font-bold px-6 py-2 rounded-full hover:bg-orange-400 transition-colors shadow-lg shadow-brand-accent/30 active:scale-95 flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                                Bob 執行 Git Pull
+                            </button>
+                        </div>
+
+                        <!-- Bob -->
+                        <div class="w-1/3 bg-white/10 rounded-xl p-4 border border-white/20">
+                            <div class="flex items-center gap-2 mb-3">
+                                <div class="w-8 h-8 rounded-full bg-blue-400 flex items-center justify-center font-bold text-brand-dark">B</div>
+                                <span class="font-mono font-bold">Bob 的 Linux</span>
+                            </div>
+                            <div id="bob-status" class="bg-black/50 p-3 rounded font-mono text-xs text-gray-500 mb-2">
+                                等待同步...
+                            </div>
+                            <code class="text-xs text-gray-300 block break-all">/home/bob/workspace/claude-hooks/</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p class="text-sm text-gray-500 mt-4 text-center">💡 對於不同開發者，專案存放路徑必然不同。絕對路徑無法被共用。</p>
+        </section>
+
+        <!-- Section 3: 架構解法 -->
+        <section>
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold border-l-4 border-brand-accent pl-4 mb-4">第三層解析：中介層與動態初始化</h2>
+                <p class="text-gray-700 leading-relaxed">
+                    為了解決這個死結，架構引入了**動態配置生命週期**。我們不再直接將設定檔提交到 Git，而是提交包含 `$PWD` 變數的樣板 (`settings.example.json`)，並透過 `npm run setup` 在本機端即時編譯。
+                </p>
+            </div>
+
+            <!-- Module 3: Dynamic Pipeline -->
+            <div class="w-full overflow-x-auto no-scrollbar bg-white rounded-2xl shadow-lg border border-gray-200">
+                <div class="min-w-[850px] p-8">
+                    <!-- 系統切換 -->
+                    <div class="flex justify-center gap-4 mb-8">
+                        <span class="font-bold text-brand-dark self-center">選擇你的本機環境：</span>
+                        <button onclick="setEnv('mac')" id="env-mac" class="px-4 py-2 rounded border-2 border-brand-accent bg-orange-50 text-brand-dark font-bold font-mono text-sm">macOS (Alice)</button>
+                        <button onclick="setEnv('linux')" id="env-linux" class="px-4 py-2 rounded border border-gray-300 text-gray-500 hover:border-gray-400 font-mono text-sm">Linux (Bob)</button>
+                        <button onclick="setEnv('win')" id="env-win" class="px-4 py-2 rounded border border-gray-300 text-gray-500 hover:border-gray-400 font-mono text-sm">Windows (Charlie)</button>
+                    </div>
+
+                    <!-- 流程圖 -->
+                    <div class="flex items-stretch justify-between relative gap-4">
+                        <!-- Step 1 -->
+                        <div class="w-1/3 flex flex-col">
+                            <div class="bg-gray-100 rounded-t-xl p-3 border-b-2 border-gray-200 text-center font-bold text-sm text-brand-dark">
+                                1. Git Repository
+                            </div>
+                            <div class="bg-white border-2 border-gray-200 border-t-0 rounded-b-xl p-4 flex-grow relative">
+                                <div class="text-xs font-mono text-gray-500 mb-2">📄 settings.example.json</div>
+                                <div class="code-block p-3 rounded font-mono text-xs overflow-hidden">
+                                    {<br>
+                                    &nbsp;&nbsp;"hooks": {<br>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;"pre-commit": "<span class="text-brand-accent font-bold bg-brand-accent/20 px-1">$PWD</span>/scripts/hook.js"<br>
+                                    &nbsp;&nbsp;}<br>
+                                    }
+                                </div>
+                                <div class="absolute -right-6 top-1/2 -translate-y-1/2 z-10">
+                                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 2 -->
+                        <div class="w-1/3 flex flex-col group cursor-pointer" onclick="runInitScript()">
+                            <div class="bg-brand-dark rounded-t-xl p-3 border-b-2 border-brand-accent text-center font-bold text-sm text-brand-bg transition-colors group-hover:bg-black">
+                                2. Runtime Execution
+                            </div>
+                            <div class="bg-brand-dark border-2 border-brand-dark border-t-0 rounded-b-xl p-4 flex-grow relative flex flex-col justify-center items-center">
+                                <div class="text-brand-accent mb-2 font-mono text-sm font-bold flex items-center gap-2">
+                                    <svg class="w-5 h-5 animate-spin-slow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                    npm run setup
+                                </div>
+                                <div class="text-xs text-gray-400 font-mono text-center">
+                                    > node scripts/init-claude.js<br>
+                                    > <span class="text-white">replace('$PWD', currentDir)</span>
+                                </div>
+                                <button class="mt-4 bg-brand-accent/20 border border-brand-accent text-brand-accent px-4 py-1 rounded text-xs hover:bg-brand-accent hover:text-white transition-colors">
+                                    點擊執行編譯
+                                </button>
+                                <div class="absolute -right-6 top-1/2 -translate-y-1/2 z-10">
+                                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 3 -->
+                        <div class="w-1/3 flex flex-col">
+                            <div class="bg-gray-100 rounded-t-xl p-3 border-b-2 border-gray-200 text-center font-bold text-sm text-brand-dark">
+                                3. Local Machine (Ignored)
+                            </div>
+                            <div class="bg-white border-2 border-gray-200 border-t-0 rounded-b-xl p-4 flex-grow relative" id="final-block">
+                                <div class="text-xs font-mono text-gray-500 mb-2">📄 settings.local.json</div>
+                                <div class="code-block p-3 rounded font-mono text-xs overflow-hidden opacity-50 transition-opacity duration-300" id="final-code-container">
+                                    {<br>
+                                    &nbsp;&nbsp;"hooks": {<br>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;"pre-commit": "<span id="compiled-path" class="text-gray-400">waiting_for_init...</span>/scripts/hook.js"<br>
+                                    &nbsp;&nbsp;}<br>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p class="text-sm text-gray-500 mt-4 text-center">💡 透過這個機制，專案內會同時存在 `example.json` 與 `local.json`，完美兼顧資安絕對路徑與跨平台協作。</p>
+        </section>
+
+    </main>
+
+    <!-- Interactive Scripts -->
+    <script>
+        // --- Module 1: Linter Logic ---
+        const rulesStatus = { 1: false, 2: false, 3: false, 4: false, 5: false };
+        function updateScore() {
+            const passed = Object.values(rulesStatus).filter(Boolean).length;
+            const score = (passed / 5) * 100;
+            const scoreEl = document.getElementById('security-score');
+            scoreEl.innerText = `安全評分: ${score}%`;
+            
+            if (score === 100) {
+                scoreEl.className = "text-green-400 font-bold fade-in";
+                scoreEl.innerText = "✓ 滿分：防禦工事完善";
+            } else if (score >= 60) {
+                scoreEl.className = "text-yellow-400 font-bold";
+            }
+        }
+
+        function fixRule(id) {
+            if (rulesStatus[id]) return; // 已修復
+            rulesStatus[id] = true;
+            
+            // 更新按鈕狀態
+            const btn = document.getElementById(`btn-rule-${id}`);
+            const indicator = btn.querySelector('.indicator');
+            indicator.className = "w-3 h-3 rounded-full bg-green-500";
+            if(id === 4) {
+                btn.className = "text-left p-3 rounded-lg border-2 border-green-500 bg-green-50 transition-colors flex justify-between items-center shadow-inner relative";
+            } else {
+                btn.className = "text-left p-3 rounded-lg border border-green-400 bg-green-50 transition-colors flex justify-between items-center";
+            }
+
+            // 更新程式碼 (展示前後差異)
+            const line = document.getElementById(`code-line-${id}`);
+            line.classList.add('fade-in');
+            
+            switch(id) {
+                case 1:
+                    line.innerHTML = `<span class="text-gray-400"># 處理輸入 (已驗證)</span><br><span class="text-blue-400">USER_INPUT</span>=<span class="text-green-300">$(echo "$1" | tr -d ';&|')</span>`;
+                    break;
+                case 2:
+                    line.innerHTML = `<span class="text-gray-400"># 執行指令 (已加引號)</span><br><span class="text-green-300">echo "$USER_INPUT"</span>`;
+                    break;
+                case 3:
+                    line.innerHTML = `<span class="text-gray-400"># 讀取路徑配置 (安全根目錄)</span><br><span class="text-blue-400">TARGET_DIR</span>=<span class="text-green-300">"/var/app/config/"</span>`;
+                    break;
+                case 4:
+                    line.className = "p-2 border border-green-500/50 rounded bg-green-500/10 fade-in";
+                    line.innerHTML = `<span class="text-gray-400"># 執行子腳本 (採用絕對路徑，阻斷 Plant/Intercept)</span><br><span class="text-brand-accent font-bold">/Users/alice/dev/project/</span><span class="text-green-300">scripts/format.sh</span>`;
+                    break;
+                case 5:
+                    line.innerHTML = `<span class="text-gray-400"># 略過敏感檔 (忽略 .env)</span><br><span class="text-gray-500 italic"># 拒絕讀取本地 .env 變數</span>`;
+                    break;
+            }
+            updateScore();
+        }
+
+        // --- Module 2: Paradox Logic ---
+        function simulateGitPull() {
+            const btn = document.getElementById('btn-pull');
+            const bobStatus = document.getElementById('bob-status');
+            const file = document.getElementById('git-file');
+            
+            btn.disabled = true;
+            btn.innerHTML = '<svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg> Pulling...';
+            
+            // 動畫：文件移向 Bob
+            file.style.transform = 'translate(100px, 40px) scale(0.8)';
+            file.style.opacity = '0.5';
+
+            setTimeout(() => {
+                file.style.transform = 'translate(0, 0) scale(1)';
+                file.style.opacity = '1';
+                
+                bobStatus.className = "bg-red-900/50 border border-red-500 p-3 rounded font-mono text-xs text-red-200 mb-2 fade-in";
+                bobStatus.innerHTML = `
+                    <div class="font-bold text-red-400 mb-1">❌ 執行崩潰 (Path Not Found)</div>
+                    嘗試執行: <span class="bg-black text-red-400 px-1">/Users/alice/dev...</span><br>
+                    錯誤: 目錄不存在於 Bob 的機器上
+                `;
+                
+                btn.innerHTML = '重新模擬';
+                btn.disabled = false;
+                btn.onclick = () => {
+                    bobStatus.className = "bg-black/50 p-3 rounded font-mono text-xs text-gray-500 mb-2";
+                    bobStatus.innerHTML = "等待同步...";
+                    btn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg> Bob 執行 Git Pull`;
+                    btn.onclick = simulateGitPull;
+                };
+            }, 1000);
+        }
+
+        // --- Module 3: Pipeline Logic ---
+        let currentEnvStr = '/Users/alice/dev/project';
+        
+        function setEnv(env) {
+            // Reset styles
+            ['mac', 'linux', 'win'].forEach(e => {
+                const btn = document.getElementById(`env-${e}`);
+                btn.className = "px-4 py-2 rounded border border-gray-300 text-gray-500 hover:border-gray-400 font-mono text-sm";
+            });
+            
+            // Set active
+            const activeBtn = document.getElementById(`env-${env}`);
+            activeBtn.className = "px-4 py-2 rounded border-2 border-brand-accent bg-orange-50 text-brand-dark font-bold font-mono text-sm";
+            
+            if(env === 'mac') currentEnvStr = '/Users/alice/dev/project';
+            if(env === 'linux') currentEnvStr = '/home/bob/workspace/project';
+            if(env === 'win') currentEnvStr = 'C:/Users/Charlie/projects/app';
+            
+            // Reset output block
+            document.getElementById('compiled-path').innerText = 'waiting_for_init...';
+            document.getElementById('compiled-path').className = "text-gray-400";
+            document.getElementById('final-code-container').classList.add('opacity-50');
+            document.getElementById('final-block').classList.remove('border-brand-accent', 'shadow-lg');
+        }
+
+        function runInitScript() {
+            const compiledEl = document.getElementById('compiled-path');
+            const container = document.getElementById('final-code-container');
+            const block = document.getElementById('final-block');
+            
+            // Reset animation state
+            compiledEl.classList.remove('fade-in');
+            void compiledEl.offsetWidth; // Trigger reflow
+            
+            // Execute
+            compiledEl.innerText = currentEnvStr;
+            compiledEl.className = "text-brand-accent font-bold bg-brand-accent/20 px-1 fade-in";
+            container.classList.remove('opacity-50');
+            block.classList.add('border-brand-accent', 'shadow-lg', 'transition-all');
+        }
+    </script>
+</body>
+</html>

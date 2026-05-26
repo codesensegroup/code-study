@@ -10,7 +10,8 @@ const baseUrl = z
 export default defineNuxtConfig({
   // https://github.com/nuxt-themes/docus
   extends: "@nuxt-themes/docus",
-  css: ["@/assets/css/override.css"],
+  css: ["@/assets/css/override.css", "@/assets/css/transitions.css"],
+  compatibilityDate: '2025-10-10',
   devtools: { enabled: true },
   modules: ["@nuxtjs/tailwindcss", "@nuxt/content"],
   app: {
@@ -18,6 +19,10 @@ export default defineNuxtConfig({
     head: {
       meta: [{ name: "referrer", content: "no-referrer-when-downgrade" }],
     },
+    pageTransition: false,
+  },
+  experimental: {
+    viewTransition: true
   },
   runtimeConfig: {
     public: {
@@ -25,9 +30,13 @@ export default defineNuxtConfig({
     },
   },
   content: {
+    ignores: ['AGENTS\\.md$', 'CLAUDE\\.md$'],
+    navigation: {
+      fields: ['icon', 'titleTemplate', 'header', 'main', 'aside', 'footer', 'group']
+    },
     markdown: {
       remarkPlugins: ['remark-math'],
-      rehypePlugins: ['rehype-mathjax'],
+      rehypePlugins: ['rehype-katex'],
     },
     highlight: {
       theme: {

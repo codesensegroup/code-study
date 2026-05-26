@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BFS & DFS 視覺化教學</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        
+        .btn-bfs {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .btn-bfs:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+        
+        .btn-dfs {
+            background: #2196F3;
+            color: white;
+        }
+        
+        .btn-dfs:hover {
+            background: #0b7dda;
+            transform: translateY(-2px);
+        }
+        
+        .btn-reset {
+            background: #f44336;
+            color: white;
+        }
+        
+        .btn-reset:hover {
+            background: #da190b;
+            transform: translateY(-2px);
+        }
+        
+        .btn-crawler {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-crawler:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .speed-control input {
+            width: 150px;
+        }
+        
+        .canvas-container {
+            background: #f5f5f5;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        canvas {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background: white;
+        }
+        
+        .info-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .info-box {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .info-box h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .info-box ul {
+            padding-left: 20px;
+        }
+        
+        .info-box li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+        
+        .log {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            min-height: 150px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            border: 2px solid #ddd;
+        }
+        
+        .log-item {
+            padding: 5px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+        }
+        
+        .log-visit {
+            background: #e3f2fd;
+        }
+        
+        .log-queue {
+            background: #f1f8e9;
+        }
+        
+        .legend {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .legend-color {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid #333;
+        }
+        
+        .crawler-section {
+            margin-top: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            border-radius: 15px;
+        }
+        
+        .crawler-demo {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        #crawlerAnimation {
+            margin-top: 30px;
+            padding: 30px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        
+        #crawlerAnimation h2 {
+            color: #fff;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        .crawler-controls {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+        
+        .crawler-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        #crawlerStatus {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 8px;
+            color: #fff;
+            text-align: center;
+            font-family: monospace;
+            min-height: 50px;
+        }
+        
+        .crawler-canvas-container {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+        }
+        
+        #crawlerLog {
+            margin-top: 20px;
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            color: #fff;
+            font-family: monospace;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .crawler-log-item {
+            padding: 8px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .info-section {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌳 BFS & DFS 視覺化教學</h1>
+        <p class="subtitle">廣度優先搜尋 vs 深度優先搜尋</p>
+        
+        <div class="controls">
+            <button class="btn-bfs" onclick="startBFS()">▶ 執行 BFS</button>
+            <button class="btn-dfs" onclick="startDFS()">▶ 執行 DFS</button>
+            <button class="btn-reset" onclick="resetGraph()">🔄 重置</button>
+            <div class="speed-control">
+                <label>速度：</label>
+                <input type="range" id="speed" min="100" max="2000" value="800" step="100">
+                <span id="speedValue">800ms</span>
+            </div>
+        </div>
+        
+        <div class="canvas-container">
+            <canvas id="canvas" width="700" height="400"></canvas>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #ddd;"></div>
+                <span>未訪問</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #FFC107;"></div>
+                <span>當前節點</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #4CAF50;"></div>
+                <span>已訪問</span>
+            </div>
+        </div>
+        
+        <div class="info-section">
+            <div class="info-box">
+                <h3>🟢 BFS (廣度優先搜尋)</h3>
+                <ul>
+                    <li><strong>策略：</strong>一層一層搜尋，先訪問所有相鄰節點</li>
+                    <li><strong>資料結構：</strong>使用佇列 (Queue) - 先進先出</li>
+                    <li><strong>特點：</strong>找到的路徑一定是最短路徑</li>
+                    <li><strong>適用：</strong>最短路徑問題、層級遍歷</li>
+                    <li><strong>空間複雜度：</strong>O(V) - 需要儲存所有同層節點</li>
+                </ul>
+            </div>
+            
+            <div class="info-box">
+                <h3>🔵 DFS (深度優先搜尋)</h3>
+                <ul>
+                    <li><strong>策略：</strong>一路走到底，再回頭探索其他分支</li>
+                    <li><strong>資料結構：</strong>使用堆疊 (Stack) - 後進先出</li>
+                    <li><strong>特點：</strong>會優先探索深層節點</li>
+                    <li><strong>適用：</strong>拓撲排序、路徑查找、迷宮</li>
+                    <li><strong>空間複雜度：</strong>O(h) - h為樹的高度</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="log" id="log">
+            <div style="color: #666; font-style: italic;">點擊上方按鈕開始演示...</div>
+        </div>
+        
+        <div class="crawler-section">
+            <h2 style="color: #667eea; margin-bottom: 20px; text-align: center;">🕷️ 實戰演練：網頁爬蟲為什麼用 BFS？</h2>
+            
+            <div class="crawler-demo">
+                <div style="background: white; padding: 25px; border-radius: 10px; margin-bottom: 20px;">
+                    <h3 style="color: #4CAF50; margin-bottom: 15px;">🟢 使用 BFS 的爬蟲（推薦）</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px;">
+                        <div>
+                            <strong>✅ 優點：</strong>
+                            <ul style="margin: 10px 0; padding-left: 20px; line-height: 1.8;">
+                                <li><strong>平衡探索</strong>：不會卡在單一網站太深</li>
+                                <li><strong>禮貌爬取</strong>：分散請求到不同網站，避免過載</li>
+                                <li><strong>快速覆蓋</strong>：優先獲取廣度資訊</li>
+                                <li><strong>易於控制</strong>：可設定深度限制</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <strong>🎯 實際場景：</strong>
+                            <ul style="margin: 10px 0; padding-left: 20px; line-height: 1.8;">
+                                <li>搜尋引擎索引網頁</li>
+                                <li>新聞爬蟲抓取頭條</li>
+                                <li>社群媒體爬取</li>
+                                <li>網站地圖生成</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="background: white; padding: 25px; border-radius: 10px;">
+                    <h3 style="color: #2196F3; margin-bottom: 15px;">🔵 使用 DFS 的爬蟲（問題多）</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px;">
+                        <div>
+                            <strong>⚠️ 缺點：</strong>
+                            <ul style="margin: 10px 0; padding-left: 20px; line-height: 1.8;">
+                                <li><strong>容易卡住</strong>：可能一直爬同一網站的深層頁面</li>
+                                <li><strong>伺服器過載</strong>：短時間大量請求同一網站</li>
+                                <li><strong>覆蓋不均</strong>：花太多時間在單一路徑</li>
+                                <li><strong>可能無限循環</strong>：網站內部連結互相指向</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <strong>🔍 可能的場景：</strong>
+                            <ul style="margin: 10px 0; padding-left: 20px; line-height: 1.8;">
+                                <li>特定資料深度挖掘</li>
+                                <li>單一網站完整抓取</li>
+                                <li>檔案系統遍歷</li>
+                                <li>需要完整路徑的情況</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 30px; text-align: center;">
+                <button class="btn-crawler" onclick="showCrawlerDemo()">
+                    🎬 播放爬蟲模擬動畫
+                </button>
+            </div>
+        </div>
+        
+        <div style="margin-top: 30px; padding: 25px; background: #f9f9f9; border-radius: 15px;">
+            <h3 style="color: #667eea; margin-bottom: 15px;">💡 關鍵洞察：為什麼爬蟲偏好 BFS？</h3>
+            <div style="line-height: 1.8;">
+                <p style="margin-bottom: 15px;"><strong>1. 避免「陷入兔子洞」：</strong>想像你要調查100個網站的首頁資訊。用 DFS 可能會在第一個網站就爬了1000個頁面，而其他99個網站都還沒看！</p>
+                
+                <p style="margin-bottom: 15px;"><strong>2. 分散請求壓力：</strong>BFS 會輪流訪問不同網站，就像排隊一樣公平。DFS 則會連續敲同一個伺服器的門，可能被當成攻擊！</p>
+                
+                <p style="margin-bottom: 15px;"><strong>3. 重要資訊在前幾層：</strong>大部分有價值的內容都在網站的前幾層（首頁、分類頁）。BFS 能快速覆蓋這些重點。</p>
+                
+                <p><strong>4. 更好的控制：</strong>你可以說「我只要爬3層深度」，BFS 會均勻地給你所有網站的前3層。DFS 則可能只給你一個網站的超深層內容。</p>
+            </div>
+        </div>
+        
+        <!-- 爬蟲動畫模擬區 -->
+        <div id="crawlerAnimation" style="display: none;">
+            <h2>🕷️ 網頁爬蟲視覺化模擬</h2>
+            
+            <div class="crawler-controls">
+                <div class="crawler-buttons">
+                    <button class="btn-bfs" onclick="simulateBFSCrawler()">🟢 模擬 BFS 爬蟲</button>
+                    <button class="btn-dfs" onclick="simulateDFSCrawler()">🔵 模擬 DFS 爬蟲</button>
+                    <button class="btn-reset" onclick="resetCrawlerAnimation()">🔄 重置</button>
+                    <button class="btn-reset" onclick="closeCrawlerAnimation()">✖ 關閉</button>
+                </div>
+                
+                <div id="crawlerStatus">準備開始爬蟲模擬...</div>
+            </div>
+            
+            <div class="crawler-canvas-container">
+                <canvas id="crawlerCanvas" width="700" height="500"></canvas>
+            </div>
+            
+            <div id="crawlerLog"></div>
+        </div>
+    </div>
+
+    <script>
+        // ===== 全域變數 =====
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const log = document.getElementById('log');
+        const speedSlider = document.getElementById('speed');
+        const speedValue = document.getElementById('speedValue');
+        
+        let animationSpeed = 800;
+        let isRunning = false;
+        
+        speedSlider.addEventListener('input', (e) => {
+            animationSpeed = e.target.value;
+            speedValue.textContent = e.target.value + 'ms';
+        });
+        
+        // ===== 基礎圖的節點 =====
+        const nodes = [
+            { id: 'A', x: 350, y: 50, neighbors: ['B', 'C'] },
+            { id: 'B', x: 200, y: 150, neighbors: ['A', 'D', 'E'] },
+            { id: 'C', x: 500, y: 150, neighbors: ['A', 'F', 'G'] },
+            { id: 'D', x: 100, y: 250, neighbors: ['B', 'H'] },
+            { id: 'E', x: 300, y: 250, neighbors: ['B', 'I'] },
+            { id: 'F', x: 450, y: 250, neighbors: ['C'] },
+            { id: 'G', x: 600, y: 250, neighbors: ['C', 'J'] },
+            { id: 'H', x: 50, y: 350, neighbors: ['D'] },
+            { id: 'I', x: 250, y: 350, neighbors: ['E'] },
+            { id: 'J', x: 650, y: 350, neighbors: ['G'] }
+        ];
+        
+        const nodeMap = {};
+        nodes.forEach(node => {
+            nodeMap[node.id] = node;
+            node.visited = false;
+            node.current = false;
+        });
+        
+        // ===== 爬蟲模擬的網站節點 =====
+        const crawlerWebsites = [
+            { id: 'Home', x: 350, y: 50, children: ['News', 'Products', 'About'], color: '#ff6b6b', domain: 'example.com', visited: false, current: false },
+            { id: 'News', x: 150, y: 150, children: ['News1', 'News2'], color: '#4ecdc4', domain: 'example.com', visited: false, current: false },
+            { id: 'Products', x: 350, y: 150, children: ['Prod1', 'Prod2'], color: '#45b7d1', domain: 'example.com', visited: false, current: false },
+            { id: 'About', x: 550, y: 150, children: ['Team', 'Contact'], color: '#96ceb4', domain: 'example.com', visited: false, current: false },
+            { id: 'News1', x: 80, y: 270, children: ['Detail1'], color: '#ffeaa7', domain: 'news.example.com', visited: false, current: false },
+            { id: 'News2', x: 220, y: 270, children: ['Detail2'], color: '#dfe6e9', domain: 'news.example.com', visited: false, current: false },
+            { id: 'Prod1', x: 300, y: 270, children: ['Spec1'], color: '#74b9ff', domain: 'shop.example.com', visited: false, current: false },
+            { id: 'Prod2', x: 400, y: 270, children: ['Spec2'], color: '#a29bfe', domain: 'shop.example.com', visited: false, current: false },
+            { id: 'Team', x: 500, y: 270, children: [], color: '#fd79a8', domain: 'about.example.com', visited: false, current: false },
+            { id: 'Contact', x: 600, y: 270, children: [], color: '#fdcb6e', domain: 'about.example.com', visited: false, current: false },
+            { id: 'Detail1', x: 80, y: 390, children: [], color: '#fab1a0', domain: 'news.example.com', visited: false, current: false },
+            { id: 'Detail2', x: 220, y: 390, children: [], color: '#ff7675', domain: 'news.example.com', visited: false, current: false },
+            { id: 'Spec1', x: 300, y: 390, children: [], color: '#6c5ce7', domain: 'shop.example.com', visited: false, current: false },
+            { id: 'Spec2', x: 400, y: 390, children: [], color: '#00b894', domain: 'shop.example.com', visited: false, current: false }
+        ];
+        
+        const crawlerWebsiteMap = {};
+        crawlerWebsites.forEach(site => {
+            crawlerWebsiteMap[site.id] = site;
+        });
+        
+        // ===== 輔助函數 =====
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        
+        function addLog(message, type = '') {
+            const logItem = document.createElement('div');
+            logItem.className = 'log-item ' + type;
+            logItem.textContent = message;
+            log.appendChild(logItem);
+            log.scrollTop = log.scrollHeight;
+        }
+        
+        function addCrawlerLog(message, type = '') {
+            const crawlerLog = document.getElementById('crawlerLog');
+            if (!crawlerLog) return;
+            
+            const logItem = document.createElement('div');
+            logItem.className = 'crawler-log-item';
+            logItem.style.borderLeft = '4px solid ' + (type === 'bfs' ? '#4CAF50' : type === 'dfs' ? '#2196F3' : '#FFC107');
+            logItem.textContent = message;
+            crawlerLog.appendChild(logItem);
+            crawlerLog.scrollTop = crawlerLog.scrollHeight;
+        }
+        
+        // ===== 基礎圖繪製函數 =====
+        function drawGraph() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 繪製邊
+            ctx.strokeStyle = '#999';
+            ctx.lineWidth = 2;
+            nodes.forEach(node => {
+                node.neighbors.forEach(neighborId => {
+                    const neighbor = nodeMap[neighborId];
+                    if (neighbor && nodes.indexOf(node) < nodes.indexOf(neighbor)) {
+                        ctx.beginPath();
+                        ctx.moveTo(node.x, node.y);
+                        ctx.lineTo(neighbor.x, neighbor.y);
+                        ctx.stroke();
+                    }
+                });
+            });
+            
+            // 繪製節點
+            nodes.forEach(node => {
+                ctx.beginPath();
+                ctx.arc(node.x, node.y, 25, 0, Math.PI * 2);
+                
+                if (node.current) {
+                    ctx.fillStyle = '#FFC107';
+                } else if (node.visited) {
+                    ctx.fillStyle = '#4CAF50';
+                } else {
+                    ctx.fillStyle = '#ddd';
+                }
+                
+                ctx.fill();
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                ctx.fillStyle = '#333';
+                ctx.font = 'bold 18px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(node.id, node.x, node.y);
+            });
+        }
+        
+        // ===== 爬蟲圖繪製函數 =====
+        function drawWebStructure() {
+            const crawlerCanvas = document.getElementById('crawlerCanvas');
+            if (!crawlerCanvas) return;
+            
+            const crawlerCtx = crawlerCanvas.getContext('2d');
+            crawlerCtx.clearRect(0, 0, crawlerCanvas.width, crawlerCanvas.height);
+            
+            // 繪製連線
+            crawlerCtx.strokeStyle = '#ccc';
+            crawlerCtx.lineWidth = 2;
+            crawlerWebsites.forEach(site => {
+                site.children.forEach(childId => {
+                    const child = crawlerWebsiteMap[childId];
+                    if (child) {
+                        crawlerCtx.beginPath();
+                        crawlerCtx.moveTo(site.x, site.y);
+                        crawlerCtx.lineTo(child.x, child.y);
+                        crawlerCtx.stroke();
+                    }
+                });
+            });
+            
+            // 繪製網站節點
+            crawlerWebsites.forEach(site => {
+                crawlerCtx.save();
+                
+                if (site.current) {
+                    crawlerCtx.shadowBlur = 20;
+                    crawlerCtx.shadowColor = '#FFC107';
+                }
+                
+                crawlerCtx.beginPath();
+                crawlerCtx.arc(site.x, site.y, 30, 0, Math.PI * 2);
+                
+                if (site.current) {
+                    crawlerCtx.fillStyle = '#FFC107';
+                } else if (site.visited) {
+                    crawlerCtx.fillStyle = '#4CAF50';
+                } else {
+                    crawlerCtx.fillStyle = site.color;
+                }
+                
+                crawlerCtx.fill();
+                crawlerCtx.shadowBlur = 0;
+                crawlerCtx.strokeStyle = '#333';
+                crawlerCtx.lineWidth = 2;
+                crawlerCtx.stroke();
+                crawlerCtx.restore();
+                
+                crawlerCtx.fillStyle = '#000';
+                crawlerCtx.font = 'bold 12px Arial';
+                crawlerCtx.textAlign = 'center';
+                crawlerCtx.textBaseline = 'middle';
+                crawlerCtx.fillText(site.id, site.x, site.y);
+                
+                crawlerCtx.fillStyle = '#666';
+                crawlerCtx.font = '9px Arial';
+                crawlerCtx.fillText(site.domain, site.x, site.y + 45);
+            });
+        }
+        
+        // ===== BFS 演算法 =====
+        async function startBFS() {
+            if (isRunning) return;
+            isRunning = true;
+            resetGraph();
+            
+            addLog('=== 開始 BFS（廣度優先搜尋）===', 'log-queue');
+            addLog('使用佇列 (Queue)，先進先出');
+            
+            const queue = ['A'];
+            const visited = new Set();
+            
+            while (queue.length > 0) {
+                const currentId = queue.shift();
+                const currentNode = nodeMap[currentId];
+                
+                if (visited.has(currentId)) continue;
+                
+                currentNode.current = true;
+                drawGraph();
+                addLog(`正在訪問節點：${currentId}`, 'log-visit');
+                await sleep(animationSpeed);
+                
+                currentNode.visited = true;
+                currentNode.current = false;
+                visited.add(currentId);
+                
+                const unvisitedNeighbors = currentNode.neighbors.filter(n => !visited.has(n));
+                if (unvisitedNeighbors.length > 0) {
+                    queue.push(...unvisitedNeighbors);
+                    addLog(`  → 將 [${unvisitedNeighbors.join(', ')}] 加入佇列`, 'log-queue');
+                    addLog(`  → 當前佇列：[${queue.join(', ')}]`, 'log-queue');
+                }
+                
+                drawGraph();
+                await sleep(animationSpeed / 2);
+            }
+            
+            addLog('=== BFS 完成！===', 'log-queue');
+            isRunning = false;
+        }
+        
+        // ===== DFS 演算法 =====
+        async function startDFS() {
+            if (isRunning) return;
+            isRunning = true;
+            resetGraph();
+            
+            addLog('=== 開始 DFS（深度優先搜尋）===', 'log-queue');
+            addLog('使用堆疊 (Stack)，後進先出');
+            
+            const visited = new Set();
+            
+            async function dfsVisit(nodeId, depth = 0) {
+                if (visited.has(nodeId)) return;
+                
+                const currentNode = nodeMap[nodeId];
+                const indent = '  '.repeat(depth);
+                
+                currentNode.current = true;
+                drawGraph();
+                addLog(`${indent}正在訪問節點：${nodeId} (深度：${depth})`, 'log-visit');
+                await sleep(animationSpeed);
+                
+                currentNode.visited = true;
+                currentNode.current = false;
+                visited.add(nodeId);
+                drawGraph();
+                
+                for (const neighborId of currentNode.neighbors) {
+                    if (!visited.has(neighborId)) {
+                        addLog(`${indent}  → 深入探索：${neighborId}`, 'log-queue');
+                        await sleep(animationSpeed / 2);
+                        await dfsVisit(neighborId, depth + 1);
+                        addLog(`${indent}  ← 回溯到：${nodeId}`, 'log-queue');
+                    }
+                }
+            }
+            
+            await dfsVisit('A');
+            addLog('=== DFS 完成！===', 'log-queue');
+            isRunning = false;
+        }
+        
+        // ===== 重置圖 =====
+        function resetGraph() {
+            nodes.forEach(node => {
+                node.visited = false;
+                node.current = false;
+            });
+            log.innerHTML = '';
+            drawGraph();
+        }
+        
+        // ===== 爬蟲動畫函數 =====
+        function showCrawlerDemo() {
+            crawlerWebsites.forEach(site => {
+                site.visited = false;
+                site.current = false;
+            });
+            
+            const animationDiv = document.getElementById('crawlerAnimation');
+            animationDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                animationDiv.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+            
+            const status = document.getElementById('crawlerStatus');
+            const crawlerLog = document.getElementById('crawlerLog');
+            
+            if (crawlerLog) crawlerLog.innerHTML = '';
+            if (status) status.textContent = '👆 請選擇要模擬的爬蟲類型（DFS 或 BFS）';
+            
+            setTimeout(() => {
+                drawWebStructure();
+            }, 300);
+        }
+        
+        function closeCrawlerAnimation() {
+            document.getElementById('crawlerAnimation').style.display = 'none';
+            crawlerWebsites.forEach(site => {
+                site.visited = false;
+                site.current = false;
+            });
+        }
+        
+        function resetCrawlerAnimation() {
+            // 停止正在執行的爬蟲
+            isRunning = false;
+            
+            crawlerWebsites.forEach(site => {
+                site.visited = false;
+                site.current = false;
+            });
+            
+            const crawlerLogDiv = document.getElementById('crawlerLog');
+            if (crawlerLogDiv) crawlerLogDiv.innerHTML = '';
+            
+            const status = document.getElementById('crawlerStatus');
+            if (status) status.textContent = '👆 請選擇要模擬的爬蟲類型（BFS 或 DFS）';
+            
+            drawWebStructure();
+        }
+        
+        // ===== DFS 爬蟲模擬 =====
+        async function simulateDFSCrawler() {
+            if (isRunning) return;
+            isRunning = true;
+            
+            crawlerWebsites.forEach(site => {
+                site.visited = false;
+                site.current = false;
+            });
+            
+            const crawlerLogDiv = document.getElementById('crawlerLog');
+            if (crawlerLogDiv) crawlerLogDiv.innerHTML = '';
+            
+            const status = document.getElementById('crawlerStatus');
+            if (status) status.textContent = '🔵 DFS 爬蟲執行中...';
+            
+            drawWebStructure();
+            
+            addCrawlerLog('=== 開始 DFS 爬蟲 ===', 'dfs');
+            addCrawlerLog('特點：一路爬到底，深入探索單一路徑', 'dfs');
+            
+            await sleep(1000);
+            
+            const visited = new Set();
+            let requestCount = {};
+            
+            async function dfsCrawl(siteId, depth = 0) {
+                if (!isRunning || visited.has(siteId)) return;
+                
+                const site = crawlerWebsiteMap[siteId];
+                const indent = '  '.repeat(depth);
+                
+                requestCount[site.domain] = (requestCount[site.domain] || 0) + 1;
+                
+                site.current = true;
+                drawWebStructure();
+                addCrawlerLog(`${indent}🕷️ 正在爬取: ${site.id} (${site.domain}) - 深度 ${depth}`, 'dfs');
+                await sleep(animationSpeed);
+                
+                if (!isRunning) return;
+                
+                site.visited = true;
+                site.current = false;
+                visited.add(siteId);
+                drawWebStructure();
+                
+                if (site.children.length > 0) {
+                    addCrawlerLog(`${indent}  → 發現 ${site.children.length} 個連結，深入第一個...`, 'dfs');
+                }
+                
+                for (const childId of site.children) {
+                    if (!isRunning) return;
+                    if (!visited.has(childId)) {
+                        await sleep(animationSpeed / 2);
+                        await dfsCrawl(childId, depth + 1);
+                    }
+                }
+            }
+            
+            await dfsCrawl('Home');
+            
+            if (!isRunning) {
+                addCrawlerLog('', 'dfs');
+                addCrawlerLog('⚠️ DFS 爬蟲已被中斷', 'dfs');
+                if (status) status.textContent = '⚠️ DFS 爬蟲已被中斷';
+                return;
+            }
+            
+            addCrawlerLog('', 'dfs');
+            addCrawlerLog('=== DFS 完成 ===', 'dfs');
+            addCrawlerLog('📊 各網域請求次數統計:', 'dfs');
+            Object.keys(requestCount).forEach(domain => {
+                addCrawlerLog(`   ${domain}: ${requestCount[domain]} 次請求`, 'dfs');
+            });
+            addCrawlerLog('⚠️ 注意：某些網域可能被連續請求多次！', 'dfs');
+            
+            if (status) status.textContent = '✅ DFS 爬蟲完成 - 注意觀察爬取順序是否集中在單一路徑';
+            isRunning = false;
+        }
+        
+        // ===== BFS 爬蟲模擬 =====
+        async function simulateBFSCrawler() {
+            if (isRunning) return;
+            isRunning = true;
+            
+            crawlerWebsites.forEach(site => {
+                site.visited = false;
+                site.current = false;
+            });
+            
+            const crawlerLogDiv = document.getElementById('crawlerLog');
+            if (crawlerLogDiv) crawlerLogDiv.innerHTML = '';
+            
+            const status = document.getElementById('crawlerStatus');
+            if (status) status.textContent = '🟢 BFS 爬蟲執行中...';
+            
+            drawWebStructure();
+            
+            addCrawlerLog('=== 開始 BFS 爬蟲 ===', 'bfs');
+            addCrawlerLog('特點：層層推進，平衡探索所有網站', 'bfs');
+            
+            await sleep(1000);
+            
+            const queue = ['Home'];
+            const visited = new Set();
+            let currentDepth = 0;
+            let nodesAtDepth = { 0: 1 };
+            let processedAtDepth = 0;
+            let requestCount = {};
+            
+            while (queue.length > 0 && isRunning) {
+                const siteId = queue.shift();
+                const site = crawlerWebsiteMap[siteId];
+                
+                if (visited.has(siteId)) continue;
+                
+                processedAtDepth++;
+                if (processedAtDepth > nodesAtDepth[currentDepth]) {
+                    currentDepth++;
+                    processedAtDepth = 1;
+                    addCrawlerLog('', 'bfs');
+                    addCrawlerLog(`--- 進入第 ${currentDepth} 層 ---`, 'bfs');
+                }
+                
+                requestCount[site.domain] = (requestCount[site.domain] || 0) + 1;
+                
+                site.current = true;
+                drawWebStructure();
+                addCrawlerLog(`🕷️ 爬取: ${site.id} (${site.domain})`, 'bfs');
+                await sleep(animationSpeed);
+                
+                if (!isRunning) break;
+                
+                site.visited = true;
+                site.current = false;
+                visited.add(siteId);
+                drawWebStructure();
+                
+                const unvisitedChildren = site.children.filter(c => !visited.has(c));
+                if (unvisitedChildren.length > 0) {
+                    queue.push(...unvisitedChildren);
+                    addCrawlerLog(`  → 將 [${unvisitedChildren.join(', ')}] 加入佇列`, 'bfs');
+                    
+                    if (!nodesAtDepth[currentDepth + 1]) {
+                        nodesAtDepth[currentDepth + 1] = 0;
+                    }
+                    nodesAtDepth[currentDepth + 1] += unvisitedChildren.length;
+                }
+                
+                await sleep(animationSpeed / 2);
+            }
+            
+            if (!isRunning) {
+                addCrawlerLog('', 'bfs');
+                addCrawlerLog('⚠️ BFS 爬蟲已被中斷', 'bfs');
+                if (status) status.textContent = '⚠️ BFS 爬蟲已被中斷';
+                return;
+            }
+            
+            addCrawlerLog('', 'bfs');
+            addCrawlerLog('=== BFS 完成 ===', 'bfs');
+            addCrawlerLog('📊 各網域請求次數統計:', 'bfs');
+            Object.keys(requestCount).forEach(domain => {
+                addCrawlerLog(`   ${domain}: ${requestCount[domain]} 次請求`, 'bfs');
+            });
+            addCrawlerLog('✅ 優勢：請求分散到不同網域，不會過載單一伺服器', 'bfs');
+            
+            if (status) status.textContent = '✅ BFS 爬蟲完成 - 注意觀察如何平衡地探索各個網站';
+            isRunning = false;
+        }
+        
+        // ===== 初始化 =====
+        drawGraph();
+    </script>
+</body>
+</html>

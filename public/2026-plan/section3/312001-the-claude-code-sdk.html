@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Code SDK | 秒懂白話文解析</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap"
+        rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    colors: {
+                        // 強制鎖死品牌配色
+                        themeBg: '#F8F8F5',
+                        themeDark: '#1A1A1A',
+                        themeAccent: '#C88A64',
+                        themeAccentHover: '#B57855',
+                        themeCode: '#242424',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #F8F8F5;
+            color: #1A1A1A;
+        }
+
+        /* 橫向防呆 */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* 淡入動畫 (給對話泡泡用) */
+        .fade-in-up {
+            animation: fadeInUp 0.4s ease-out forwards;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Loading 點點點動畫 */
+        .loading-dots:after {
+            content: '.';
+            animation: dots 1.5s steps(5, end) infinite;
+        }
+
+        @keyframes dots {
+
+            0%,
+            20% {
+                color: rgba(0, 0, 0, 0);
+                text-shadow: .25em 0 0 rgba(0, 0, 0, 0), .5em 0 0 rgba(0, 0, 0, 0);
+            }
+
+            40% {
+                color: currentColor;
+                text-shadow: .25em 0 0 rgba(0, 0, 0, 0), .5em 0 0 rgba(0, 0, 0, 0);
+            }
+
+            60% {
+                text-shadow: .25em 0 0 currentColor, .5em 0 0 rgba(0, 0, 0, 0);
+            }
+
+            80%,
+            100% {
+                text-shadow: .25em 0 0 currentColor, .5em 0 0 currentColor;
+            }
+        }
+    </style>
+</head>
+
+<body class="font-sans leading-relaxed pb-32">
+
+    <!-- Header -->
+    <header class="w-full bg-themeDark text-themeBg py-20 px-6 shadow-xl">
+        <div class="max-w-4xl mx-auto">
+            <div
+                class="inline-block px-3 py-1 bg-themeAccent/20 border border-themeAccent/50 text-themeAccent rounded-full text-xs font-mono mb-4 tracking-widest uppercase">
+                Developer Advocate Guide
+            </div>
+            <h1 class="text-4xl md:text-5xl font-black tracking-tight leading-tight mb-4">
+                白話文圖解：<br>
+                <span class="text-themeAccent">Claude Code SDK 底層邏輯</span>
+            </h1>
+            <p class="text-lg text-gray-400 font-light leading-relaxed">
+                放棄難懂的 JSON 封包與抽象的節點圖。我們直接用「情境對比」，讓你一秒看懂 SDK 到底在幹嘛、它跟傳統 API 差在哪，以及為什麼程式會自己「知錯能改」。
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-6 mt-16 space-y-24">
+
+        <!-- Module 1: 依賴陷阱 (維持極簡對比) -->
+        <section>
+            <div class="flex items-center gap-3 mb-6">
+                <div
+                    class="w-10 h-10 bg-themeDark text-themeAccent rounded-lg flex items-center justify-center font-mono font-bold text-lg">
+                    1</div>
+                <h2 class="text-2xl font-bold">第一關：千萬別抄影片的程式碼</h2>
+            </div>
+            <p class="text-gray-700 mb-6">
+                官方教學影片裡示範的套件名稱已經過期。如果你照抄，程式根本跑不起來。請認明下方的正確版本：
+            </p>
+            <div class="w-full overflow-x-auto no-scrollbar">
+                <div
+                    class="min-w-[700px] grid grid-cols-2 rounded-xl overflow-hidden border border-gray-300 shadow-sm bg-white">
+                    <div class="p-6 bg-[#2a1c1c] border-r border-gray-300">
+                        <div class="text-red-400 font-bold text-sm mb-3">❌ 影片舊版寫法 (會報錯)</div>
+                        <code
+                            class="block text-sm font-mono text-gray-400 line-through decoration-red-500 mb-2">npm install @anthropic-ai/claude-code</code>
+                        <code
+                            class="block text-sm font-mono text-gray-400 opacity-50">import { query } from "@anthropic-ai/claude-code";</code>
+                    </div>
+                    <div class="p-6 bg-themeDark">
+                        <div class="text-themeAccent font-bold text-sm mb-3">✅ 最新正確寫法 (請用這個)</div>
+                        <code
+                            class="block text-sm font-mono text-white mb-2">npm install <span class="text-themeAccent">@anthropic-ai/claude-agent-sdk</span></code>
+                        <code
+                            class="block text-sm font-mono text-gray-300">import { query } from <span class="text-themeAccent">"@anthropic-ai/claude-agent-sdk"</span>;</code>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Module 2: 串流軌跡 (白話文對比版) -->
+        <section>
+            <div class="flex items-center gap-3 mb-6">
+                <div
+                    class="w-10 h-10 bg-themeDark text-themeAccent rounded-lg flex items-center justify-center font-mono font-bold text-lg">
+                    2</div>
+                <h2 class="text-2xl font-bold">什麼是「串流思考軌跡」？</h2>
+            </div>
+
+            <p class="text-gray-700 mb-6 leading-relaxed">
+                很多人不懂為什麼 SDK 要寫 <code>for await (const event of query())</code>。因為它不是一個「按下去等答案」的
+                API，而是一個<strong>「實況轉播台」</strong>。<br>
+                點擊下方按鈕，看看「傳統 API」和「Agent SDK」在處理同一個任務時，你看到的畫面有什麼不同：
+            </p>
+
+            <div class="w-full overflow-x-auto no-scrollbar">
+                <div
+                    class="min-w-[800px] bg-white border border-gray-300 rounded-xl shadow-lg overflow-hidden flex flex-col">
+
+                    <div class="bg-gray-100 px-6 py-4 border-b border-gray-300 flex justify-between items-center">
+                        <span class="font-mono text-sm font-bold text-gray-700">任務：找出專案目錄裡有幾個 JS 檔案</span>
+                        <button onclick="runRaceDemo()" id="btn-race"
+                            class="bg-themeDark hover:bg-themeAccent text-white px-4 py-2 rounded-lg font-bold text-sm transition-colors shadow">
+                            開始執行比較
+                        </button>
+                    </div>
+
+                    <div class="flex h-[320px] bg-white divide-x divide-gray-200">
+                        <!-- 左：傳統 API -->
+                        <div class="w-1/2 p-6 flex flex-col">
+                            <h3 class="text-sm font-bold text-gray-500 mb-4 uppercase tracking-widest text-center">傳統
+                                API (乾等模式)</h3>
+                            <div
+                                class="flex-1 bg-gray-50 rounded-lg p-4 font-mono text-sm border border-gray-200 flex flex-col justify-center items-center relative">
+                                <div id="api-loading" class="hidden text-gray-400 font-bold">送出請求，伺服器處理中<span
+                                        class="loading-dots"></span></div>
+                                <div id="api-result"
+                                    class="hidden mt-4 text-themeDark bg-white px-4 py-2 rounded border border-gray-300 shadow-sm w-full text-center fade-in-up">
+                                    [最終答案] 找到了！總共有 5 個 JS 檔案。
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 右：SDK Agent -->
+                        <div class="w-1/2 p-6 flex flex-col">
+                            <h3 class="text-sm font-bold text-themeAccent mb-4 uppercase tracking-widest text-center">
+                                Agent SDK (實況串流)</h3>
+                            <div id="sdk-stream"
+                                class="flex-1 bg-themeCode rounded-lg p-4 font-mono text-sm text-gray-300 overflow-y-auto space-y-3 relative">
+                                <div class="text-gray-500 italic text-center absolute inset-0 flex items-center justify-center pointer-events-none"
+                                    id="sdk-placeholder">等待執行...</div>
+                                <!-- 串流內容會動態插入這裡 -->
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <p class="text-sm text-gray-500 mt-4 text-center">
+                💡 這就是 <code>for await</code> 的威力：你能「攔截」到它每一次決定使用工具 (tool_use) 的瞬間，用來實作 UI 進度條，而不是讓用戶看著畫面發呆。
+            </p>
+        </section>
+
+        <!-- Module 3: 沙箱與錯誤迴圈 (白話文情境版) -->
+        <section>
+            <div class="flex items-center gap-3 mb-6">
+                <div
+                    class="w-10 h-10 bg-themeDark text-themeAccent rounded-lg flex items-center justify-center font-mono font-bold text-lg">
+                    3</div>
+                <h2 class="text-2xl font-bold">「預設唯讀」與神奇的錯誤迴圈</h2>
+            </div>
+
+            <p class="text-gray-700 mb-6 leading-relaxed">
+                這是初學者最常跌倒的坑：SDK 為了安全，<strong>預設不准修改檔案</strong>。如果你在 Prompt 要求它改檔案，程式不會當機，而是會上演一段「被警衛攔下，然後乖乖道歉」的戲碼。<br>
+                觀察下方模擬器，看看「有給權限」和「沒給權限」時，底層系統與 AI 之間的對話是怎麼進行的。
+            </p>
+
+            <div class="w-full overflow-x-auto no-scrollbar">
+                <div
+                    class="min-w-[800px] border border-gray-300 rounded-xl overflow-hidden shadow-lg bg-white flex flex-col">
+
+                    <div class="bg-gray-100 px-6 py-4 border-b border-gray-300 flex justify-center gap-4">
+                        <button onclick="runGotchaDemo('fail')" id="btn-gotcha-fail"
+                            class="bg-[#2A1A1A] text-red-400 px-4 py-2 rounded-lg font-mono text-sm border border-red-900/30 hover:bg-[#3A1A1A] transition-colors">
+                            模擬 1：未設定 Edit 權限 (觀察出錯)
+                        </button>
+                        <button onclick="runGotchaDemo('success')" id="btn-gotcha-succ"
+                            class="bg-themeAccent/10 text-themeAccent px-4 py-2 rounded-lg font-mono text-sm border border-themeAccent/30 hover:bg-themeAccent/20 transition-colors">
+                            模擬 2：加入 allowedTools: ["Edit"]
+                        </button>
+                    </div>
+
+                    <div class="flex flex-col p-6 h-[400px] bg-themeBg overflow-y-auto" id="chat-container">
+                        <div class="text-center text-gray-400 italic font-mono text-sm my-auto" id="chat-placeholder">
+                            請點擊上方按鈕開始模擬...
+                        </div>
+                        <!-- 對話泡泡會動態插入這裡 -->
+                    </div>
+
+                </div>
+            </div>
+            <div class="mt-4 p-4 bg-gray-100 rounded-lg text-sm text-gray-700 font-mono leading-relaxed">
+                <span class="font-bold text-themeDark">👨‍💻 程式碼解法：</span><br>
+                在呼叫時加上 <code
+                    class="bg-white px-1 text-themeAccent border border-gray-200">options: { allowedTools: ["Edit"] }</code>，或是修改專案底下的
+                <code class="bg-white px-1 border border-gray-200">.claude/settings.json</code>，就能發給它通行證。
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="w-full bg-themeDark py-8 mt-20 text-center text-gray-500 font-mono text-sm">
+        Claude Agent SDK • Plain Language Visual Guide
+    </footer>
+
+    <script>
+        // --- Module 2: 傳統 API vs SDK 串流競速 ---
+        let isRaceRunning = false;
+        async function runRaceDemo() {
+            if (isRaceRunning) return;
+            isRaceRunning = true;
+
+            const btn = document.getElementById('btn-race');
+            const apiLoad = document.getElementById('api-loading');
+            const apiRes = document.getElementById('api-result');
+            const sdkStream = document.getElementById('sdk-stream');
+            const placeholder = document.getElementById('sdk-placeholder');
+
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
+            apiLoad.classList.remove('hidden');
+            apiRes.classList.add('hidden');
+            sdkStream.innerHTML = '';
+            if (placeholder) placeholder.style.display = 'none';
+
+            // 準備 SDK 串流的每一句話
+            const sdkSteps = [
+                { type: 'message_start', text: '收到任務，我開始思考了...' },
+                { type: 'tool_use', text: '決定使用工具：打開目錄閱讀器 (read_dir)' },
+                { type: 'tool_result', text: '系統回報：目錄讀取完畢，檔案清單已獲取' },
+                { type: 'message', text: '整理資料中，準備回覆...' },
+                { type: 'final', text: '[最終答案] 找到了！總共有 5 個 JS 檔案。' }
+            ];
+
+            // 模擬 SDK 一步步吐出資訊
+            for (let i = 0; i < sdkSteps.length; i++) {
+                await new Promise(r => setTimeout(r, 1000));
+                const div = document.createElement('div');
+                div.className = 'fade-in-up border-l-2 border-themeAccent pl-3 py-1';
+
+                if (sdkSteps[i].type === 'final') {
+                    div.innerHTML = `<span class="text-white font-bold block">${sdkSteps[i].text}</span>`;
+                } else {
+                    div.innerHTML = `
+                        <div class="text-[10px] text-themeAccent uppercase tracking-wider mb-0.5">${sdkSteps[i].type}</div>
+                        <div class="text-gray-300">${sdkSteps[i].text}</div>
+                    `;
+                }
+                sdkStream.appendChild(div);
+                sdkStream.scrollTop = sdkStream.scrollHeight;
+            }
+
+            // 此刻，傳統 API 才終於醒來給出答案
+            apiLoad.classList.add('hidden');
+            apiRes.classList.remove('hidden');
+
+            btn.classList.remove('opacity-50', 'cursor-not-allowed');
+            isRaceRunning = false;
+        }
+
+        // --- Module 3: 沙箱錯誤迴圈 (對話模擬) ---
+        let isGotchaRunning = false;
+        async function runGotchaDemo(mode) {
+            if (isGotchaRunning) return;
+            isGotchaRunning = true;
+
+            const chat = document.getElementById('chat-container');
+            chat.innerHTML = '';
+
+            const addBubble = (role, text, isError = false) => {
+                const div = document.createElement('div');
+                div.className = `fade-in-up flex w-full mb-4 ${role === 'ai' ? 'justify-start' : 'justify-end'}`;
+
+                let innerHTML = '';
+                if (role === 'ai') {
+                    // AI (Claude) 的泡泡
+                    innerHTML = `
+                        <div class="max-w-[70%]">
+                            <div class="text-[10px] text-gray-500 font-mono mb-1 ml-1">Claude 模型</div>
+                            <div class="bg-white border border-gray-300 text-gray-800 p-3 rounded-2xl rounded-tl-none shadow-sm text-sm">
+                                ${text}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // System (SDK Guard) 的泡泡
+                    const bgColor = isError ? 'bg-red-50 border-red-200 text-red-700' : 'bg-green-50 border-green-200 text-green-700';
+                    const titleColor = isError ? 'text-red-500' : 'text-green-600';
+                    innerHTML = `
+                        <div class="max-w-[70%]">
+                            <div class="text-[10px] ${titleColor} font-mono mb-1 mr-1 text-right">SDK 系統防護網 (Sandbox Guard)</div>
+                            <div class="${bgColor} border p-3 rounded-2xl rounded-tr-none shadow-sm text-sm">
+                                ${text}
+                            </div>
+                        </div>
+                    `;
+                }
+                div.innerHTML = innerHTML;
+                chat.appendChild(div);
+                chat.scrollTop = chat.scrollHeight;
+            };
+
+            // 劇情開始
+            addBubble('ai', '你要求我編輯 package.json。好的，我發出工具請求：<code>edit_file("package.json")</code>');
+            await new Promise(r => setTimeout(r, 1200));
+
+            if (mode === 'fail') {
+                // 失敗情境 (攔截)
+                addBubble('system', '⛔ <strong>攔截！</strong>你沒有被授權使用 Edit 工具。我退回一個錯誤 JSON：<br><code>{"is_error": true, "content": "Permission denied"}</code>', true);
+                await new Promise(r => setTimeout(r, 1500));
+
+                addBubble('ai', '收到錯誤回報。原來我沒權限改檔案，那我改口道歉好了。');
+                await new Promise(r => setTimeout(r, 1000));
+
+                addBubble('ai', '「非常抱歉，我目前的設定檔不允許我編輯檔案，請幫我加上權限。」');
+            } else {
+                // 成功情境 (放行)
+                addBubble('system', '✅ <strong>放行！</strong>我檢查到 <code>allowedTools</code> 裡面有 "Edit"。檔案寫入成功。回傳：<br><code>{"is_error": false, "content": "Success"}</code>', false);
+                await new Promise(r => setTimeout(r, 1500));
+
+                addBubble('ai', '收到成功回報。任務完成了，我來回覆用戶。');
+                await new Promise(r => setTimeout(r, 1000));
+
+                addBubble('ai', '「我已經成功為您的 package.json 更新內容了！」');
+            }
+
+            isGotchaRunning = false;
+        }
+    </script>
+</body>
+
+</html>
