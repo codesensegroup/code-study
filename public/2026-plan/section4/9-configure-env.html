@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>重點 #8 · 工具鏈 &gt; Prompt</title>
+    <title>重點 #9 · Configure Your Environment</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap');
@@ -75,86 +75,93 @@
     <div class="max-w-5xl mx-auto">
 
         <header class="text-center mb-12">
-            <p class="chip bg-indigo-500/20 text-indigo-300 mb-3">重點 #8 · 觀念</p>
-            <h1 class="text-5xl font-bold gradient-text mb-4">工具鏈 &gt; Prompt</h1>
-            <p class="text-slate-400">Claude Code 的威力不是 prompt engineering，而是周邊工具的組合。</p>
+            <p class="chip bg-indigo-500/20 text-indigo-300 mb-3">重點 #9 · Configure Your Environment</p>
+            <h1 class="text-5xl font-bold gradient-text mb-4">配置你的環境</h1>
+            <p class="text-slate-400">官方建議：花一次時間配置好環境，所有後續 session 都自動受惠。八個官方推薦的擴充點，從上到下堆起來。</p>
         </header>
 
         <!-- 主動畫：積木堆疊 -->
         <section class="mb-12 p-8 rounded-2xl bg-slate-800/50 border border-slate-700">
             <div class="grid grid-cols-1 md:grid-cols-[1fr_180px] gap-8 items-end">
 
-                <!-- 左：積木堆 -->
+                <!-- 左：8 個官方擴充點堆疊 -->
                 <div class="flex flex-col-reverse gap-2">
-                    <div class="block blk1 rounded-lg px-5 py-3 bg-gradient-to-r from-blue-500/30 to-blue-600/30 border border-blue-400 flex items-center gap-3">
-                        <span class="text-2xl">💬</span>
-                        <span class="font-mono text-sm text-slate-300">prompt</span>
-                        <span class="ml-auto text-xs text-slate-400">基礎</span>
-                    </div>
-                    <div class="block blk2 rounded-lg px-5 py-3 bg-gradient-to-r from-cyan-500/30 to-cyan-600/30 border border-cyan-400 flex items-center gap-3">
-                        <span class="text-2xl">🐚</span>
-                        <span class="font-mono text-sm text-slate-300">shell tools</span>
-                        <span class="ml-auto text-xs text-slate-400">bash / find / grep</span>
-                    </div>
-                    <div class="block blk3 rounded-lg px-5 py-3 bg-gradient-to-r from-emerald-500/30 to-emerald-600/30 border border-emerald-400 flex items-center gap-3">
-                        <span class="text-2xl">🌿</span>
-                        <span class="font-mono text-sm text-slate-300">git</span>
-                        <span class="ml-auto text-xs text-slate-400">commit / branch / diff</span>
-                    </div>
-                    <div class="block blk4 rounded-lg px-5 py-3 bg-gradient-to-r from-amber-500/30 to-amber-600/30 border border-amber-400 flex items-center gap-3">
-                        <span class="text-2xl">🧪</span>
-                        <span class="font-mono text-sm text-slate-300">test runner</span>
-                        <span class="ml-auto text-xs text-slate-400">vitest / jest / pytest</span>
-                    </div>
-                    <div class="block blk5 rounded-lg px-5 py-3 bg-gradient-to-r from-orange-500/30 to-orange-600/30 border border-orange-400 flex items-center gap-3">
-                        <span class="text-2xl">🧹</span>
-                        <span class="font-mono text-sm text-slate-300">linter</span>
-                        <span class="ml-auto text-xs text-slate-400">eslint / ruff</span>
-                    </div>
-                    <div class="block blk6 rounded-lg px-5 py-3 bg-gradient-to-r from-purple-500/30 to-purple-600/30 border border-purple-400 flex items-center gap-3">
+                    <div class="block blk1 rounded-lg px-5 py-3 bg-gradient-to-r from-purple-500/30 to-purple-600/30 border border-purple-400 flex items-center gap-3">
                         <span class="text-2xl">📜</span>
                         <span class="font-mono text-sm text-slate-300">CLAUDE.md</span>
-                        <span class="ml-auto text-xs text-slate-400">專案知識</span>
+                        <span class="ml-auto text-xs text-slate-400">專案規則 · 每次自動載入</span>
                     </div>
-                    <div class="block blk7 rounded-lg px-5 py-3 bg-gradient-to-r from-pink-500/30 to-pink-600/30 border border-pink-400 flex items-center gap-3">
+                    <div class="block blk2 rounded-lg px-5 py-3 bg-gradient-to-r from-pink-500/30 to-pink-600/30 border border-pink-400 flex items-center gap-3">
+                        <span class="text-2xl">🛡️</span>
+                        <span class="font-mono text-sm text-slate-300">Permissions / Auto Mode</span>
+                        <span class="ml-auto text-xs text-slate-400">減少彈窗、限制風險</span>
+                    </div>
+                    <div class="block blk3 rounded-lg px-5 py-3 bg-gradient-to-r from-cyan-500/30 to-cyan-600/30 border border-cyan-400 flex items-center gap-3">
+                        <span class="text-2xl">🐚</span>
+                        <span class="font-mono text-sm text-slate-300">CLI tools</span>
+                        <span class="ml-auto text-xs text-slate-400">gh · aws · gcloud · sentry-cli</span>
+                    </div>
+                    <div class="block blk4 rounded-lg px-5 py-3 bg-gradient-to-r from-blue-500/30 to-blue-600/30 border border-blue-400 flex items-center gap-3">
+                        <span class="text-2xl">🔌</span>
+                        <span class="font-mono text-sm text-slate-300">MCP Servers</span>
+                        <span class="ml-auto text-xs text-slate-400">Notion · Figma · DB · 監控</span>
+                    </div>
+                    <div class="block blk5 rounded-lg px-5 py-3 bg-gradient-to-r from-emerald-500/30 to-emerald-600/30 border border-emerald-400 flex items-center gap-3">
                         <span class="text-2xl">🪝</span>
-                        <span class="font-mono text-sm text-slate-300">hooks + permissions</span>
-                        <span class="ml-auto text-xs text-slate-400">自動化攔截</span>
+                        <span class="font-mono text-sm text-slate-300">Hooks</span>
+                        <span class="ml-auto text-xs text-slate-400">確定性自動化 · 100% 觸發</span>
+                    </div>
+                    <div class="block blk6 rounded-lg px-5 py-3 bg-gradient-to-r from-amber-500/30 to-amber-600/30 border border-amber-400 flex items-center gap-3">
+                        <span class="text-2xl">🎯</span>
+                        <span class="font-mono text-sm text-slate-300">Skills</span>
+                        <span class="ml-auto text-xs text-slate-400">領域知識 · 按需載入</span>
+                    </div>
+                    <div class="block blk7 rounded-lg px-5 py-3 bg-gradient-to-r from-orange-500/30 to-orange-600/30 border border-orange-400 flex items-center gap-3">
+                        <span class="text-2xl">🧑‍🚀</span>
+                        <span class="font-mono text-sm text-slate-300">Subagents</span>
+                        <span class="ml-auto text-xs text-slate-400">獨立 context · 不污染主對話</span>
+                    </div>
+                    <div class="block blk7 rounded-lg px-5 py-3 bg-gradient-to-r from-rose-500/30 to-rose-600/30 border border-rose-400 flex items-center gap-3">
+                        <span class="text-2xl">🧩</span>
+                        <span class="font-mono text-sm text-slate-300">Plugins</span>
+                        <span class="ml-auto text-xs text-slate-400">社群打包好的整套擴充</span>
                     </div>
                 </div>
 
                 <!-- 右：總和變超人 -->
                 <div class="text-center">
                     <div class="power-up text-7xl mb-3">🤖</div>
-                    <p class="text-amber-300 font-bold text-sm">= 真正的 Agent</p>
-                    <p class="text-xs text-slate-500 mt-1 font-mono">tools × discipline</p>
+                    <p class="text-amber-300 font-bold text-sm">= 配置好的 Agent</p>
+                    <p class="text-xs text-slate-500 mt-1 font-mono">env × discipline</p>
                 </div>
             </div>
         </section>
 
-        <!-- 對比：純 prompt 派 vs 工具鏈派 -->
-        <h2 class="text-2xl font-bold mb-4 text-center text-slate-300">兩種派系</h2>
+        <!-- 對比：未配置 vs 配置完整 -->
+        <h2 class="text-2xl font-bold mb-4 text-center text-slate-300">未配置 vs 配置完整環境</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
 
             <div class="compare-card rounded-xl p-6 bg-red-950/30 border border-red-900/50">
-                <p class="chip bg-red-500/30 text-red-300 mb-3">❌ Prompt 派</p>
-                <h3 class="font-bold mb-3 text-red-200">「我有超強 prompt」</h3>
+                <p class="chip bg-red-500/30 text-red-300 mb-3">❌ 開箱即用</p>
+                <h3 class="font-bold mb-3 text-red-200">「就一個對話視窗」</h3>
                 <ul class="space-y-1 text-sm text-slate-400">
-                    <li>• 把 prompt 寫成五頁長</li>
-                    <li>• 一直微調咒語</li>
-                    <li>• 結果還是不會跑測試</li>
-                    <li>• 還是要自己 git commit</li>
+                    <li>• 每次重貼一遍專案規則</li>
+                    <li>• 每個動作都要點確認</li>
+                    <li>• 不知道 gh / aws CLI 可以用</li>
+                    <li>• Lint / test 全靠手動跑</li>
+                    <li>• 同樣的 review 重做 N 次</li>
                 </ul>
             </div>
 
             <div class="compare-card rounded-xl p-6 bg-emerald-950/30 border border-emerald-900/50">
-                <p class="chip bg-emerald-500/30 text-emerald-300 mb-3">✅ 工具鏈派</p>
-                <h3 class="font-bold mb-3 text-emerald-200">「我有完整 workflow」</h3>
+                <p class="chip bg-emerald-500/30 text-emerald-300 mb-3">✅ 配置完整</p>
+                <h3 class="font-bold mb-3 text-emerald-200">「環境替你做事」</h3>
                 <ul class="space-y-1 text-sm text-slate-400">
-                    <li>• CLAUDE.md 寫好規則</li>
-                    <li>• Hook 自動 lint + test</li>
-                    <li>• Permissions 限制危險指令</li>
-                    <li>• Prompt 反而可以很短</li>
+                    <li>• CLAUDE.md 規則永久生效</li>
+                    <li>• Auto mode 自動審核命令</li>
+                    <li>• CLI tools / MCP 整合外部系統</li>
+                    <li>• Hook 自動 lint / test / format</li>
+                    <li>• Subagent 做 review 不污染主對話</li>
                 </ul>
             </div>
         </div>
@@ -165,9 +172,9 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
 
-            <!-- Prompt 派 -->
+            <!-- 沒配置環境 -->
             <div class="compare-card rounded-xl p-6 bg-red-950/30 border border-red-900/50">
-                <p class="chip bg-red-500/30 text-red-300 mb-3">❌ Prompt 派</p>
+                <p class="chip bg-red-500/30 text-red-300 mb-3">❌ 沒配置環境</p>
                 <h3 class="font-bold mb-3 text-red-200">把一切塞進巨型 prompt</h3>
 
                 <div class="font-mono text-xs bg-slate-950/50 rounded p-3 text-slate-300 space-y-1 mb-3 max-h-64 overflow-hidden">
@@ -190,9 +197,9 @@
                 </div>
             </div>
 
-            <!-- 工具鏈派 -->
+            <!-- 配置完整 -->
             <div class="compare-card rounded-xl p-6 bg-emerald-950/30 border border-emerald-900/50">
-                <p class="chip bg-emerald-500/30 text-emerald-300 mb-3">✅ 工具鏈派</p>
+                <p class="chip bg-emerald-500/30 text-emerald-300 mb-3">✅ 配置完整</p>
                 <h3 class="font-bold mb-3 text-emerald-200">短 prompt + 環境自動補位</h3>
 
                 <div class="font-mono text-xs bg-slate-950/50 rounded p-3 space-y-1 mb-3">
@@ -219,11 +226,11 @@
         <!-- 心法 -->
         <section class="rounded-2xl bg-slate-900 border border-slate-700 p-6 font-mono text-sm">
             <p class="text-slate-500 mb-3"># 一句話心法</p>
-            <p class="text-green-400 cursor-blink">不要練咒語，去搭環境 — 工具鏈才是真正的乘數</p>
+            <p class="text-green-400 cursor-blink">花一次時間配置環境 — 之後每個 session 都自動受惠</p>
         </section>
 
         <footer class="mt-12 text-center text-sm text-slate-500">
-            <p>Section 4 · Best Practice #8</p>
+            <p>Section 4 · Best Practice #9</p>
         </footer>
 
     </div>

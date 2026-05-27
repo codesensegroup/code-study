@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>重點 #5 · 探索型任務最在行</title>
+    <title>重點 #6 · 探索型任務最在行</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap');
@@ -94,12 +94,29 @@
     <div class="max-w-5xl mx-auto">
 
         <header class="text-center mb-12">
-            <p class="chip bg-amber-500/20 text-amber-300 mb-3">重點 #5 · 強項</p>
-            <h1 class="text-5xl font-bold gradient-text mb-4">探索型任務最在行</h1>
-            <p class="text-slate-400">不熟的 codebase、巨大 refactor、找 root cause — 這才是 Claude 的主場。</p>
+            <p class="chip bg-amber-500/20 text-amber-300 mb-3">重點 #6 · Ask Codebase Questions</p>
+            <h1 class="text-5xl font-bold gradient-text mb-4">把 Claude 當資深工程師問</h1>
+            <p class="text-slate-400">官方主張：在不熟的 codebase 裡，Claude Code 是最佳 onboarding 工具 — 你可以問同事的問題都可以問它。</p>
         </header>
 
+        <!-- 官方建議的問法示範 -->
+        <section class="mb-12 p-6 rounded-2xl bg-amber-950/20 border border-amber-700/40">
+            <p class="chip bg-amber-500/20 text-amber-300 mb-3">💬 官方建議直接問</p>
+            <p class="text-sm text-slate-300 mb-4">把 Claude Code 當<span class="text-amber-300 font-bold">新人 onboarding 的 mentor</span>，直接拋問題，不用特別寫 prompt 技巧：</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 font-mono text-xs">
+                <div class="bg-slate-900/60 rounded p-3 text-slate-300">▸ 這個專案的 logging 怎麼運作？</div>
+                <div class="bg-slate-900/60 rounded p-3 text-slate-300">▸ 我要新增一個 API endpoint 該怎麼做？</div>
+                <div class="bg-slate-900/60 rounded p-3 text-slate-300">▸ <span class="text-amber-300">foo.rs</span> 第 134 行的 <span class="text-amber-300">async move</span> 是什麼意思？</div>
+                <div class="bg-slate-900/60 rounded p-3 text-slate-300">▸ <span class="text-amber-300">CustomerOnboardingFlow</span> 處理了哪些邊界情況？</div>
+                <div class="bg-slate-900/60 rounded p-3 text-slate-300">▸ 第 333 行為什麼是呼叫 <span class="text-amber-300">foo()</span> 而不是 <span class="text-amber-300">bar()</span>？</div>
+                <div class="bg-slate-900/60 rounded p-3 text-slate-300">▸ 這個 helper 為什麼存在？誰在用？</div>
+            </div>
+            <p class="text-xs text-slate-500 mt-4">→ 效果：縮短 ramp-up 時間，減少同事被問問題的負擔</p>
+        </section>
+
         <!-- 主動畫：左邊掃檔案、右邊建 mental model -->
+        <h2 class="text-2xl font-bold mb-3 text-center text-slate-300">問了之後它會做什麼</h2>
+        <p class="text-center text-sm text-slate-400 mb-6">不需要你給檔名 — 它自己去掃，建立 mental model 再回答。</p>
         <section class="mb-12 p-8 rounded-2xl bg-slate-800/50 border border-slate-700">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
@@ -155,7 +172,8 @@
         </section>
 
         <!-- 適合的任務 -->
-        <h2 class="text-2xl font-bold mb-4 text-center text-slate-300">最適合丟給它的六種任務</h2>
+        <h2 class="text-2xl font-bold mb-4 text-center text-slate-300">適合在「探索期」丟給它的六種任務</h2>
+        <p class="text-center text-sm text-slate-400 mb-6">— 涵蓋 onboarding、追架構、找問題的高槓桿用法</p>
         <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
             <div class="task-card rounded-xl p-5 bg-slate-800/60 border border-slate-700 text-center">
                 <div class="text-3xl mb-2">🗺️</div>
@@ -244,11 +262,11 @@
         <!-- 心法 -->
         <section class="rounded-2xl bg-slate-900 border border-slate-700 p-6 font-mono text-sm">
             <p class="text-slate-500 mb-3"># 一句話心法</p>
-            <p class="text-green-400 cursor-blink">不是 autocomplete，而是「自主推理 + 建立 mental model」</p>
+            <p class="text-green-400 cursor-blink">不熟的 codebase = Claude 主場 — 把它當資深同事，直接問</p>
         </section>
 
         <footer class="mt-12 text-center text-sm text-slate-500">
-            <p>Section 4 · Best Practice #5</p>
+            <p>Section 4 · Best Practice #6</p>
         </footer>
 
     </div>
