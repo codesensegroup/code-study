@@ -31,7 +31,7 @@
         @keyframes fillUp {
             0%, 100%  { width: 5%;  background: #10B981; }
             25%       { width: 50%; background: #FBBF24; }
-            50%, 90%  { width: 95%; background: #EF4444; }
+            50%, 95%  { width: 95%; background: #EF4444; }
         }
 
         .quality-indicator {
@@ -40,7 +40,7 @@
         @keyframes qualityDrop {
             0%, 100%  { transform: translateY(0);    color: #10B981; }
             25%       { transform: translateY(28px); color: #FBBF24; }
-            50%, 90%  { transform: translateY(60px); color: #EF4444; }
+            50%, 95%  { transform: translateY(60px); color: #EF4444; }
         }
 
         /* 對話泡泡漸進累積 — 全部用同一 8s 週期、不同 keyframe 出現點，與進度條 100% 同步重設 */
@@ -133,7 +133,7 @@
 
         <header class="text-center mb-12">
             <p class="chip bg-red-500/20 text-red-300 mb-3">重點 #1 · 最重要</p>
-            <h1 class="text-5xl font-bold gradient-text mb-4">Context Window 越大越糊</h1>
+            <h1 class="text-5xl font-bold gradient-text mb-4">Context 越滿越容易失準</h1>
             <p class="text-slate-400">所有對話、檔案、命令輸出都塞同一個窗。越接近滿載、無關噪音越多，AI 越容易失準。</p>
             <p class="text-xs text-amber-300/80 mt-2">💡 重點是避免<strong>無關噪音</strong>，不是永遠清空 — 深陷複雜問題時，累積的脈絡反而有價值</p>
         </header>
