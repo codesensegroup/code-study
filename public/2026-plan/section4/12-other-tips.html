@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>補充 #12 · 其他官方技巧速覽</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: linear-gradient(180deg, #0F172A 0%, #1E293B 100%);
+            color: #E2E8F0;
+            min-height: 100vh;
+        }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #60A5FA, #A78BFA, #F472B6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .chip {
+            display: inline-block; padding: 3px 12px; border-radius: 999px;
+            font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+        }
+
+        .tip-card {
+            transition: all 0.3s ease;
+        }
+        .tip-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(96, 165, 250, 0.5);
+            box-shadow: 0 12px 30px -10px rgba(96, 165, 250, 0.3);
+        }
+
+        .kbd {
+            display: inline-block;
+            padding: 2px 8px;
+            background: #334155;
+            border: 1px solid #475569;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            color: #E2E8F0;
+            box-shadow: 0 1px 0 #1e293b;
+        }
+
+        .cursor-blink::after { content: '▍'; animation: blink 1s step-end infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+    </style>
+</head>
+<body class="px-6 py-12">
+
+    <div class="max-w-5xl mx-auto">
+
+        <header class="text-center mb-12">
+            <p class="chip bg-slate-500/20 text-slate-300 mb-3">補充 #12 · 速覽</p>
+            <h1 class="text-5xl font-bold gradient-text mb-4">其他官方技巧</h1>
+            <p class="text-slate-400">官方文件提到、但篇幅較小的 5 個進階技巧 — 條列式速覽。</p>
+        </header>
+
+        <div class="space-y-5">
+
+            <!-- 1. 即時修正 -->
+            <section class="tip-card rounded-2xl p-6 bg-slate-800/50 border border-slate-700">
+                <div class="flex items-center gap-3 mb-3">
+                    <span class="text-3xl">⏪</span>
+                    <h2 class="text-xl font-bold text-slate-200">① 即時修正 Course-Correct</h2>
+                </div>
+                <p class="text-sm text-slate-400 mb-4">Claude 偏掉的瞬間就要拉回來，越早越好。會議室裡 5 個快捷鍵：</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                    <div class="bg-slate-950/50 rounded p-3 flex items-center gap-3">
+                        <span class="kbd">Esc</span>
+                        <span class="text-slate-300">中斷它的動作，context 保留可繼續對話</span>
+                    </div>
+                    <div class="bg-slate-950/50 rounded p-3 flex items-center gap-3">
+                        <span class="kbd">Esc Esc</span>
+                        <span class="text-slate-300">開啟 rewind 選單，回到任意 checkpoint</span>
+                    </div>
+                    <div class="bg-slate-950/50 rounded p-3 flex items-center gap-3">
+                        <span class="font-mono text-amber-300 text-xs">/rewind</span>
+                        <span class="text-slate-300">同上，用指令打開</span>
+                    </div>
+                    <div class="bg-slate-950/50 rounded p-3 flex items-center gap-3">
+                        <span class="font-mono text-amber-300 text-xs">Undo that</span>
+                        <span class="text-slate-300">直接叫它把剛才的改動倒回去</span>
+                    </div>
+                    <div class="bg-slate-950/50 rounded p-3 flex items-center gap-3 md:col-span-2">
+                        <span class="font-mono text-amber-300 text-xs">/btw</span>
+                        <span class="text-slate-300">問個不想留在 context 的小問題（答案顯示後不會加入對話歷史）</span>
+                    </div>
+                </div>
+                <p class="text-xs text-slate-500 mt-3">💡 同一個錯誤糾正兩次後 → <span class="font-mono text-emerald-300">/clear</span> + 寫更精準的新 prompt，比繼續糾正快</p>
+            </section>
+
+            <!-- 2. Let Claude interview you -->
+            <section class="tip-card rounded-2xl p-6 bg-slate-800/50 border border-slate-700">
+                <div class="flex items-center gap-3 mb-3">
+                    <span class="text-3xl">🎤</span>
+                    <h2 class="text-xl font-bold text-slate-200">② 讓 Claude 反問你 — Interview Mode</h2>
+                </div>
+                <p class="text-sm text-slate-400 mb-3">大型功能要做但你還沒想清楚 → 不要硬寫 prompt，叫它<span class="text-amber-300 font-bold">用 <span class="font-mono">AskUserQuestion</span> 訪談你</span>。</p>
+                <div class="font-mono text-xs bg-slate-950/50 rounded p-3 text-slate-300 mb-3">
+                    <p class="text-amber-300">$ I want to build [brief description].</p>
+                    <p class="text-amber-300 ml-2">Interview me in detail using AskUserQuestion.</p>
+                    <p class="text-amber-300 ml-2">Don't ask obvious questions, dig into the hard parts.</p>
+                    <p class="text-amber-300 ml-2">Keep going until covered everything, then write SPEC.md.</p>
+                </div>
+                <p class="text-xs text-slate-500">→ 它會挖出你沒想過的 edge case、UI/UX 取捨、技術選擇。寫完 spec 後另開 fresh session 實作。</p>
+            </section>
+
+            <!-- 3. Non-interactive mode -->
+            <section class="tip-card rounded-2xl p-6 bg-slate-800/50 border border-slate-700">
+                <div class="flex items-center gap-3 mb-3">
+                    <span class="text-3xl">🤖</span>
+                    <h2 class="text-xl font-bold text-slate-200">③ Non-Interactive Mode — 接 CI / pipeline</h2>
+                </div>
+                <p class="text-sm text-slate-400 mb-3">用 <span class="font-mono text-amber-300">claude -p "prompt"</span> 讓 Claude 不開 session 直接跑，可串進 CI、pre-commit hook、批次腳本。</p>
+                <div class="font-mono text-xs bg-slate-950/50 rounded p-3 text-slate-300 space-y-1">
+                    <p><span class="text-slate-500"># 單次查詢</span></p>
+                    <p class="text-amber-300">claude -p "Explain what this project does"</p>
+                    <p class="mt-2"><span class="text-slate-500"># 結構化輸出給腳本用</span></p>
+                    <p class="text-amber-300">claude -p "List all API endpoints" <span class="text-emerald-300">--output-format json</span></p>
+                    <p class="mt-2"><span class="text-slate-500"># Streaming 即時處理</span></p>
+                    <p class="text-amber-300">claude -p "Analyze log" <span class="text-emerald-300">--output-format stream-json --verbose</span></p>
+                </div>
+                <p class="text-xs text-slate-500 mt-3">→ 配 <span class="font-mono text-emerald-300">--allowedTools</span> 限制權限，無人值守時更安全。</p>
+            </section>
+
+            <!-- 4. Adversarial review -->
+            <section class="tip-card rounded-2xl p-6 bg-slate-800/50 border border-slate-700">
+                <div class="flex items-center gap-3 mb-3">
+                    <span class="text-3xl">⚖️</span>
+                    <h2 class="text-xl font-bold text-slate-200">④ Adversarial Review — 用 fresh subagent 找碴</h2>
+                </div>
+                <p class="text-sm text-slate-400 mb-3">Claude 跑很久之後，找一個<span class="text-amber-300 font-bold">沒看過實作過程</span>的 subagent 來 review diff。看到的只有結果跟標準，不會被「我剛剛這樣寫」帶偏。</p>
+                <div class="font-mono text-xs bg-slate-950/50 rounded p-3 text-slate-300 mb-3">
+                    <p class="text-amber-300">$ Use a subagent to review the rate limiter diff against PLAN.md.</p>
+                    <p class="text-amber-300 ml-2">Report gaps that affect correctness or stated requirements.</p>
+                    <p class="text-slate-500 mt-1"># 或直接用內建 /code-review skill</p>
+                </div>
+                <p class="text-xs text-slate-500">⚠️ Reviewer 被指派找碴就一定會找出東西。要它<span class="text-amber-300">只報關鍵問題</span>，不然會 over-engineer。</p>
+            </section>
+
+            <!-- 5. Permission modes -->
+            <section class="tip-card rounded-2xl p-6 bg-slate-800/50 border border-slate-700">
+                <div class="flex items-center gap-3 mb-3">
+                    <span class="text-3xl">🛡️</span>
+                    <h2 class="text-xl font-bold text-slate-200">⑤ Permission Modes — Shift+Tab 切四檔</h2>
+                </div>
+                <p class="text-sm text-slate-400 mb-3">每個動作都按確認太煩、全自動又不安全 — 官方提供四個主要模式，按 <kbd class="kbd">Shift</kbd>+<kbd class="kbd">Tab</kbd> 循環切換：</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                    <div class="bg-slate-950/50 rounded p-3 border-l-2 border-blue-400">
+                        <p class="font-bold text-blue-300 text-sm mb-1">Ask before edits <span class="text-slate-500 font-normal text-[10px]">(default)</span></p>
+                        <p class="text-xs text-slate-400">每個動作都問你 — 預設行為，敏感工作用。</p>
+                    </div>
+                    <div class="bg-slate-950/50 rounded p-3 border-l-2 border-emerald-400">
+                        <p class="font-bold text-emerald-300 text-sm mb-1">Edit automatically <span class="text-slate-500 font-normal text-[10px]">(acceptEdits)</span></p>
+                        <p class="text-xs text-slate-400">檔案編輯自動過，但 shell 命令仍問你 — 邊改邊在編輯器看 diff。</p>
+                    </div>
+                    <div class="bg-slate-950/50 rounded p-3 border-l-2 border-purple-400">
+                        <p class="font-bold text-purple-300 text-sm mb-1">Plan mode <span class="text-slate-500 font-normal text-[10px]">(plan)</span></p>
+                        <p class="text-xs text-slate-400">只讀檔、跑探索性指令、寫計畫 — 不會動到任何 source。</p>
+                    </div>
+                    <div class="bg-slate-950/50 rounded p-3 border-l-2 border-amber-400">
+                        <p class="font-bold text-amber-300 text-sm mb-1">Auto mode <span class="text-slate-500 font-normal text-[10px]">(auto)</span></p>
+                        <p class="text-xs text-slate-400">全自動執行 + 背景 classifier 自動擋風險動作。需 Sonnet 4.6 / Opus 4.6+。</p>
+                    </div>
+                </div>
+
+                <p class="text-xs text-slate-500 mb-2">⚙️ 另外兩個進階模式（不在 Shift+Tab 循環）：</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+                    <div class="bg-slate-950/30 rounded p-2 text-slate-400">
+                        <span class="font-mono text-rose-300">dontAsk</span> — CI 用，只跑白名單，其餘全擋
+                    </div>
+                    <div class="bg-slate-950/30 rounded p-2 text-slate-400">
+                        <span class="font-mono text-rose-300">bypassPermissions</span> — 跳過全部檢查，容器/VM 內才用
+                    </div>
+                </div>
+
+                <p class="text-xs text-slate-500 mt-3">💡 另外還有兩個獨立工具疊在 mode 之上：<span class="font-mono text-emerald-300">/permissions</span> 設細粒度規則（allowlist/deny）、<span class="font-mono text-emerald-300">/sandbox</span> 做 OS 級隔離。</p>
+            </section>
+
+        </div>
+
+        <!-- 心法 -->
+        <section class="mt-12 rounded-2xl bg-slate-900 border border-slate-700 p-6 font-mono text-sm">
+            <p class="text-slate-500 mb-3"># 一句話心法</p>
+            <p class="text-green-400 cursor-blink">這 5 招都是「降低摩擦」— 知道何時用，比每招都精通更重要</p>
+        </section>
+
+        <footer class="mt-12 text-center text-sm text-slate-500">
+            <p>Section 4 · Supplement #12 · Other Tips</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>
