@@ -153,6 +153,50 @@
             </div>
         </div>
 
+        <!-- 進階 context 管理工具 -->
+        <h2 class="text-2xl font-bold mb-3 text-center text-slate-300">進階管理工具</h2>
+        <p class="text-center text-sm text-slate-400 mb-6">基本三招（<code class="font-mono text-slate-300">/clear</code> · <code class="font-mono text-slate-300">/compact</code> · CLAUDE.md）之外，官方還有這些細節：</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
+
+            <div class="sol-card rounded-xl p-5 bg-slate-800/60 border border-slate-700">
+                <p class="chip bg-amber-500/20 text-amber-300 mb-2">Auto Compaction</p>
+                <p class="text-sm text-slate-300 mb-1">接近 context 上限時 Claude Code <span class="text-amber-300">自動觸發</span>壓縮</p>
+                <p class="text-xs text-slate-500">→ 保留程式碼、檔案狀態、關鍵決策；壓掉聊天瑣事。</p>
+            </div>
+
+            <div class="sol-card rounded-xl p-5 bg-slate-800/60 border border-slate-700">
+                <p class="chip bg-blue-500/20 text-blue-300 mb-2"><code class="font-mono">/compact &lt;指示&gt;</code></p>
+                <p class="text-sm text-slate-300 mb-1">帶<span class="text-blue-300">指示</span>壓縮，告訴它要保留什麼</p>
+                <div class="font-mono text-xs bg-slate-950/50 rounded p-2 mt-2 text-slate-300">
+                    <p class="text-amber-300">/compact Focus on the API changes</p>
+                </div>
+            </div>
+
+            <div class="sol-card rounded-xl p-5 bg-slate-800/60 border border-slate-700">
+                <p class="chip bg-purple-500/20 text-purple-300 mb-2"><kbd class="font-mono bg-slate-700 px-1 rounded text-[10px]">Esc Esc</kbd> / <code class="font-mono">/rewind</code></p>
+                <p class="text-sm text-slate-300 mb-1"><span class="text-purple-300">部分摘要</span> — 選中某個 checkpoint</p>
+                <p class="text-xs text-slate-500">→ 「Summarize from here」(往後壓) 或「Summarize up to here」(往前壓)</p>
+            </div>
+
+            <div class="sol-card rounded-xl p-5 bg-slate-800/60 border border-slate-700">
+                <p class="chip bg-emerald-500/20 text-emerald-300 mb-2">CLAUDE.md 壓縮規則</p>
+                <p class="text-sm text-slate-300 mb-1">在 <code class="font-mono text-emerald-300">CLAUDE.md</code> 指定壓縮時<span class="text-emerald-300">要保留什麼</span></p>
+                <div class="font-mono text-xs bg-slate-950/50 rounded p-2 mt-2 text-slate-300">
+                    <p class="text-slate-500"># CLAUDE.md</p>
+                    <p>When compacting, always preserve</p>
+                    <p>modified files list and test commands</p>
+                </div>
+            </div>
+
+            <div class="sol-card rounded-xl p-5 bg-slate-800/60 border border-slate-700 md:col-span-2">
+                <p class="chip bg-rose-500/20 text-rose-300 mb-2"><code class="font-mono">/btw</code></p>
+                <p class="text-sm text-slate-300 mb-1"><span class="text-rose-300">不入歷史</span>的快問快答</p>
+                <p class="text-xs text-slate-500">→ 想查個小東西但不想污染對話歷史，用 <code class="font-mono">/btw</code>。答案顯示在 overlay 但不會加進 context。</p>
+            </div>
+
+        </div>
+
         <!-- 最終 prompt 範例 -->
         <section class="rounded-2xl bg-slate-900 border border-slate-700 p-6 font-mono text-sm">
             <p class="text-slate-500 mb-3"># 一句話心法</p>

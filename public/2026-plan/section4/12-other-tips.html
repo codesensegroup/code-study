@@ -66,14 +66,17 @@
 
         <div class="space-y-5">
 
-            <!-- 1. 即時修正 -->
+            <!-- 1. Session 控制 -->
             <section class="tip-card rounded-2xl p-6 bg-slate-800/50 border border-slate-700">
                 <div class="flex items-center gap-3 mb-3">
                     <span class="text-3xl">⏪</span>
-                    <h2 class="text-xl font-bold text-slate-200">① 即時修正 Course-Correct</h2>
+                    <h2 class="text-xl font-bold text-slate-200">① Session 控制 — 修正、回溯、跨次延續</h2>
                 </div>
-                <p class="text-sm text-slate-400 mb-4">Claude 偏掉的瞬間就要拉回來，越早越好。會議室裡 5 個快捷鍵：</p>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+
+                <!-- 1A: Course-correct -->
+                <p class="chip bg-blue-500/20 text-blue-300 mb-2">A · 即時修正 Course-Correct</p>
+                <p class="text-sm text-slate-400 mb-3">Claude 偏掉的瞬間就要拉回來，越早越好。5 個快捷操作：</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm mb-4">
                     <div class="bg-slate-950/50 rounded p-3 flex items-center gap-3">
                         <span class="kbd">Esc</span>
                         <span class="text-slate-300">中斷它的動作，context 保留可繼續對話</span>
@@ -95,7 +98,26 @@
                         <span class="text-slate-300">問個不想留在 context 的小問題（答案顯示後不會加入對話歷史）</span>
                     </div>
                 </div>
-                <p class="text-xs text-slate-500 mt-3">💡 同一個錯誤糾正兩次後 → <span class="font-mono text-emerald-300">/clear</span> + 寫更精準的新 prompt，比繼續糾正快</p>
+                <p class="text-xs text-slate-500 mb-5">💡 同一個錯誤糾正兩次後 → <span class="font-mono text-emerald-300">/clear</span> + 寫更精準的新 prompt，比繼續糾正快</p>
+
+                <!-- 1B: Resume conversations -->
+                <p class="chip bg-purple-500/20 text-purple-300 mb-2">B · 延續對話 Resume Conversations</p>
+                <p class="text-sm text-slate-400 mb-3">把 session 當成 <span class="text-purple-300 font-bold">workstream / git branch</span> 管理，跨次延續任務不必重新解釋脈絡：</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm mb-3">
+                    <div class="bg-slate-950/50 rounded p-3">
+                        <p class="font-mono text-amber-300 text-xs mb-1">/rename oauth-migration</p>
+                        <p class="text-xs text-slate-400">幫 session 取個描述性名字，之後找得回來</p>
+                    </div>
+                    <div class="bg-slate-950/50 rounded p-3">
+                        <p class="font-mono text-amber-300 text-xs mb-1">claude --continue</p>
+                        <p class="text-xs text-slate-400">繼續最近一個 session</p>
+                    </div>
+                    <div class="bg-slate-950/50 rounded p-3">
+                        <p class="font-mono text-amber-300 text-xs mb-1">claude --resume</p>
+                        <p class="text-xs text-slate-400">從清單裡選一個 session 回去</p>
+                    </div>
+                </div>
+                <p class="text-xs text-slate-500">💡 對話會在本機自動保存。一個任務跨好幾天時，這幾個指令比起每次重新 onboarding 省超多時間。</p>
             </section>
 
             <!-- 2. Let Claude interview you -->
@@ -132,30 +154,55 @@
                 <p class="text-xs text-slate-500 mt-3">→ 配 <span class="font-mono text-emerald-300">--allowedTools</span> 限制權限，無人值守時更安全。</p>
             </section>
 
-            <!-- 4. Adversarial review -->
+            <!-- 4. Subagent 兩種用法 -->
             <section class="tip-card rounded-2xl p-6 bg-slate-800/50 border border-slate-700">
                 <div class="flex items-center gap-3 mb-3">
-                    <span class="text-3xl">⚖️</span>
-                    <h2 class="text-xl font-bold text-slate-200">④ Adversarial Review — 用 fresh subagent 找碴</h2>
+                    <span class="text-3xl">🧑‍🚀</span>
+                    <h2 class="text-xl font-bold text-slate-200">④ Subagent 兩種用法 — 調查 & 對抗性 Review</h2>
                 </div>
-                <p class="text-sm text-slate-400 mb-3">Claude 跑很久之後，找一個<span class="text-amber-300 font-bold">沒看過實作過程</span>的 subagent 來 review diff。看到的只有結果跟標準，不會被「我剛剛這樣寫」帶偏。</p>
+                <p class="text-sm text-slate-400 mb-4">官方把 subagent 列為「最強工具之一」(one of the most powerful tools available) — 因為它跑在<span class="text-amber-300 font-bold">獨立的 context window</span>，回報摘要給你，主對話完全不被污染。</p>
+
+                <!-- 4A: Investigation -->
+                <p class="chip bg-emerald-500/20 text-emerald-300 mb-2">A · 大量調查 Investigation（主流用法）</p>
+                <p class="text-sm text-slate-400 mb-3">需要看大量檔案才能回答的問題 → 丟給 subagent 探索，<span class="text-emerald-300">主 session context 保持乾淨</span>。</p>
+                <div class="font-mono text-xs bg-slate-950/50 rounded p-3 text-slate-300 mb-2">
+                    <p class="text-emerald-300">$ Use subagents to investigate how our auth system</p>
+                    <p class="text-emerald-300 ml-2">handles token refresh, and whether we have existing</p>
+                    <p class="text-emerald-300 ml-2">OAuth utilities I should reuse.</p>
+                </div>
+                <p class="text-xs text-slate-500 mb-5">→ Subagent 讀爆 30 個檔案、燒它自己的 context；回報「答案在 src/auth/refresh.ts:47，已有 OAuthClient 可用」。你的主對話只多了一段摘要。</p>
+
+                <!-- 4B: Adversarial Review -->
+                <p class="chip bg-rose-500/20 text-rose-300 mb-2">B · 對抗性 Review Adversarial Review</p>
+                <p class="text-sm text-slate-400 mb-3">Claude 跑很久之後，找一個<span class="text-rose-300 font-bold">沒看過實作過程</span>的 subagent 來 review diff。看到的只有結果跟標準，不會被「我剛剛這樣寫」帶偏。</p>
                 <div class="font-mono text-xs bg-slate-950/50 rounded p-3 text-slate-300 mb-3">
-                    <p class="text-amber-300">$ Use a subagent to review the rate limiter diff against PLAN.md.</p>
-                    <p class="text-amber-300 ml-2">Report gaps that affect correctness or stated requirements.</p>
+                    <p class="text-rose-300">$ Use a subagent to review the rate limiter diff</p>
+                    <p class="text-rose-300 ml-2">against PLAN.md.</p>
                     <p class="text-slate-500 mt-1"># 或直接用內建 /code-review skill</p>
                 </div>
-                <p class="text-xs text-slate-500">⚠️ Reviewer 被指派找碴就一定會找出東西。要它<span class="text-amber-300">只報關鍵問題</span>，不然會 over-engineer。</p>
+
+                <!-- 強化的 caveat -->
+                <div class="bg-amber-950/20 border border-amber-700/40 rounded p-3">
+                    <p class="text-amber-300 font-bold text-xs mb-2">⚠️ 官方警告 — 不要追每個 finding</p>
+                    <p class="text-xs text-slate-300 mb-2">Reviewer 被指派找碴，<span class="text-amber-300">就算實作沒問題也會回報問題</span>。追每個 finding 會導致<span class="text-amber-300 font-bold">過度工程</span>（over-engineering）：</p>
+                    <ul class="text-xs text-slate-400 space-y-0.5 ml-3 mb-2">
+                        <li>• 多餘的抽象層</li>
+                        <li>• 防禦性 code 處理不可能發生的情況</li>
+                        <li>• 為永遠不會觸發的 case 寫測試</li>
+                    </ul>
+                    <p class="text-xs text-slate-300">✅ 正確做法：明確告訴 reviewer「<span class="text-amber-300">只報影響 correctness 或 stated requirements 的 gaps</span>」，其餘的當作 optional 看看就好。</p>
+                </div>
             </section>
 
             <!-- 5. Permission modes -->
             <section class="tip-card rounded-2xl p-6 bg-slate-800/50 border border-slate-700">
                 <div class="flex items-center gap-3 mb-3">
                     <span class="text-3xl">🛡️</span>
-                    <h2 class="text-xl font-bold text-slate-200">⑤ Permission Modes — Shift+Tab 切四檔</h2>
+                    <h2 class="text-xl font-bold text-slate-200">⑤ Permission Modes — Shift+Tab 預設切 3 檔</h2>
                 </div>
-                <p class="text-sm text-slate-400 mb-3">每個動作都按確認太煩、全自動又不安全 — 官方提供四個主要模式，按 <kbd class="kbd">Shift</kbd>+<kbd class="kbd">Tab</kbd> 循環切換：</p>
+                <p class="text-sm text-slate-400 mb-3">每個動作都按確認太煩、全自動又不安全。按 <kbd class="kbd">Shift</kbd>+<kbd class="kbd">Tab</kbd> 預設循環 <span class="text-amber-300 font-bold">3 個模式</span>，Auto mode 達條件才會插入循環：</p>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
                     <div class="bg-slate-950/50 rounded p-3 border-l-2 border-blue-400">
                         <p class="font-bold text-blue-300 text-sm mb-1">Ask before edits <span class="text-slate-500 font-normal text-[10px]">(default)</span></p>
                         <p class="text-xs text-slate-400">每個動作都問你 — 預設行為，敏感工作用。</p>
@@ -168,10 +215,17 @@
                         <p class="font-bold text-purple-300 text-sm mb-1">Plan mode <span class="text-slate-500 font-normal text-[10px]">(plan)</span></p>
                         <p class="text-xs text-slate-400">只讀檔、跑探索性指令、寫計畫 — 不會動到任何 source。</p>
                     </div>
-                    <div class="bg-slate-950/50 rounded p-3 border-l-2 border-amber-400">
-                        <p class="font-bold text-amber-300 text-sm mb-1">Auto mode <span class="text-slate-500 font-normal text-[10px]">(auto)</span></p>
-                        <p class="text-xs text-slate-400">全自動執行 + 背景 classifier 自動擋風險動作。需 Sonnet 4.6 / Opus 4.6+。</p>
-                    </div>
+                </div>
+
+                <div class="bg-amber-950/20 border border-amber-700/40 rounded p-3 mb-3">
+                    <p class="text-amber-300 font-bold text-sm mb-1">⭐ Auto mode <span class="text-slate-500 font-normal text-[10px]">(auto) · 條件達成才出現</span></p>
+                    <p class="text-xs text-slate-400 mb-2">全自動執行 + 背景 classifier 自動擋風險動作。要符合<span class="text-amber-300">所有條件</span>才會出現在 Shift+Tab cycle：</p>
+                    <ul class="text-xs text-slate-400 space-y-0.5 ml-3">
+                        <li>• 模型：Sonnet 4.6 / Opus 4.6+（更舊的模型不行）</li>
+                        <li>• Team / Enterprise plan 需 Admin 在管理後台啟用</li>
+                        <li>• Provider 必須是 Anthropic API（Bedrock / Vertex 不支援）</li>
+                        <li>• 使用者第一次循環到時要 opt-in</li>
+                    </ul>
                 </div>
 
                 <p class="text-xs text-slate-500 mb-2">⚙️ 另外兩個進階模式（不在 Shift+Tab 循環）：</p>
