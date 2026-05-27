@@ -43,21 +43,40 @@
             66%      { transform: translateY(60px); color: #EF4444; }
         }
 
-        /* 對話泡泡漸進填入 */
+        /* 對話泡泡漸進累積 — 全部用同一 8s 週期、不同 keyframe 出現點，與進度條 100% 同步重設 */
         .chat-bubble {
             opacity: 0;
             transform: translateX(-8px);
-            animation: bubbleIn 8s linear infinite;
+            animation-duration: 8s;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
         }
-        @keyframes bubbleIn {
-            0%, 100% { opacity: 0; transform: translateX(-8px); }
-            10%, 90% { opacity: 1; transform: translateX(0); }
+        .chat-bubble:nth-of-type(1) { animation-name: bubble1; }  /* 🟢 早期 */
+        .chat-bubble:nth-of-type(2) { animation-name: bubble2; }  /* 🟢 → 🟡 */
+        .chat-bubble:nth-of-type(3) { animation-name: bubble3; }  /* 🟡 */
+        .chat-bubble:nth-of-type(4) { animation-name: bubble4; }  /* 🔴 邊緣 */
+        .chat-bubble:nth-of-type(5) { animation-name: bubble5; }  /* 🔴 警告 */
+
+        @keyframes bubble1 {
+            0%, 8%, 100% { opacity: 0; transform: translateX(-8px); }
+            12%, 95%     { opacity: 1; transform: translateX(0); }
         }
-        .chat-bubble:nth-of-type(1) { animation-delay: 0s; }
-        .chat-bubble:nth-of-type(2) { animation-delay: 1.2s; }
-        .chat-bubble:nth-of-type(3) { animation-delay: 2.4s; }
-        .chat-bubble:nth-of-type(4) { animation-delay: 3.6s; }
-        .chat-bubble:nth-of-type(5) { animation-delay: 4.8s; }
+        @keyframes bubble2 {
+            0%, 22%, 100% { opacity: 0; transform: translateX(-8px); }
+            26%, 95%      { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes bubble3 {
+            0%, 40%, 100% { opacity: 0; transform: translateX(-8px); }
+            44%, 95%      { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes bubble4 {
+            0%, 60%, 100% { opacity: 0; transform: translateX(-8px); }
+            64%, 95%      { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes bubble5 {
+            0%, 76%, 100% { opacity: 0; transform: translateX(-8px); }
+            80%, 95%      { opacity: 1; transform: translateX(0); }
+        }
 
         /* Token 計數三段 fade，與進度條同步 */
         .token-stage {
