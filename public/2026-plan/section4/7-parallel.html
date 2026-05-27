@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>重點 #7 · Parallel Sessions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: linear-gradient(180deg, #0F172A 0%, #1E293B 100%);
+            color: #E2E8F0;
+            min-height: 100vh;
+        }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #60A5FA, #A78BFA, #F472B6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .chip {
+            display: inline-block; padding: 3px 12px; border-radius: 999px;
+            font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+        }
+
+        /* 三個終端機獨立打字節奏 */
+        .term-line {
+            opacity: 0;
+        }
+        /* Terminal A */
+        .a1 { animation: lineIn 5s linear infinite; animation-delay: 0.2s; }
+        .a2 { animation: lineIn 5s linear infinite; animation-delay: 0.9s; }
+        .a3 { animation: lineIn 5s linear infinite; animation-delay: 1.6s; }
+        .a4 { animation: lineIn 5s linear infinite; animation-delay: 2.3s; }
+        .a5 { animation: lineIn 5s linear infinite; animation-delay: 3.0s; }
+        /* Terminal B */
+        .b1 { animation: lineIn 5s linear infinite; animation-delay: 0.5s; }
+        .b2 { animation: lineIn 5s linear infinite; animation-delay: 1.3s; }
+        .b3 { animation: lineIn 5s linear infinite; animation-delay: 2.1s; }
+        .b4 { animation: lineIn 5s linear infinite; animation-delay: 2.9s; }
+        .b5 { animation: lineIn 5s linear infinite; animation-delay: 3.5s; }
+        /* Terminal C */
+        .c1 { animation: lineIn 5s linear infinite; animation-delay: 0.8s; }
+        .c2 { animation: lineIn 5s linear infinite; animation-delay: 1.6s; }
+        .c3 { animation: lineIn 5s linear infinite; animation-delay: 2.4s; }
+        .c4 { animation: lineIn 5s linear infinite; animation-delay: 3.2s; }
+        .c5 { animation: lineIn 5s linear infinite; animation-delay: 3.8s; }
+
+        @keyframes lineIn {
+            0%        { opacity: 0; transform: translateY(4px); }
+            10%, 90%  { opacity: 1; transform: translateY(0); }
+            100%      { opacity: 0; }
+        }
+
+        /* 終端機框 hover */
+        .terminal {
+            transition: all 0.3s ease;
+        }
+        .terminal:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -10px rgba(96, 165, 250, 0.3);
+        }
+
+        .terminal-bar {
+            display: flex; gap: 6px; padding: 8px 12px;
+            background: #1e293b; border-bottom: 1px solid #334155;
+            border-top-left-radius: 8px; border-top-right-radius: 8px;
+        }
+        .dot { width: 12px; height: 12px; border-radius: 999px; }
+
+        .cursor-blink::after { content: '▍'; animation: blink 1s step-end infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .compare-card { transition: transform 0.3s ease; }
+        .compare-card:hover { transform: translateY(-4px); }
+    </style>
+</head>
+<body class="px-6 py-12">
+
+    <div class="max-w-6xl mx-auto">
+
+        <header class="text-center mb-12">
+            <p class="chip bg-cyan-500/20 text-cyan-300 mb-3">重點 #7 · 進階</p>
+            <h1 class="text-5xl font-bold gradient-text mb-4">Parallel Sessions</h1>
+            <p class="text-slate-400">不要一個 Claude 排隊做所有事 — 開三個 terminal，三件事同時跑。</p>
+        </header>
+
+        <!-- 主動畫：三個終端機並排 -->
+        <section class="mb-12">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                <!-- Terminal A: Backend -->
+                <div class="terminal rounded-lg bg-slate-900 border border-slate-700 overflow-hidden">
+                    <div class="terminal-bar">
+                        <span class="dot bg-red-500"></span>
+                        <span class="dot bg-yellow-500"></span>
+                        <span class="dot bg-green-500"></span>
+                        <span class="ml-2 text-xs text-slate-400 font-mono">Terminal A · Backend</span>
+                    </div>
+                    <div class="p-4 font-mono text-xs space-y-1 min-h-[280px]">
+                        <p class="term-line a1 text-cyan-300">$ claude</p>
+                        <p class="term-line a2 text-slate-400">→ 重構 /api/users 路由</p>
+                        <p class="term-line a3 text-slate-500">→ 拆出 service 層</p>
+                        <p class="term-line a4 text-slate-500">→ 加錯誤處理</p>
+                        <p class="term-line a5 text-green-400">✓ done. running tests...</p>
+                    </div>
+                </div>
+
+                <!-- Terminal B: Frontend -->
+                <div class="terminal rounded-lg bg-slate-900 border border-slate-700 overflow-hidden">
+                    <div class="terminal-bar">
+                        <span class="dot bg-red-500"></span>
+                        <span class="dot bg-yellow-500"></span>
+                        <span class="dot bg-green-500"></span>
+                        <span class="ml-2 text-xs text-slate-400 font-mono">Terminal B · Frontend</span>
+                    </div>
+                    <div class="p-4 font-mono text-xs space-y-1 min-h-[280px]">
+                        <p class="term-line b1 text-purple-300">$ claude</p>
+                        <p class="term-line b2 text-slate-400">→ 把 UserList 改成 virtualized</p>
+                        <p class="term-line b3 text-slate-500">→ 加 skeleton loading</p>
+                        <p class="term-line b4 text-slate-500">→ 套用新的 design tokens</p>
+                        <p class="term-line b5 text-green-400">✓ build success</p>
+                    </div>
+                </div>
+
+                <!-- Terminal C: Tests -->
+                <div class="terminal rounded-lg bg-slate-900 border border-slate-700 overflow-hidden">
+                    <div class="terminal-bar">
+                        <span class="dot bg-red-500"></span>
+                        <span class="dot bg-yellow-500"></span>
+                        <span class="dot bg-green-500"></span>
+                        <span class="ml-2 text-xs text-slate-400 font-mono">Terminal C · Tests</span>
+                    </div>
+                    <div class="p-4 font-mono text-xs space-y-1 min-h-[280px]">
+                        <p class="term-line c1 text-emerald-300">$ claude</p>
+                        <p class="term-line c2 text-slate-400">→ 補 auth module 測試</p>
+                        <p class="term-line c3 text-slate-500">→ coverage 從 62% 提到 89%</p>
+                        <p class="term-line c4 text-slate-500">→ 寫 edge case</p>
+                        <p class="term-line c5 text-green-400">✓ 14 new tests pass</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <p class="text-center mt-6 text-slate-300">
+                <span class="text-cyan-300 font-bold">三件事同步進行</span> · 時間直接 ÷ 3
+            </p>
+        </section>
+
+        <!-- Tips -->
+        <h2 class="text-2xl font-bold mb-4 text-center text-slate-300">注意事項</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div class="compare-card rounded-xl p-6 bg-slate-800/60 border border-slate-700">
+                <div class="text-3xl mb-2">🌿</div>
+                <h3 class="font-bold mb-1">不同 branch / worktree</h3>
+                <p class="text-sm text-slate-400">避免兩個 Claude 同時改同一檔案打架。</p>
+            </div>
+            <div class="compare-card rounded-xl p-6 bg-slate-800/60 border border-slate-700">
+                <div class="text-3xl mb-2">🎯</div>
+                <h3 class="font-bold mb-1">任務要正交</h3>
+                <p class="text-sm text-slate-400">backend / frontend / tests，彼此不踩腳。</p>
+            </div>
+            <div class="compare-card rounded-xl p-6 bg-slate-800/60 border border-slate-700">
+                <div class="text-3xl mb-2">📋</div>
+                <h3 class="font-bold mb-1">最後人工 review</h3>
+                <p class="text-sm text-slate-400">三邊結果整合時還是要看一眼。</p>
+            </div>
+        </div>
+
+        <!-- 深度提醒：檔案衝突 -->
+        <section class="rounded-2xl bg-amber-950/20 border border-amber-700/40 p-6 mb-8">
+            <div class="flex items-start gap-3 mb-4">
+                <div class="text-3xl">🔀</div>
+                <div>
+                    <h3 class="font-bold text-lg text-amber-200">萬一三個 session 必須動到同一份檔案？</h3>
+                    <p class="text-sm text-slate-400 mt-1">純粹「任務正交」很難 100% 做到（router、types、config 常被多方共用）。下面是實戰防呆四招。</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <div class="bg-slate-900/60 rounded-lg p-4 border border-slate-700">
+                    <p class="font-bold text-emerald-300 text-sm mb-1">① git worktree 物理隔離</p>
+                    <p class="text-xs text-slate-400 mb-2">每個 session 開獨立目錄 + 分支，本機檔案系統就分開了。</p>
+                    <div class="font-mono text-xs bg-slate-950 rounded p-2 text-slate-300">
+                        <p>$ git worktree add ../shop-api feat/api</p>
+                        <p>$ git worktree add ../shop-ui feat/ui</p>
+                        <p class="text-slate-500"># 三個 Claude 各在自己目錄</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/60 rounded-lg p-4 border border-slate-700">
+                    <p class="font-bold text-emerald-300 text-sm mb-1">② Prompt 明確劃界線</p>
+                    <p class="text-xs text-slate-400 mb-2">在 prompt 跟 CLAUDE.md 都寫死可動 / 不可動範圍。</p>
+                    <div class="font-mono text-xs bg-slate-950 rounded p-2 text-slate-300">
+                        <p class="text-emerald-300">✓ 你只能改 src/api/</p>
+                        <p class="text-red-300">✗ 不要碰 shared/types.ts</p>
+                        <p class="text-amber-300">⚠ 需要新 type 時先停下來問</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/60 rounded-lg p-4 border border-slate-700">
+                    <p class="font-bold text-emerald-300 text-sm mb-1">③ 共享檔案凍結 + 整合 session</p>
+                    <p class="text-xs text-slate-400 mb-2">把 types、config、router 列為「共享凍結區」，三邊都不改；最後開一個整合 session 統一處理。</p>
+                    <div class="font-mono text-xs bg-slate-950 rounded p-2 text-slate-300">
+                        <p class="text-slate-500"># shared/ ← 凍結</p>
+                        <p>session A · B · C 各自完成</p>
+                        <p class="text-emerald-300">→ 開 session D 統一更新 shared/</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/60 rounded-lg p-4 border border-slate-700">
+                    <p class="font-bold text-emerald-300 text-sm mb-1">④ 小步 commit + 頻繁 rebase</p>
+                    <p class="text-xs text-slate-400 mb-2">每個 session 做完一段就 commit；其他 session 開新任務前先 <span class="font-mono text-amber-300">git pull --rebase</span>，衝突早發現。</p>
+                    <div class="font-mono text-xs bg-slate-950 rounded p-2 text-slate-300">
+                        <p class="text-emerald-300">commit 小 → 衝突好解</p>
+                        <p class="text-red-300">commit 大 → merge 地獄</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <p class="text-center text-xs text-slate-400 mt-4">
+                💡 核心原則：<span class="text-amber-300">「能物理隔離就物理隔離，不能就劃界線，最後一定要有人整合」</span>
+            </p>
+        </section>
+
+        <!-- 心法 -->
+        <section class="rounded-2xl bg-slate-900 border border-slate-700 p-6 font-mono text-sm">
+            <p class="text-slate-500 mb-3"># 一句話心法</p>
+            <p class="text-green-400 cursor-blink">Claude 是低成本的並行工程師 — 不要當單核 CPU 用</p>
+        </section>
+
+        <footer class="mt-12 text-center text-sm text-slate-500">
+            <p>Section 4 · Best Practice #7</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>重點 #6 · Agent vs Copilot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: linear-gradient(180deg, #0F172A 0%, #1E293B 100%);
+            color: #E2E8F0;
+            min-height: 100vh;
+        }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #60A5FA, #A78BFA, #F472B6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .chip {
+            display: inline-block; padding: 3px 12px; border-radius: 999px;
+            font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+        }
+
+        .cursor-blink::after { content: '▍'; animation: blink 1s step-end infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* === Copilot 側：一行 autocomplete === */
+        .copilot-suggest {
+            opacity: 0;
+            animation: copilotShow 10s linear infinite;
+        }
+        @keyframes copilotShow {
+            0%, 15%   { opacity: 0; }
+            20%, 90%  { opacity: 1; }
+            100%      { opacity: 0; }
+        }
+
+        /* === Agent 側：一連串自主動作依序出現 === */
+        .agent-step {
+            opacity: 0;
+            transform: translateX(-6px);
+            animation: agentStep 10s linear infinite;
+        }
+        @keyframes agentStep {
+            0%, 100%  { opacity: 0; transform: translateX(-6px); }
+            8%, 95%   { opacity: 1; transform: translateX(0); }
+        }
+        .agent-step:nth-child(1) { animation-delay: 0.5s; }
+        .agent-step:nth-child(2) { animation-delay: 1.5s; }
+        .agent-step:nth-child(3) { animation-delay: 2.5s; }
+        .agent-step:nth-child(4) { animation-delay: 3.5s; }
+        .agent-step:nth-child(5) { animation-delay: 4.5s; }
+        .agent-step:nth-child(6) { animation-delay: 5.5s; }
+        .agent-step:nth-child(7) { animation-delay: 6.5s; }
+
+        .compare-card {
+            transition: transform 0.3s ease;
+        }
+        .compare-card:hover {
+            transform: translateY(-4px);
+        }
+    </style>
+</head>
+<body class="px-6 py-12">
+
+    <div class="max-w-6xl mx-auto">
+
+        <header class="text-center mb-12">
+            <p class="chip bg-pink-500/20 text-pink-300 mb-3">重點 #6 · 心態</p>
+            <h1 class="text-5xl font-bold gradient-text mb-4">Agent ≠ Copilot</h1>
+            <p class="text-slate-400">同一個任務、兩種思維。差別不在 AI 能不能，而是你怎麼用它。</p>
+        </header>
+
+        <!-- 共同任務 -->
+        <div class="text-center mb-8">
+            <p class="text-xs text-slate-500 mb-1">同一個任務：</p>
+            <p class="font-bold text-lg text-slate-200">「找出為什麼 staging API timeout，修掉並補測試」</p>
+        </div>
+
+        <!-- 左右對比 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-12">
+
+            <!-- Copilot side -->
+            <div class="compare-card rounded-2xl p-6 bg-slate-800/50 border border-slate-700">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="text-2xl">💡</span>
+                    <h2 class="text-xl font-bold text-amber-300">Copilot 思維</h2>
+                </div>
+                <p class="text-xs text-slate-400 mb-4">你寫 code，它補 code。逐行 autocomplete。</p>
+
+                <div class="bg-slate-900 rounded-lg border border-slate-700 p-4 font-mono text-sm min-h-[280px]">
+                    <p class="text-slate-500 mb-2">// api.ts</p>
+                    <p class="text-blue-300">async function callBackend() {</p>
+                    <p class="ml-4 text-slate-300">const res = await fetch(url);</p>
+                    <p class="ml-4 text-slate-300">
+                        <span class="copilot-suggest text-amber-300/70">return res.json(); // ← AI 補這行</span>
+                    </p>
+                    <p class="text-blue-300">}</p>
+
+                    <p class="text-slate-600 text-xs mt-6">— 然後呢？</p>
+                    <p class="text-slate-400 text-xs">你還是要自己 trace、看 log、改 config、寫測試。</p>
+                </div>
+
+                <div class="mt-4 text-xs text-slate-400 space-y-1">
+                    <p>✓ 補半行 code</p>
+                    <p class="text-slate-600">✗ 不知道為什麼 timeout</p>
+                    <p class="text-slate-600">✗ 不會自己跑測試</p>
+                    <p class="text-slate-600">✗ 不會去看 staging log</p>
+                </div>
+            </div>
+
+            <!-- Agent side -->
+            <div class="compare-card rounded-2xl p-6 bg-slate-800/50 border-2 border-purple-500/40" style="box-shadow: 0 0 40px -10px rgba(167,139,250,0.3);">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="text-2xl">🤖</span>
+                    <h2 class="text-xl font-bold text-purple-300">Agent 思維</h2>
+                </div>
+                <p class="text-xs text-slate-400 mb-4">你描述目標，它自己想辦法完成。</p>
+
+                <div class="bg-slate-900 rounded-lg border border-slate-700 p-4 font-mono text-xs space-y-1 min-h-[280px]">
+                    <p class="agent-step text-purple-300">$ 找出 staging API timeout 原因並修復</p>
+                    <p class="agent-step text-slate-400">→ 🔍 grep "timeout" src/</p>
+                    <p class="agent-step text-slate-400">→ 📖 讀 api.ts、config.ts、middleware/</p>
+                    <p class="agent-step text-slate-400">→ 📊 看 logs/staging.log 最近 100 行</p>
+                    <p class="agent-step text-amber-300">→ 💡 發現 DB pool size 設成 5，staging 流量打爆</p>
+                    <p class="agent-step text-emerald-300">→ ✏️ 改 config + 補 retry + 寫 integration test</p>
+                    <p class="agent-step text-emerald-300 cursor-blink">→ ✅ test pass，回報結果</p>
+                </div>
+
+                <div class="mt-4 text-xs text-slate-300 space-y-1">
+                    <p class="text-emerald-300">✓ 自主探索 codebase</p>
+                    <p class="text-emerald-300">✓ 跨檔案推理</p>
+                    <p class="text-emerald-300">✓ 看 log、定位 root cause</p>
+                    <p class="text-emerald-300">✓ 改 code + 寫測試 + 驗證</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 觀念差異 -->
+        <section class="rounded-2xl bg-slate-900 border border-slate-700 p-6">
+            <p class="chip bg-purple-500/20 text-purple-300 mb-3">心法</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                <div>
+                    <p class="text-amber-300 font-bold mb-1">❌ Copilot 用法</p>
+                    <p class="text-slate-300">「幫我補這行」「下個 token 是什麼」「這個 syntax 怎麼寫」</p>
+                </div>
+                <div>
+                    <p class="text-purple-300 font-bold mb-1">✅ Agent 用法</p>
+                    <p class="text-slate-300">「找出為什麼 X 壞了並修掉」「重構這個模組」「migrate 到 v2 API」</p>
+                </div>
+            </div>
+            <p class="mt-6 text-center text-slate-200 font-bold">
+                差別不是 AI 能不能 — 是<span class="gradient-text">你給它的目標夠不夠大</span>。
+            </p>
+        </section>
+
+        <footer class="mt-12 text-center text-sm text-slate-500">
+            <p>Section 4 · Best Practice #6</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>

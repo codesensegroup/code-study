@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>重點 #3 · Plan → Review → Execute</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: linear-gradient(180deg, #0F172A 0%, #1E293B 100%);
+            color: #E2E8F0;
+            min-height: 100vh;
+        }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #60A5FA, #A78BFA, #F472B6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .chip {
+            display: inline-block; padding: 3px 12px; border-radius: 999px;
+            font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+        }
+
+        /* 三步驟燈號依序點亮 */
+        .step {
+            opacity: 0.35;
+            transition: all 0.4s ease;
+            animation: stepActivate 9s linear infinite;
+        }
+        .step:nth-child(1) { animation-delay: 0s; }
+        .step:nth-child(2) { animation-delay: 2.5s; }
+        .step:nth-child(3) { animation-delay: 5s; }
+
+        @keyframes stepActivate {
+            0%, 28%, 100% { opacity: 0.35; transform: scale(1); }
+            5%, 25%       { opacity: 1; transform: scale(1.04); }
+        }
+
+        .step-dot {
+            width: 80px; height: 80px; border-radius: 999px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 36px; font-weight: 700;
+            border: 3px solid;
+        }
+        .step-1 .step-dot { border-color: #60A5FA; color: #60A5FA; background: rgba(96,165,250,0.1); }
+        .step-2 .step-dot { border-color: #A78BFA; color: #A78BFA; background: rgba(167,139,250,0.1); }
+        .step-3 .step-dot { border-color: #34D399; color: #34D399; background: rgba(52,211,153,0.1); }
+
+        .step-1.active .step-dot { box-shadow: 0 0 30px rgba(96,165,250,0.6); }
+        .step-2.active .step-dot { box-shadow: 0 0 30px rgba(167,139,250,0.6); }
+        .step-3.active .step-dot { box-shadow: 0 0 30px rgba(52,211,153,0.6); }
+
+        /* 連接線 */
+        .step-line {
+            flex: 1; height: 3px; background: linear-gradient(90deg, #334155, #475569);
+            position: relative; min-width: 40px; align-self: center; margin-top: 36px;
+        }
+        .step-line::after {
+            content: ''; position: absolute; top: 0; left: 0;
+            width: 0%; height: 100%; background: linear-gradient(90deg, #60A5FA, #A78BFA);
+            animation: lineFill 9s linear infinite;
+        }
+        .step-line.l2::after { animation-delay: 2.5s; background: linear-gradient(90deg, #A78BFA, #34D399); }
+
+        @keyframes lineFill {
+            0%, 25%       { width: 0%; }
+            28%, 50%      { width: 100%; }
+            53%, 100%     { width: 100%; opacity: 0.3; }
+        }
+
+        /* checkmark 出現 */
+        .checkmark {
+            opacity: 0;
+            animation: checkPop 9s linear infinite;
+        }
+        .checkmark.c1 { animation-delay: 2s; }
+        .checkmark.c2 { animation-delay: 4.5s; }
+        .checkmark.c3 { animation-delay: 7s; }
+        @keyframes checkPop {
+            0%, 22%   { opacity: 0; transform: scale(0); }
+            25%, 95%  { opacity: 1; transform: scale(1); }
+            100%      { opacity: 0; }
+        }
+
+        .cursor-blink::after { content: '▍'; animation: blink 1s step-end infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .anti-pattern {
+            transition: all 0.3s ease;
+        }
+        .anti-pattern:hover {
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+<body class="px-6 py-12">
+
+    <div class="max-w-5xl mx-auto">
+
+        <header class="text-center mb-12">
+            <p class="chip bg-blue-500/20 text-blue-300 mb-3">重點 #3 · 工作流</p>
+            <h1 class="text-5xl font-bold gradient-text mb-4">Plan → Review → Execute</h1>
+            <p class="text-slate-400">不要說「幫我直接改」。讓 AI 先想、給你看、確認了再動手。</p>
+        </header>
+
+        <!-- 三步驟動畫 -->
+        <section class="mb-12 p-8 rounded-2xl bg-slate-800/50 border border-slate-700">
+
+            <div class="flex items-start justify-between gap-2 mb-8">
+
+                <!-- Step 1: Plan -->
+                <div class="step step-1 text-center flex-1 max-w-[200px]">
+                    <div class="step-dot mx-auto mb-3">1</div>
+                    <p class="font-bold text-blue-300">PLAN</p>
+                    <p class="text-xs text-slate-400 mt-1">提出策略與步驟</p>
+                </div>
+
+                <div class="step-line"></div>
+
+                <!-- Step 2: Review -->
+                <div class="step step-2 text-center flex-1 max-w-[200px]">
+                    <div class="step-dot mx-auto mb-3">2</div>
+                    <p class="font-bold text-purple-300">REVIEW</p>
+                    <p class="text-xs text-slate-400 mt-1">你決定改不改、怎麼改</p>
+                </div>
+
+                <div class="step-line l2"></div>
+
+                <!-- Step 3: Execute -->
+                <div class="step step-3 text-center flex-1 max-w-[200px]">
+                    <div class="step-dot mx-auto mb-3">3</div>
+                    <p class="font-bold text-emerald-300">EXECUTE</p>
+                    <p class="text-xs text-slate-400 mt-1">按計畫實作</p>
+                </div>
+
+            </div>
+
+            <!-- Terminal output -->
+            <div class="bg-slate-900 rounded-lg border border-slate-700 p-4 font-mono text-sm space-y-2">
+                <p class="text-slate-500"># Plan</p>
+                <p class="text-blue-300">→ 分析 auth.ts 結構 <span class="checkmark c1 text-green-400">✓</span></p>
+                <p class="text-blue-300">→ 列出三個修改點，等待確認 <span class="checkmark c1 text-green-400">✓</span></p>
+                <p class="text-slate-500 mt-3"># Review</p>
+                <p class="text-purple-300">→ 你說：「第二點先跳過」 <span class="checkmark c2 text-green-400">✓</span></p>
+                <p class="text-slate-500 mt-3"># Execute</p>
+                <p class="text-emerald-300">→ 套用變更，跑測試 <span class="checkmark c3 text-green-400">✓</span></p>
+                <p class="text-emerald-300 cursor-blink">→ Done.</p>
+            </div>
+        </section>
+
+        <!-- 反模式對比 -->
+        <h2 class="text-2xl font-bold mb-4 text-center text-slate-300">反模式 vs 正確做法</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+            <div class="anti-pattern rounded-xl p-6 bg-red-950/30 border border-red-900/50">
+                <p class="chip bg-red-500/30 text-red-300 mb-3">❌ 反模式</p>
+                <h3 class="font-bold mb-3 text-red-200">「幫我直接改」</h3>
+                <div class="font-mono text-xs text-slate-400 space-y-1 bg-slate-950/50 rounded p-3">
+                    <p>$ 修一下 login bug</p>
+                    <p class="text-red-300">⚠️ 改了 6 個檔案，砍了一個 helper，新增了你沒同意的 lib</p>
+                    <p class="text-red-300">⚠️ 你不知道改了什麼，rollback 也痛</p>
+                    <p class="text-red-300">⚠️ 複雜引用（如 WordPress 本體 + 外掛互相 hook）動一處</p>
+                    <p class="text-red-300 ml-4">→ 連環炸 N 個外掛，連 AI 自己都不知道波及範圍</p>
+                </div>
+            </div>
+
+            <div class="anti-pattern rounded-xl p-6 bg-emerald-950/30 border border-emerald-900/50">
+                <p class="chip bg-emerald-500/30 text-emerald-300 mb-3">✅ 正確</p>
+                <h3 class="font-bold mb-3 text-emerald-200">「先給我計畫」</h3>
+                <div class="font-mono text-xs text-slate-400 space-y-1 bg-slate-950/50 rounded p-3">
+                    <p>$ 看一下 login bug，給我 plan</p>
+                    <p class="text-emerald-300">🔍 先調查：grep 引用、列出相關檔案與外掛</p>
+                    <p class="text-emerald-300">📝 預計要修改：<span class="text-slate-300">auth.php : 3 處</span> · <span class="text-slate-300">plugin-x hook : 1 處</span></p>
+                    <p class="text-emerald-300">→ 列三個可能原因 + 對應改動</p>
+                    <p class="text-emerald-300">→ 你選擇方案 B，再按 plan 執行</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Tip -->
+        <section class="mt-8 rounded-2xl bg-slate-900 border border-slate-700 p-6">
+            <p class="text-sm text-slate-400 mb-2">💡 實戰小技巧</p>
+            <p class="text-slate-200">直接按 <kbd class="font-mono bg-slate-700 px-2 py-1 rounded text-sm">Shift+Tab</kbd> 切換到 <span class="text-blue-300 font-bold">Plan Mode</span> — Claude 只規劃不動手。</p>
+        </section>
+
+        <footer class="mt-12 text-center text-sm text-slate-500">
+            <p>Section 4 · Best Practice #3</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>

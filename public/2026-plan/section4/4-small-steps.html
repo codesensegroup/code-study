@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>重點 #4 · 小步驟 + 持續測試</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: linear-gradient(180deg, #0F172A 0%, #1E293B 100%);
+            color: #E2E8F0;
+            min-height: 100vh;
+        }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #60A5FA, #A78BFA, #F472B6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .chip {
+            display: inline-block; padding: 3px 12px; border-radius: 999px;
+            font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+        }
+
+        /* 小綠點依序出現 */
+        .commit-dot {
+            opacity: 0;
+            animation: commitPop 7s linear infinite;
+        }
+        @keyframes commitPop {
+            0%        { opacity: 0; transform: scale(0); }
+            12%, 90%  { opacity: 1; transform: scale(1); }
+            100%      { opacity: 0; }
+        }
+        .commit-dot:nth-child(1) { animation-delay: 0.5s; }
+        .commit-dot:nth-child(2) { animation-delay: 1.0s; }
+        .commit-dot:nth-child(3) { animation-delay: 1.5s; }
+        .commit-dot:nth-child(4) { animation-delay: 2.0s; }
+        .commit-dot:nth-child(5) { animation-delay: 2.5s; }
+        .commit-dot:nth-child(6) { animation-delay: 3.0s; }
+        .commit-dot:nth-child(7) { animation-delay: 3.5s; }
+        .commit-dot:nth-child(8) { animation-delay: 4.0s; }
+
+        /* 紅炸彈 commit */
+        .bomb-commit {
+            animation: bombShake 7s linear infinite;
+        }
+        @keyframes bombShake {
+            0%, 70%   { transform: translateX(0); opacity: 0.4; }
+            75%       { opacity: 1; }
+            80%       { transform: translateX(-3px) rotate(-1deg); }
+            82%       { transform: translateX(3px) rotate(1deg); }
+            84%       { transform: translateX(-3px); }
+            86%       { transform: translateX(3px); }
+            88%       { transform: scale(1.05); }
+            90%, 100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* 測試 pass tick */
+        .test-tick {
+            opacity: 0;
+            animation: tickPop 7s linear infinite;
+        }
+        @keyframes tickPop {
+            0%        { opacity: 0; transform: scale(0); }
+            18%, 88%  { opacity: 1; transform: scale(1); }
+            100%      { opacity: 0; }
+        }
+        .test-tick:nth-child(1) { animation-delay: 0.8s; }
+        .test-tick:nth-child(2) { animation-delay: 1.3s; }
+        .test-tick:nth-child(3) { animation-delay: 1.8s; }
+        .test-tick:nth-child(4) { animation-delay: 2.3s; }
+
+        /* 紅 X */
+        .test-fail {
+            animation: failShake 7s linear infinite;
+            opacity: 0;
+        }
+        @keyframes failShake {
+            0%, 80%   { opacity: 0; }
+            85%, 100% { opacity: 1; transform: scale(1.1); }
+        }
+
+        .cursor-blink::after { content: '▍'; animation: blink 1s step-end infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .compare-card { transition: transform 0.3s ease; }
+        .compare-card:hover { transform: translateY(-4px); }
+    </style>
+</head>
+<body class="px-6 py-12">
+
+    <div class="max-w-5xl mx-auto">
+
+        <header class="text-center mb-12">
+            <p class="chip bg-green-500/20 text-green-300 mb-3">重點 #4 · 紀律</p>
+            <h1 class="text-5xl font-bold gradient-text mb-4">小步驟 + 持續測試</h1>
+            <p class="text-slate-400">頻繁 commit、立即 lint，不要讓 AI 一次改整個專案。</p>
+        </header>
+
+        <!-- 主動畫：兩條 commit timeline -->
+        <section class="mb-12 p-8 rounded-2xl bg-slate-800/50 border border-slate-700 space-y-10">
+
+            <!-- 好的：小綠點 timeline -->
+            <div>
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="chip bg-emerald-500/30 text-emerald-300">✅ 好</span>
+                    <span class="text-sm text-slate-300 font-bold">小步快跑</span>
+                </div>
+                <div class="bg-slate-900 rounded-lg border border-slate-700 p-5">
+                    <div class="relative h-12 flex items-center">
+                        <div class="absolute left-0 right-0 h-0.5 bg-slate-700"></div>
+                        <div class="relative flex justify-between w-full">
+                            <div class="commit-dot w-5 h-5 rounded-full bg-emerald-400 border-2 border-emerald-200" title="add types"></div>
+                            <div class="commit-dot w-5 h-5 rounded-full bg-emerald-400 border-2 border-emerald-200" title="lint"></div>
+                            <div class="commit-dot w-5 h-5 rounded-full bg-emerald-400 border-2 border-emerald-200" title="test"></div>
+                            <div class="commit-dot w-5 h-5 rounded-full bg-emerald-400 border-2 border-emerald-200" title="add helper"></div>
+                            <div class="commit-dot w-5 h-5 rounded-full bg-emerald-400 border-2 border-emerald-200" title="refactor"></div>
+                            <div class="commit-dot w-5 h-5 rounded-full bg-emerald-400 border-2 border-emerald-200" title="test"></div>
+                            <div class="commit-dot w-5 h-5 rounded-full bg-emerald-400 border-2 border-emerald-200" title="docs"></div>
+                            <div class="commit-dot w-5 h-5 rounded-full bg-emerald-400 border-2 border-emerald-200" title="done"></div>
+                        </div>
+                    </div>
+                    <div class="flex justify-between mt-3 text-xs font-mono">
+                        <div class="test-tick text-green-400">✓ pass</div>
+                        <div class="test-tick text-green-400">✓ pass</div>
+                        <div class="test-tick text-green-400">✓ pass</div>
+                        <div class="test-tick text-green-400">✓ pass</div>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-3 font-mono">→ rollback 容易 / 找 bug 快 / 沒有 hidden regression</p>
+                </div>
+            </div>
+
+            <!-- 壞的：一顆大紅炸彈 -->
+            <div>
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="chip bg-red-500/30 text-red-300">❌ 不好</span>
+                    <span class="text-sm text-slate-300 font-bold">一口氣大改</span>
+                </div>
+                <div class="bg-slate-900 rounded-lg border border-slate-700 p-5">
+                    <div class="relative h-12 flex items-center">
+                        <div class="absolute left-0 right-0 h-0.5 bg-slate-700"></div>
+                        <div class="relative flex justify-end w-full">
+                            <div class="bomb-commit w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-red-700 border-2 border-red-300 flex items-center justify-center text-lg">💣</div>
+                        </div>
+                    </div>
+                    <div class="flex justify-end mt-3">
+                        <div class="test-fail text-red-400 font-mono text-sm">✗ 47 tests failed, 不知從何下手</div>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-3 font-mono">→ rollback 痛 / 不知哪行壞 / hidden bug 滿地</p>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- 三紀律卡 -->
+        <h2 class="text-2xl font-bold mb-4 text-center text-slate-300">三個紀律</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div class="compare-card rounded-xl p-6 bg-slate-800/60 border border-slate-700">
+                <div class="text-3xl mb-2">🧪</div>
+                <h3 class="font-bold mb-1">TDD</h3>
+                <p class="text-sm text-slate-400">先寫測試，再讓 Claude 改，目標明確不亂飄。</p>
+            </div>
+            <div class="compare-card rounded-xl p-6 bg-slate-800/60 border border-slate-700">
+                <div class="text-3xl mb-2">🧹</div>
+                <h3 class="font-bold mb-1">Lint immediately</h3>
+                <p class="text-sm text-slate-400">改完馬上 lint，不要累積一堆風格問題。</p>
+            </div>
+            <div class="compare-card rounded-xl p-6 bg-slate-800/60 border border-slate-700">
+                <div class="text-3xl mb-2">🏃</div>
+                <h3 class="font-bold mb-1">Run tests often</h3>
+                <p class="text-sm text-slate-400">每個小段落跑一次，hidden regression 立刻浮出來。</p>
+            </div>
+        </div>
+
+        <!-- 範例：兩種問法對比 -->
+        <h2 class="text-2xl font-bold mb-4 text-center text-slate-300">📝 範例：同樣五個需求，兩種問法</h2>
+        <p class="text-center text-sm text-slate-400 mb-6">需求：幫一個部落格加上「文章按讚 + 留言 + 通知 + 報表 + 後台」</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+
+            <!-- 左：一次到位 -->
+            <div class="compare-card rounded-xl p-6 bg-red-950/30 border border-red-900/50">
+                <p class="chip bg-red-500/30 text-red-300 mb-3">❌ 一次到位</p>
+                <h3 class="font-bold mb-3 text-red-200">「全部幫我做完」</h3>
+                <div class="font-mono text-xs bg-slate-950/50 rounded p-3 text-slate-300 space-y-1 mb-3">
+                    <p class="text-red-300">$ 幫我加：</p>
+                    <p class="ml-2">1. 文章按讚功能</p>
+                    <p class="ml-2">2. 留言系統</p>
+                    <p class="ml-2">3. Email 通知</p>
+                    <p class="ml-2">4. 後台統計報表</p>
+                    <p class="ml-2">5. Admin 管理介面</p>
+                </div>
+                <div class="text-xs text-slate-400 space-y-1">
+                    <p class="text-red-300">→ 改了 23 個檔案</p>
+                    <p class="text-red-300">→ test 全紅，不知道哪個壞</p>
+                    <p class="text-red-300">→ 第 3 點通知功能耦合到留言系統</p>
+                    <p class="text-red-300">→ 想 rollback「留言」結果牽動「按讚」</p>
+                    <p class="text-red-300">→ 💣 整個 PR 報廢</p>
+                </div>
+            </div>
+
+            <!-- 右：階段問法 -->
+            <div class="compare-card rounded-xl p-6 bg-emerald-950/30 border border-emerald-900/50">
+                <p class="chip bg-emerald-500/30 text-emerald-300 mb-3">✅ 階段問法</p>
+                <h3 class="font-bold mb-3 text-emerald-200">「一次一個，跑完測試再下一個」</h3>
+                <div class="font-mono text-xs bg-slate-950/50 rounded p-3 space-y-1 mb-3">
+                    <p class="text-emerald-300">$ 1. 先做按讚功能（含 test）</p>
+                    <p class="text-slate-400 ml-4">✓ pass · commit</p>
+                    <p class="text-emerald-300">$ 2. 加留言系統</p>
+                    <p class="text-slate-400 ml-4">✓ pass · commit</p>
+                    <p class="text-emerald-300">$ 3. 接 Email 通知</p>
+                    <p class="text-slate-400 ml-4">✓ pass · commit</p>
+                    <p class="text-emerald-300">$ 4. 後台報表</p>
+                    <p class="text-slate-400 ml-4">✓ pass · commit</p>
+                    <p class="text-emerald-300">$ 5. Admin 介面</p>
+                    <p class="text-slate-400 ml-4">✓ pass · commit</p>
+                </div>
+                <div class="text-xs text-slate-400 space-y-1">
+                    <p class="text-emerald-300">→ 每步都有獨立 commit</p>
+                    <p class="text-emerald-300">→ 出錯只 rollback 那一個</p>
+                    <p class="text-emerald-300">→ 第 3 步意外影響第 2 步立刻發現</p>
+                    <p class="text-emerald-300">→ PR 切成 5 個，review 也輕鬆</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 心法 -->
+        <section class="rounded-2xl bg-slate-900 border border-slate-700 p-6 font-mono text-sm">
+            <p class="text-slate-500 mb-3"># 一句話心法</p>
+            <p class="text-green-400 cursor-blink">AI 寫 code 很快，但「驗證」比寫得快更重要</p>
+        </section>
+
+        <footer class="mt-12 text-center text-sm text-slate-500">
+            <p>Section 4 · Best Practice #4</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>
