@@ -29,18 +29,18 @@
             animation: fillUp 8s ease-in-out infinite;
         }
         @keyframes fillUp {
-            0%, 100% { width: 5%; background: #10B981; }
-            33%      { width: 50%; background: #FBBF24; }
-            66%      { width: 95%; background: #EF4444; }
+            0%, 100%  { width: 5%;  background: #10B981; }
+            25%       { width: 50%; background: #FBBF24; }
+            50%, 90%  { width: 95%; background: #EF4444; }
         }
 
         .quality-indicator {
             animation: qualityDrop 8s ease-in-out infinite;
         }
         @keyframes qualityDrop {
-            0%, 100% { transform: translateY(0);    color: #10B981; }
-            33%      { transform: translateY(28px); color: #FBBF24; }
-            66%      { transform: translateY(60px); color: #EF4444; }
+            0%, 100%  { transform: translateY(0);    color: #10B981; }
+            25%       { transform: translateY(28px); color: #FBBF24; }
+            50%, 90%  { transform: translateY(60px); color: #EF4444; }
         }
 
         /* 對話泡泡漸進累積 — 全部用同一 8s 週期、不同 keyframe 出現點，與進度條 100% 同步重設 */
@@ -58,41 +58,51 @@
         .chat-bubble:nth-of-type(5) { animation-name: bubble5; }  /* 🔴 警告 */
 
         @keyframes bubble1 {
-            0%, 8%, 100% { opacity: 0; transform: translateX(-8px); }
-            12%, 95%     { opacity: 1; transform: translateX(0); }
+            0%, 5%, 95%, 100% { opacity: 0; transform: translateX(-8px); }
+            10%, 90%          { opacity: 1; transform: translateX(0); }
         }
         @keyframes bubble2 {
-            0%, 22%, 100% { opacity: 0; transform: translateX(-8px); }
-            26%, 95%      { opacity: 1; transform: translateX(0); }
+            0%, 18%, 95%, 100% { opacity: 0; transform: translateX(-8px); }
+            22%, 90%           { opacity: 1; transform: translateX(0); }
         }
         @keyframes bubble3 {
-            0%, 40%, 100% { opacity: 0; transform: translateX(-8px); }
-            44%, 95%      { opacity: 1; transform: translateX(0); }
+            0%, 30%, 95%, 100% { opacity: 0; transform: translateX(-8px); }
+            34%, 90%           { opacity: 1; transform: translateX(0); }
         }
         @keyframes bubble4 {
-            0%, 60%, 100% { opacity: 0; transform: translateX(-8px); }
-            64%, 95%      { opacity: 1; transform: translateX(0); }
+            0%, 42%, 95%, 100% { opacity: 0; transform: translateX(-8px); }
+            46%, 90%           { opacity: 1; transform: translateX(0); }
         }
         @keyframes bubble5 {
-            0%, 76%, 100% { opacity: 0; transform: translateX(-8px); }
-            80%, 95%      { opacity: 1; transform: translateX(0); }
+            0%, 55%, 95%, 100% { opacity: 0; transform: translateX(-8px); }
+            60%, 90%           { opacity: 1; transform: translateX(0); }
         }
 
-        /* Token 計數三段 fade，與進度條同步 */
+        /* Token 計數三段 fade，與進度條同步（綠 0-25% / 黃 25-50% / 紅 50-90%） */
         .token-stage {
             position: absolute;
             right: 0;
             top: 0;
             opacity: 0;
-            animation: tokenSwap 8s ease-in-out infinite;
+            animation-duration: 8s;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
         }
-        @keyframes tokenSwap {
+        .token-stage.s1 { color: #10B981; animation-name: token1; }
+        .token-stage.s2 { color: #FBBF24; animation-name: token2; }
+        .token-stage.s3 { color: #EF4444; animation-name: token3; }
+        @keyframes token1 {
             0%, 22%, 100% { opacity: 0; }
-            5%, 17%       { opacity: 1; }
+            3%, 18%       { opacity: 1; }
         }
-        .token-stage.s2 { animation-delay: 2.64s; color: #FBBF24; }
-        .token-stage.s3 { animation-delay: 5.28s; color: #EF4444; }
-        .token-stage.s1 { color: #10B981; }
+        @keyframes token2 {
+            0%, 22%, 47%, 100% { opacity: 0; }
+            27%, 43%           { opacity: 1; }
+        }
+        @keyframes token3 {
+            0%, 47%, 95%, 100% { opacity: 0; }
+            52%, 90%           { opacity: 1; }
+        }
 
         .cursor-blink::after {
             content: '▍';
