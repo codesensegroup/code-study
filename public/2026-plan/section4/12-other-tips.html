@@ -128,10 +128,10 @@
                 </div>
                 <p class="text-sm text-slate-400 mb-3">大型功能要做但你還沒想清楚 → 不要硬寫 prompt，叫它<span class="text-amber-300 font-bold">用 <span class="font-mono">AskUserQuestion</span> 訪談你</span>。</p>
                 <div class="font-mono text-xs bg-slate-950/50 rounded p-3 text-slate-300 mb-3">
-                    <p class="text-amber-300">$ I want to build [brief description].</p>
-                    <p class="text-amber-300 ml-2">Interview me in detail using AskUserQuestion.</p>
-                    <p class="text-amber-300 ml-2">Don't ask obvious questions, dig into the hard parts.</p>
-                    <p class="text-amber-300 ml-2">Keep going until covered everything, then write SPEC.md.</p>
+                    <p class="text-amber-300">$ 我想做 [簡短描述功能]。</p>
+                    <p class="text-amber-300 ml-2">請用 AskUserQuestion 詳細訪談我。</p>
+                    <p class="text-amber-300 ml-2">不要問太明顯的問題，挖深難的部分。</p>
+                    <p class="text-amber-300 ml-2">問到全部釐清為止，然後寫成 SPEC.md。</p>
                 </div>
                 <p class="text-xs text-slate-500">→ 它會挖出你沒想過的 edge case、UI/UX 取捨、技術選擇。寫完 spec 後另開 fresh session 實作。</p>
             </section>
@@ -166,9 +166,10 @@
                 <p class="chip bg-emerald-500/20 text-emerald-300 mb-2">A · 大量調查 Investigation（主流用法）</p>
                 <p class="text-sm text-slate-400 mb-3">需要看大量檔案才能回答的問題 → 丟給 subagent 探索，<span class="text-emerald-300">主 session context 保持乾淨</span>。</p>
                 <div class="font-mono text-xs bg-slate-950/50 rounded p-3 text-slate-300 mb-2">
-                    <p class="text-emerald-300">$ Use subagents to investigate how our auth system</p>
-                    <p class="text-emerald-300 ml-2">handles token refresh, and whether we have existing</p>
-                    <p class="text-emerald-300 ml-2">OAuth utilities I should reuse.</p>
+                    <p class="text-emerald-300">$ 用 subagent 調查我們的 auth 系統怎麼處理</p>
+                    <p class="text-emerald-300 ml-2">token refresh，以及有沒有現成的 OAuth 工具</p>
+                    <p class="text-emerald-300 ml-2">可以重用。</p>
+                    <p class="text-slate-500 mt-1"># investigate auth token refresh & existing OAuth utils</p>
                 </div>
                 <p class="text-xs text-slate-500 mb-5">→ Subagent 讀爆 30 個檔案、燒它自己的 context；回報「答案在 src/auth/refresh.ts:47，已有 OAuthClient 可用」。你的主對話只多了一段摘要。</p>
 
@@ -176,9 +177,10 @@
                 <p class="chip bg-rose-500/20 text-rose-300 mb-2">B · 對抗性 Review Adversarial Review</p>
                 <p class="text-sm text-slate-400 mb-3">Claude 跑很久之後，找一個<span class="text-rose-300 font-bold">沒看過實作過程</span>的 subagent 來 review diff。看到的只有結果跟標準，不會被「我剛剛這樣寫」帶偏。</p>
                 <div class="font-mono text-xs bg-slate-950/50 rounded p-3 text-slate-300 mb-3">
-                    <p class="text-rose-300">$ Use a subagent to review the rate limiter diff</p>
-                    <p class="text-rose-300 ml-2">against PLAN.md.</p>
-                    <p class="text-slate-500 mt-1"># 或直接用內建 /code-review skill</p>
+                    <p class="text-rose-300">$ 用 subagent 對照 PLAN.md review</p>
+                    <p class="text-rose-300 ml-2">這份 rate limiter 的 diff。</p>
+                    <p class="text-slate-500 mt-1"># review rate limiter diff against PLAN.md</p>
+                    <p class="text-slate-500"># 或直接用內建 /code-review skill</p>
                 </div>
 
                 <!-- 強化的 caveat -->
