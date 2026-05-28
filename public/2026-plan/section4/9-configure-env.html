@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>重點 #9 · Configure Your Environment</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: linear-gradient(180deg, #0F172A 0%, #1E293B 100%);
+            color: #E2E8F0;
+            min-height: 100vh;
+        }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #60A5FA, #A78BFA, #F472B6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .chip {
+            display: inline-block; padding: 3px 12px; border-radius: 999px;
+            font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+        }
+
+        /* 積木由下而上堆疊 */
+        .block {
+            opacity: 0;
+            transform: translateY(40px);
+            animation: stackUp 8s linear infinite;
+            transition: all 0.3s ease;
+        }
+        @keyframes stackUp {
+            0%        { opacity: 0; transform: translateY(40px); }
+            10%, 90%  { opacity: 1; transform: translateY(0); }
+            100%      { opacity: 0; transform: translateY(40px); }
+        }
+        .blk1 { animation-delay: 0s; }
+        .blk2 { animation-delay: 0.5s; }
+        .blk3 { animation-delay: 1.0s; }
+        .blk4 { animation-delay: 1.5s; }
+        .blk5 { animation-delay: 2.0s; }
+        .blk6 { animation-delay: 2.5s; }
+        .blk7 { animation-delay: 3.0s; }
+
+        .block:hover {
+            transform: translateX(8px) !important;
+            filter: brightness(1.3);
+        }
+
+        /* 頂端 Claude 變強 */
+        .power-up {
+            animation: powerUp 8s linear infinite;
+        }
+        @keyframes powerUp {
+            0%, 40%  { filter: drop-shadow(0 0 0 transparent); transform: scale(1); }
+            50%, 90% { filter: drop-shadow(0 0 30px #FBBF24); transform: scale(1.1); }
+            100%     { filter: drop-shadow(0 0 0 transparent); transform: scale(1); }
+        }
+
+        .cursor-blink::after { content: '▍'; animation: blink 1s step-end infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .compare-card { transition: transform 0.3s ease; }
+        .compare-card:hover { transform: translateY(-4px); }
+    </style>
+</head>
+<body class="px-6 py-12">
+
+    <div class="max-w-5xl mx-auto">
+
+        <header class="text-center mb-12">
+            <p class="chip bg-indigo-500/20 text-indigo-300 mb-3">重點 #9 · Configure Your Environment</p>
+            <h1 class="text-5xl font-bold gradient-text mb-4">配置你的環境</h1>
+            <p class="text-slate-400">官方建議：花一次時間配置好環境，所有後續 session 都自動受惠。八個官方推薦的擴充點，從上到下堆起來。</p>
+        </header>
+
+        <!-- 主動畫：積木堆疊 -->
+        <section class="mb-12 p-8 rounded-2xl bg-slate-800/50 border border-slate-700">
+            <div class="grid grid-cols-1 md:grid-cols-[1fr_180px] gap-8 items-end">
+
+                <!-- 左：8 個官方擴充點堆疊 -->
+                <div class="flex flex-col-reverse gap-2">
+                    <div class="block blk1 rounded-lg px-5 py-3 bg-gradient-to-r from-purple-500/30 to-purple-600/30 border border-purple-400 flex items-center gap-3">
+                        <span class="text-2xl">📜</span>
+                        <span class="font-mono text-sm text-slate-300">CLAUDE.md</span>
+                        <span class="ml-auto text-xs text-slate-400">專案規則 · 每次自動載入</span>
+                    </div>
+                    <div class="block blk2 rounded-lg px-5 py-3 bg-gradient-to-r from-pink-500/30 to-pink-600/30 border border-pink-400 flex items-center gap-3">
+                        <span class="text-2xl">🛡️</span>
+                        <span class="font-mono text-sm text-slate-300">Permissions / Auto Mode</span>
+                        <span class="ml-auto text-xs text-slate-400">減少彈窗、限制風險</span>
+                    </div>
+                    <div class="block blk3 rounded-lg px-5 py-3 bg-gradient-to-r from-cyan-500/30 to-cyan-600/30 border border-cyan-400 flex items-center gap-3">
+                        <span class="text-2xl">🐚</span>
+                        <span class="font-mono text-sm text-slate-300">CLI tools</span>
+                        <span class="ml-auto text-xs text-slate-400">gh · aws · gcloud · sentry-cli</span>
+                    </div>
+                    <div class="block blk4 rounded-lg px-5 py-3 bg-gradient-to-r from-blue-500/30 to-blue-600/30 border border-blue-400 flex items-center gap-3">
+                        <span class="text-2xl">🔌</span>
+                        <span class="font-mono text-sm text-slate-300">MCP Servers</span>
+                        <span class="ml-auto text-xs text-slate-400">Notion · Figma · DB · 監控</span>
+                    </div>
+                    <div class="block blk5 rounded-lg px-5 py-3 bg-gradient-to-r from-emerald-500/30 to-emerald-600/30 border border-emerald-400 flex items-center gap-3">
+                        <span class="text-2xl">🪝</span>
+                        <span class="font-mono text-sm text-slate-300">Hooks</span>
+                        <span class="ml-auto text-xs text-slate-400">確定性自動化 · 100% 觸發</span>
+                    </div>
+                    <div class="block blk6 rounded-lg px-5 py-3 bg-gradient-to-r from-amber-500/30 to-amber-600/30 border border-amber-400 flex items-center gap-3">
+                        <span class="text-2xl">🎯</span>
+                        <span class="font-mono text-sm text-slate-300">Skills</span>
+                        <span class="ml-auto text-xs text-slate-400">領域知識 · 按需載入</span>
+                    </div>
+                    <div class="block blk7 rounded-lg px-5 py-3 bg-gradient-to-r from-orange-500/30 to-orange-600/30 border border-orange-400 flex items-center gap-3">
+                        <span class="text-2xl">🧑‍🚀</span>
+                        <span class="font-mono text-sm text-slate-300">Subagents</span>
+                        <span class="ml-auto text-xs text-slate-400">獨立 context · 不污染主對話</span>
+                    </div>
+                    <div class="block blk7 rounded-lg px-5 py-3 bg-gradient-to-r from-rose-500/30 to-rose-600/30 border border-rose-400 flex items-center gap-3">
+                        <span class="text-2xl">🧩</span>
+                        <span class="font-mono text-sm text-slate-300">Plugins</span>
+                        <span class="ml-auto text-xs text-slate-400">社群打包好的整套擴充</span>
+                    </div>
+                </div>
+
+                <!-- 右：總和變超人 -->
+                <div class="text-center">
+                    <div class="power-up text-7xl mb-3">🤖</div>
+                    <p class="text-amber-300 font-bold text-sm">= 配置好的 Agent</p>
+                    <p class="text-xs text-slate-500 mt-1 font-mono">env × discipline</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 對比：未配置 vs 配置完整 -->
+        <h2 class="text-2xl font-bold mb-4 text-center text-slate-300">未配置 vs 配置完整環境</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+
+            <div class="compare-card rounded-xl p-6 bg-red-950/30 border border-red-900/50">
+                <p class="chip bg-red-500/30 text-red-300 mb-3">❌ 開箱即用</p>
+                <h3 class="font-bold mb-3 text-red-200">「就一個對話視窗」</h3>
+                <ul class="space-y-1 text-sm text-slate-400">
+                    <li>• 每次重貼一遍專案規則</li>
+                    <li>• 每個動作都要點確認</li>
+                    <li>• 不知道 gh / aws CLI 可以用</li>
+                    <li>• Lint / test 全靠手動跑</li>
+                    <li>• 同樣的 review 重做 N 次</li>
+                </ul>
+            </div>
+
+            <div class="compare-card rounded-xl p-6 bg-emerald-950/30 border border-emerald-900/50">
+                <p class="chip bg-emerald-500/30 text-emerald-300 mb-3">✅ 配置完整</p>
+                <h3 class="font-bold mb-3 text-emerald-200">「環境替你做事」</h3>
+                <ul class="space-y-1 text-sm text-slate-400">
+                    <li>• CLAUDE.md 規則永久生效</li>
+                    <li>• Auto mode 自動審核命令</li>
+                    <li>• CLI tools / MCP 整合外部系統</li>
+                    <li>• Hook 自動 lint / test / format</li>
+                    <li>• Subagent 做 review 不污染主對話</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 情境範例：同一任務、兩種寫法 -->
+        <h2 class="text-2xl font-bold mb-2 text-center text-slate-300">🎬 情境範例</h2>
+        <p class="text-center text-sm text-slate-400 mb-6">任務：在電商加「使用者追蹤功能」（新 API + UI + 測試 + 部署）</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+
+            <!-- 沒配置環境 -->
+            <div class="compare-card rounded-xl p-6 bg-red-950/30 border border-red-900/50">
+                <p class="chip bg-red-500/30 text-red-300 mb-3">❌ 沒配置環境</p>
+                <h3 class="font-bold mb-3 text-red-200">把一切塞進巨型 prompt</h3>
+
+                <div class="font-mono text-xs bg-slate-950/50 rounded p-3 text-slate-300 space-y-1 mb-3 max-h-64 overflow-hidden">
+                    <p class="text-red-300">$ 加 follow 功能，要：</p>
+                    <p class="ml-2">- 用 TypeScript，禁止 any</p>
+                    <p class="ml-2">- 命名要 camelCase</p>
+                    <p class="ml-2">- 寫完跑 npm test</p>
+                    <p class="ml-2">- 用 conventional commit</p>
+                    <p class="ml-2">- 不要動 src/legacy</p>
+                    <p class="ml-2">- 不要碰 .env</p>
+                    <p class="ml-2">- 加完要 lint</p>
+                    <p class="ml-2">- 加 unit test 跟 e2e test</p>
+                    <p class="ml-2">- PR 不要超過 300 行</p>
+                    <p class="ml-2 text-slate-500">... (再 50 條)</p>
+                </div>
+                <div class="text-xs space-y-1">
+                    <p class="text-red-300">⚠️ AI 寫到後面忘記前面規則</p>
+                    <p class="text-red-300">⚠️ 你下次又要重貼一次</p>
+                    <p class="text-red-300">⚠️ 新人加入要學「咒語」</p>
+                </div>
+            </div>
+
+            <!-- 配置完整 -->
+            <div class="compare-card rounded-xl p-6 bg-emerald-950/30 border border-emerald-900/50">
+                <p class="chip bg-emerald-500/30 text-emerald-300 mb-3">✅ 配置完整</p>
+                <h3 class="font-bold mb-3 text-emerald-200">短 prompt + 環境自動補位</h3>
+
+                <div class="font-mono text-xs bg-slate-950/50 rounded p-3 space-y-1 mb-3">
+                    <p class="text-emerald-300">$ 加 follow 功能</p>
+                    <p class="text-slate-500"># 就這樣，10 個字</p>
+                </div>
+
+                <p class="text-xs text-slate-400 mb-2">背後環境自動處理：</p>
+                <div class="text-xs space-y-1 mb-3 bg-slate-950/50 rounded p-3">
+                    <p class="text-purple-300">📜 CLAUDE.md → coding style / commit / 禁忌</p>
+                    <p class="text-cyan-300">🪝 PreToolUse hook → 阻擋 .env / legacy</p>
+                    <p class="text-amber-300">🪝 PostToolUse hook → 自動跑 lint + test</p>
+                    <p class="text-pink-300">🛡️ permissions → 危險指令需確認</p>
+                    <p class="text-blue-300">⚙️ husky → commit 訊息格式自動檢查</p>
+                </div>
+                <div class="text-xs space-y-1">
+                    <p class="text-emerald-300">✓ 寫完自動 lint + test，錯了它自己 retry</p>
+                    <p class="text-emerald-300">✓ 規則永久在環境裡，新人 clone 就有</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 心法 -->
+        <section class="rounded-2xl bg-slate-900 border border-slate-700 p-6 font-mono text-sm">
+            <p class="text-slate-500 mb-3"># 一句話心法</p>
+            <p class="text-green-400 cursor-blink">花一次時間配置環境 — 之後每個 session 都自動受惠</p>
+        </section>
+
+        <footer class="mt-12 text-center text-sm text-slate-500">
+            <p>Section 4 · Best Practice #9</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>重點 #6 · 探索型任務最在行</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: linear-gradient(180deg, #0F172A 0%, #1E293B 100%);
+            color: #E2E8F0;
+            min-height: 100vh;
+        }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #60A5FA, #A78BFA, #F472B6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .chip {
+            display: inline-block; padding: 3px 12px; border-radius: 999px;
+            font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+        }
+
+        /* 檔案被掃到時亮起 */
+        .scan-file {
+            transition: all 0.3s ease;
+            animation: scanHighlight 8s linear infinite;
+        }
+        @keyframes scanHighlight {
+            0%, 100% { background: transparent; color: #64748b; }
+        }
+        .sf1 { animation: highlight 8s linear infinite; animation-delay: 0.5s; }
+        .sf2 { animation: highlight 8s linear infinite; animation-delay: 1.0s; }
+        .sf3 { animation: highlight 8s linear infinite; animation-delay: 1.5s; }
+        .sf4 { animation: highlight 8s linear infinite; animation-delay: 2.0s; }
+        .sf5 { animation: highlight 8s linear infinite; animation-delay: 2.5s; }
+        .sf6 { animation: highlight 8s linear infinite; animation-delay: 3.0s; }
+        .sf7 { animation: highlight 8s linear infinite; animation-delay: 3.5s; }
+        .sf8 { animation: highlight 8s linear infinite; animation-delay: 4.0s; }
+
+        @keyframes highlight {
+            0%, 6%, 70%, 100% { background: transparent; color: #64748b; }
+            8%, 12%           { background: rgba(96, 165, 250, 0.3); color: #DBEAFE; }
+            14%, 65%          { background: rgba(52, 211, 153, 0.15); color: #6EE7B7; }
+        }
+
+        /* mental model 圖逐步建立 */
+        .model-node {
+            opacity: 0;
+            animation: nodeAppear 8s linear infinite;
+        }
+        @keyframes nodeAppear {
+            0%, 50% { opacity: 0; transform: scale(0.5); }
+            55%, 90% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; }
+        }
+        .mn1 { animation-delay: 0s; }
+        .mn2 { animation-delay: 0.4s; }
+        .mn3 { animation-delay: 0.8s; }
+        .mn4 { animation-delay: 1.2s; }
+
+        /* 連線 */
+        .model-line {
+            opacity: 0;
+            animation: lineAppear 8s linear infinite;
+        }
+        @keyframes lineAppear {
+            0%, 60% { opacity: 0; }
+            65%, 90% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        .cursor-blink::after { content: '▍'; animation: blink 1s step-end infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .task-card {
+            transition: all 0.3s ease;
+        }
+        .task-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(251, 191, 36, 0.5);
+        }
+    </style>
+</head>
+<body class="px-6 py-12">
+
+    <div class="max-w-5xl mx-auto">
+
+        <header class="text-center mb-12">
+            <p class="chip bg-amber-500/20 text-amber-300 mb-3">重點 #6 · Ask Codebase Questions</p>
+            <h1 class="text-5xl font-bold gradient-text mb-4">把 Claude 當資深工程師問</h1>
+            <p class="text-slate-400">官方主張：在不熟的 codebase 裡，Claude Code 是最佳 onboarding 工具 — 你可以問同事的問題都可以問它。</p>
+        </header>
+
+        <!-- 官方建議的問法示範 -->
+        <section class="mb-12 p-6 rounded-2xl bg-amber-950/20 border border-amber-700/40">
+            <p class="chip bg-amber-500/20 text-amber-300 mb-3">💬 官方建議直接問</p>
+            <p class="text-sm text-slate-300 mb-4">把 Claude Code 當<span class="text-amber-300 font-bold">新人 onboarding 的 mentor</span>，直接拋問題，不用特別寫 prompt 技巧：</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 font-mono text-xs">
+                <div class="bg-slate-900/60 rounded p-3 text-slate-300">▸ 這個專案的 logging 怎麼運作？</div>
+                <div class="bg-slate-900/60 rounded p-3 text-slate-300">▸ 我要新增一個 API endpoint 該怎麼做？</div>
+                <div class="bg-slate-900/60 rounded p-3 text-slate-300">▸ <span class="text-amber-300">foo.rs</span> 第 134 行的 <span class="text-amber-300">async move</span> 是什麼意思？</div>
+                <div class="bg-slate-900/60 rounded p-3 text-slate-300">▸ <span class="text-amber-300">CustomerOnboardingFlow</span> 處理了哪些邊界情況？</div>
+                <div class="bg-slate-900/60 rounded p-3 text-slate-300">▸ 第 333 行為什麼是呼叫 <span class="text-amber-300">foo()</span> 而不是 <span class="text-amber-300">bar()</span>？</div>
+                <div class="bg-slate-900/60 rounded p-3 text-slate-300">▸ 這個 helper 為什麼存在？誰在用？</div>
+            </div>
+            <p class="text-xs text-slate-500 mt-4">→ 效果：縮短 ramp-up 時間，減少同事被問問題的負擔</p>
+        </section>
+
+        <!-- 主動畫：左邊掃檔案、右邊建 mental model -->
+        <h2 class="text-2xl font-bold mb-3 text-center text-slate-300">問了之後它會做什麼</h2>
+        <p class="text-center text-sm text-slate-400 mb-6">不需要你給檔名 — 它自己去掃，建立 mental model 再回答。</p>
+        <section class="mb-12 p-8 rounded-2xl bg-slate-800/50 border border-slate-700">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- 左：檔案樹 -->
+                <div>
+                    <p class="text-xs text-slate-500 mb-3 font-mono"># Claude 自主探索 repo</p>
+                    <div class="bg-slate-900 rounded-lg border border-slate-700 p-4 font-mono text-sm">
+                        <p class="text-slate-400">📁 src/</p>
+                        <p class="ml-4 sf1 rounded px-2 py-0.5">📄 index.ts</p>
+                        <p class="ml-4 text-slate-400">📁 auth/</p>
+                        <p class="ml-8 sf2 rounded px-2 py-0.5">📄 login.ts</p>
+                        <p class="ml-8 sf3 rounded px-2 py-0.5">📄 jwt.ts</p>
+                        <p class="ml-8 sf4 rounded px-2 py-0.5">📄 middleware.ts</p>
+                        <p class="ml-4 text-slate-400">📁 api/</p>
+                        <p class="ml-8 sf5 rounded px-2 py-0.5">📄 routes.ts</p>
+                        <p class="ml-8 sf6 rounded px-2 py-0.5">📄 handlers.ts</p>
+                        <p class="ml-4 text-slate-400">📁 db/</p>
+                        <p class="ml-8 sf7 rounded px-2 py-0.5">📄 schema.sql</p>
+                        <p class="ml-8 sf8 rounded px-2 py-0.5">📄 migrations.ts</p>
+                    </div>
+                </div>
+
+                <!-- 右：mental model -->
+                <div>
+                    <p class="text-xs text-slate-500 mb-3 font-mono"># 建立架構心智圖</p>
+                    <div class="bg-slate-900 rounded-lg border border-slate-700 p-4 relative min-h-[250px]">
+                        <!-- 連線（CSS 模擬） -->
+                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <svg class="w-full h-full" viewBox="0 0 300 250">
+                                <line class="model-line" x1="150" y1="50" x2="80" y2="130" stroke="#60A5FA" stroke-width="1.5" opacity="0.5"/>
+                                <line class="model-line" x1="150" y1="50" x2="220" y2="130" stroke="#60A5FA" stroke-width="1.5" opacity="0.5"/>
+                                <line class="model-line" x1="80" y1="130" x2="150" y2="210" stroke="#60A5FA" stroke-width="1.5" opacity="0.5"/>
+                                <line class="model-line" x1="220" y1="130" x2="150" y2="210" stroke="#60A5FA" stroke-width="1.5" opacity="0.5"/>
+                            </svg>
+                        </div>
+                        <div class="relative flex flex-col items-center gap-6">
+                            <div class="model-node mn1 bg-blue-500/30 border border-blue-400 rounded-lg px-3 py-1.5 text-sm">🌐 API Layer</div>
+                            <div class="flex gap-12">
+                                <div class="model-node mn2 bg-purple-500/30 border border-purple-400 rounded-lg px-3 py-1.5 text-sm">🔐 Auth</div>
+                                <div class="model-node mn3 bg-emerald-500/30 border border-emerald-400 rounded-lg px-3 py-1.5 text-sm">🗄️ DB</div>
+                            </div>
+                            <div class="model-node mn4 bg-amber-500/30 border border-amber-400 rounded-lg px-3 py-1.5 text-sm">⚡ Middleware</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="mt-6 bg-slate-900 rounded-lg border border-slate-700 p-4 font-mono text-sm">
+                <p class="text-slate-500"># 結果</p>
+                <p class="text-amber-300 cursor-blink">$ 我已經 trace 完，問題在 middleware/auth.ts:47，可以開始修了</p>
+            </div>
+        </section>
+
+        <!-- 適合的任務 -->
+        <h2 class="text-2xl font-bold mb-4 text-center text-slate-300">適合在「探索期」丟給它的六種任務</h2>
+        <p class="text-center text-sm text-slate-400 mb-6">— 涵蓋 onboarding、追架構、找問題的高槓桿用法</p>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+            <div class="task-card rounded-xl p-5 bg-slate-800/60 border border-slate-700 text-center">
+                <div class="text-3xl mb-2">🗺️</div>
+                <p class="font-bold text-sm">不熟的 codebase</p>
+                <p class="text-xs text-slate-400 mt-1">新進專案、外包接手</p>
+            </div>
+            <div class="task-card rounded-xl p-5 bg-slate-800/60 border border-slate-700 text-center">
+                <div class="text-3xl mb-2">🏛️</div>
+                <p class="font-bold text-sm">追蹤架構</p>
+                <p class="text-xs text-slate-400 mt-1">trace data flow</p>
+            </div>
+            <div class="task-card rounded-xl p-5 bg-slate-800/60 border border-slate-700 text-center">
+                <div class="text-3xl mb-2">♻️</div>
+                <p class="font-bold text-sm">大型 refactor</p>
+                <p class="text-xs text-slate-400 mt-1">跨檔案改動</p>
+            </div>
+            <div class="task-card rounded-xl p-5 bg-slate-800/60 border border-slate-700 text-center">
+                <div class="text-3xl mb-2">🔬</div>
+                <p class="font-bold text-sm">找 root cause</p>
+                <p class="text-xs text-slate-400 mt-1">複雜 bug</p>
+            </div>
+            <div class="task-card rounded-xl p-5 bg-slate-800/60 border border-slate-700 text-center">
+                <div class="text-3xl mb-2">🚚</div>
+                <p class="font-bold text-sm">Migration</p>
+                <p class="text-xs text-slate-400 mt-1">v1 → v2 API</p>
+            </div>
+            <div class="task-card rounded-xl p-5 bg-slate-800/60 border border-slate-700 text-center">
+                <div class="text-3xl mb-2">🐛</div>
+                <p class="font-bold text-sm">Debugging</p>
+                <p class="text-xs text-slate-400 mt-1">log + code 跨域追</p>
+            </div>
+        </div>
+
+        <!-- 反例：不適合的情境 -->
+        <h2 class="text-2xl font-bold mb-2 text-center text-slate-300">⚠️ 反例：這四種「探索」會空轉</h2>
+        <p class="text-center text-sm text-slate-400 mb-6">不是 Claude 不努力 — 是「資訊不在 codebase 裡」，怎麼 grep 都找不到。</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+
+            <div class="task-card rounded-xl p-5 bg-red-950/30 border border-red-900/50">
+                <div class="flex items-start gap-3">
+                    <div class="text-3xl">⏱️</div>
+                    <div>
+                        <p class="font-bold text-sm text-red-200 mb-1">Race condition / 記憶體洩漏</p>
+                        <p class="text-xs text-slate-400">需要 runtime trace、profiler、heap snapshot — 靜態讀檔案看不出來。</p>
+                        <p class="text-xs text-amber-300 mt-2">💡 該做：你把 profiler / log 貼給它分析</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="task-card rounded-xl p-5 bg-red-950/30 border border-red-900/50">
+                <div class="flex items-start gap-3">
+                    <div class="text-3xl">👁️</div>
+                    <div>
+                        <p class="font-bold text-sm text-red-200 mb-1">純視覺 / UX bug</p>
+                        <p class="text-xs text-slate-400">「按鈕排版怪怪的」「動畫卡卡」— 需要肉眼或瀏覽器互動。</p>
+                        <p class="text-xs text-amber-300 mt-2">💡 該做：截圖貼給它 + 配 Playwright MCP</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="task-card rounded-xl p-5 bg-red-950/30 border border-red-900/50">
+                <div class="flex items-start gap-3">
+                    <div class="text-3xl">🎭</div>
+                    <div>
+                        <p class="font-bold text-sm text-red-200 mb-1">動態 / 反射程式碼</p>
+                        <p class="text-xs text-slate-400">PHP magic method、Python <span class="font-mono text-slate-300">getattr</span>、JS <span class="font-mono text-slate-300">eval</span> — call graph 是 runtime 才知道。</p>
+                        <p class="text-xs text-amber-300 mt-2">💡 該做：你補上「執行範例」當線索</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="task-card rounded-xl p-5 bg-red-950/30 border border-red-900/50">
+                <div class="flex items-start gap-3">
+                    <div class="text-3xl">☁️</div>
+                    <div>
+                        <p class="font-bold text-sm text-red-200 mb-1">只發生在 production 的 bug</p>
+                        <p class="text-xs text-slate-400">流量、DB 真實資料、第三方 API 才會觸發 — 本機 repo 看不出來。</p>
+                        <p class="text-xs text-amber-300 mt-2">💡 該做：把 production log / 監控數據貼進來</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 心法 -->
+        <section class="rounded-2xl bg-slate-900 border border-slate-700 p-6 font-mono text-sm">
+            <p class="text-slate-500 mb-3"># 一句話心法</p>
+            <p class="text-green-400 cursor-blink">不熟的 codebase = Claude 主場 — 把它當資深同事，直接問</p>
+        </section>
+
+        <footer class="mt-12 text-center text-sm text-slate-500">
+            <p>Section 4 · Best Practice #6</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>

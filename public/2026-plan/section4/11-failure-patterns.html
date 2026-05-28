@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>補充 #11 · 五大常見失敗模式</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: linear-gradient(180deg, #0F172A 0%, #1E293B 100%);
+            color: #E2E8F0;
+            min-height: 100vh;
+        }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #F87171, #FB923C, #FBBF24);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .chip {
+            display: inline-block; padding: 3px 12px; border-radius: 999px;
+            font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+        }
+
+        /* 卡片 stagger 出現 */
+        .pattern-card {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.6s ease-out forwards;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .pattern-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px -10px rgba(248, 113, 113, 0.3);
+        }
+        .pattern-card:nth-child(1) { animation-delay: 0.1s; }
+        .pattern-card:nth-child(2) { animation-delay: 0.25s; }
+        .pattern-card:nth-child(3) { animation-delay: 0.4s; }
+        .pattern-card:nth-child(4) { animation-delay: 0.55s; }
+        .pattern-card:nth-child(5) { animation-delay: 0.7s; }
+
+        /* fix 區塊閃綠光提示 */
+        .fix-glow {
+            animation: glow 3s ease-in-out infinite;
+        }
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 0 rgba(52, 211, 153, 0); }
+            50%      { box-shadow: 0 0 20px rgba(52, 211, 153, 0.4); }
+        }
+
+        .cursor-blink::after { content: '▍'; animation: blink 1s step-end infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .pattern-num {
+            display: inline-flex;
+            width: 28px; height: 28px;
+            border-radius: 999px;
+            align-items: center; justify-content: center;
+            background: rgba(248, 113, 113, 0.2);
+            border: 1px solid rgba(248, 113, 113, 0.5);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px; font-weight: 700;
+            color: #FCA5A5;
+        }
+    </style>
+</head>
+<body class="px-6 py-12">
+
+    <div class="max-w-5xl mx-auto">
+
+        <header class="text-center mb-12">
+            <p class="chip bg-red-500/20 text-red-300 mb-3">補充 #11 · 官方反模式</p>
+            <h1 class="text-5xl font-bold gradient-text mb-4">五大常見失敗模式</h1>
+            <p class="text-slate-400">「Avoid common failure patterns」— 官方獨立列出的 5 個踩坑場景。早識別、早脫身。</p>
+        </header>
+
+        <div class="space-y-5">
+
+            <!-- 1. Kitchen sink -->
+            <div class="pattern-card rounded-2xl p-6 bg-slate-800/50 border border-slate-700">
+                <div class="flex items-start gap-4">
+                    <span class="pattern-num">01</span>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-red-200 mb-2">🍳 Kitchen Sink Session — 一鍋亂燉</h3>
+                        <p class="text-sm text-slate-400 mb-4">一個 session 裡先做 A、跳去做不相關的 B、又跳回 A...</p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div class="bg-slate-950/60 rounded-lg p-4 border-l-2 border-red-500">
+                                <p class="text-xs text-red-300 font-bold mb-2">❌ 症狀 & 後果</p>
+                                <ul class="text-xs text-slate-300 space-y-1">
+                                    <li>• context 充斥不相關資訊</li>
+                                    <li>• AI 開始混淆 A、B 任務</li>
+                                    <li>• 品質明顯下降</li>
+                                </ul>
+                            </div>
+                            <div class="bg-slate-950/60 rounded-lg p-4 border-l-2 border-emerald-500 fix-glow">
+                                <p class="text-xs text-emerald-300 font-bold mb-2">✅ 官方解法</p>
+                                <p class="text-xs text-slate-300">不相關任務之間 <span class="font-mono text-emerald-300">/clear</span> 重來</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Correcting over and over -->
+            <div class="pattern-card rounded-2xl p-6 bg-slate-800/50 border border-slate-700">
+                <div class="flex items-start gap-4">
+                    <span class="pattern-num">02</span>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-red-200 mb-2">🔁 Correcting Over and Over — 反覆糾正</h3>
+                        <p class="text-sm text-slate-400 mb-4">改錯 → 你糾正 → 還是錯 → 再糾正 → 還是錯...</p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div class="bg-slate-950/60 rounded-lg p-4 border-l-2 border-red-500">
+                                <p class="text-xs text-red-300 font-bold mb-2">❌ 症狀 & 後果</p>
+                                <ul class="text-xs text-slate-300 space-y-1">
+                                    <li>• context 累積一堆失敗嘗試</li>
+                                    <li>• AI 受污染、開始重複錯誤</li>
+                                    <li>• 越糾正越糟</li>
+                                </ul>
+                            </div>
+                            <div class="bg-slate-950/60 rounded-lg p-4 border-l-2 border-emerald-500 fix-glow">
+                                <p class="text-xs text-emerald-300 font-bold mb-2">✅ 官方解法</p>
+                                <p class="text-xs text-slate-300">糾正 <span class="font-mono text-amber-300">兩次</span>失敗就 <span class="font-mono text-emerald-300">/clear</span>，把學到的教訓寫進新 prompt</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Over-specified CLAUDE.md -->
+            <div class="pattern-card rounded-2xl p-6 bg-slate-800/50 border border-slate-700">
+                <div class="flex items-start gap-4">
+                    <span class="pattern-num">03</span>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-red-200 mb-2">📜 Over-specified CLAUDE.md — 寫太多</h3>
+                        <p class="text-sm text-slate-400 mb-4">CLAUDE.md 越寫越長，五頁、十頁、五十條規則...</p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div class="bg-slate-950/60 rounded-lg p-4 border-l-2 border-red-500">
+                                <p class="text-xs text-red-300 font-bold mb-2">❌ 症狀 & 後果</p>
+                                <ul class="text-xs text-slate-300 space-y-1">
+                                    <li>• AI 反而忽略一半規則</li>
+                                    <li>• 重要規則被埋在雜訊裡</li>
+                                    <li>• 越寫越像沒寫</li>
+                                </ul>
+                            </div>
+                            <div class="bg-slate-950/60 rounded-lg p-4 border-l-2 border-emerald-500 fix-glow">
+                                <p class="text-xs text-emerald-300 font-bold mb-2">✅ 官方解法</p>
+                                <p class="text-xs text-slate-300">殘酷剪裁。每行問：「移除這條會讓 Claude 犯錯嗎？」不會就刪。<br/>能轉成 hook 的就轉。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Trust-then-verify gap -->
+            <div class="pattern-card rounded-2xl p-6 bg-slate-800/50 border border-slate-700">
+                <div class="flex items-start gap-4">
+                    <span class="pattern-num">04</span>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-red-200 mb-2">🎭 Trust-Then-Verify Gap — 看似對就 ship</h3>
+                        <p class="text-sm text-slate-400 mb-4">AI 給出看起來合理的程式碼 → 你沒驗證 → 直接合進去...</p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div class="bg-slate-950/60 rounded-lg p-4 border-l-2 border-red-500">
+                                <p class="text-xs text-red-300 font-bold mb-2">❌ 症狀 & 後果</p>
+                                <ul class="text-xs text-slate-300 space-y-1">
+                                    <li>• edge case 沒處理</li>
+                                    <li>• 上線才爆炸</li>
+                                    <li>• 連 AI 自己也不確定對不對</li>
+                                </ul>
+                            </div>
+                            <div class="bg-slate-950/60 rounded-lg p-4 border-l-2 border-emerald-500 fix-glow">
+                                <p class="text-xs text-emerald-300 font-bold mb-2">✅ 官方解法</p>
+                                <p class="text-xs text-slate-300">永遠給 Claude 一條<span class="text-amber-300">驗證路徑</span>（tests / script / screenshot）。<br/>不能驗證的事 → 不要 ship。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. Infinite exploration -->
+            <div class="pattern-card rounded-2xl p-6 bg-slate-800/50 border border-slate-700">
+                <div class="flex items-start gap-4">
+                    <span class="pattern-num">05</span>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-red-200 mb-2">🌀 Infinite Exploration — 無底洞探索</h3>
+                        <p class="text-sm text-slate-400 mb-4">「研究一下這個專案」「看看這個是怎麼運作的」沒劃任何範圍...</p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div class="bg-slate-950/60 rounded-lg p-4 border-l-2 border-red-500">
+                                <p class="text-xs text-red-300 font-bold mb-2">❌ 症狀 & 後果</p>
+                                <ul class="text-xs text-slate-300 space-y-1">
+                                    <li>• AI 讀爆 100 個檔案</li>
+                                    <li>• context 瞬間炸滿</li>
+                                    <li>• 真正開始做事時 context 已耗盡</li>
+                                </ul>
+                            </div>
+                            <div class="bg-slate-950/60 rounded-lg p-4 border-l-2 border-emerald-500 fix-glow">
+                                <p class="text-xs text-emerald-300 font-bold mb-2">✅ 官方解法</p>
+                                <p class="text-xs text-slate-300">調查範圍要窄。<br/>不確定多大就用 <span class="font-mono text-amber-300">subagent</span>，讓它自己的 context 燒，回報摘要就好。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 心法 -->
+        <section class="mt-12 rounded-2xl bg-slate-900 border border-slate-700 p-6 font-mono text-sm">
+            <p class="text-slate-500 mb-3"># 識別反模式的口訣</p>
+            <p class="text-green-400 cursor-blink">同樣的事重複兩次都還在掙扎 → 停下來、清 context、換個問法</p>
+        </section>
+
+        <footer class="mt-12 text-center text-sm text-slate-500">
+            <p>Section 4 · Supplement #11 · Avoid Common Failure Patterns</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>

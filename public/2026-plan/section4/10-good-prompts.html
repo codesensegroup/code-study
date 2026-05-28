@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>補充 #10 · 寫出精準 Prompt</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: linear-gradient(180deg, #0F172A 0%, #1E293B 100%);
+            color: #E2E8F0;
+            min-height: 100vh;
+        }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #60A5FA, #A78BFA, #34D399);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .chip {
+            display: inline-block; padding: 3px 12px; border-radius: 999px;
+            font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+        }
+
+        /* 比較卡片 stagger */
+        .pair {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.6s ease-out forwards;
+        }
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .pair:nth-child(1) { animation-delay: 0.1s; }
+        .pair:nth-child(2) { animation-delay: 0.25s; }
+        .pair:nth-child(3) { animation-delay: 0.4s; }
+        .pair:nth-child(4) { animation-delay: 0.55s; }
+
+        /* good prompt 閃綠光 */
+        .good {
+            position: relative;
+            animation: goodPulse 4s ease-in-out infinite;
+        }
+        @keyframes goodPulse {
+            0%, 100% { box-shadow: 0 0 0 rgba(52, 211, 153, 0); }
+            50%      { box-shadow: 0 0 25px rgba(52, 211, 153, 0.35); }
+        }
+
+        /* 箭頭脈動 */
+        .arrow {
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.6; }
+            50%      { transform: scale(1.2); opacity: 1; }
+        }
+
+        .cursor-blink::after { content: '▍'; animation: blink 1s step-end infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .rich-tag {
+            transition: all 0.3s ease;
+        }
+        .rich-tag:hover {
+            transform: translateY(-3px);
+            border-color: rgba(96, 165, 250, 0.7);
+        }
+    </style>
+</head>
+<body class="px-6 py-12">
+
+    <div class="max-w-5xl mx-auto">
+
+        <header class="text-center mb-12">
+            <p class="chip bg-blue-500/20 text-blue-300 mb-3">補充 #10 · Provide Specific Context</p>
+            <h1 class="text-5xl font-bold gradient-text mb-4">寫出精準 Prompt</h1>
+            <p class="text-slate-400">指令越精確、修正越少。官方提供 4 種改寫技巧 + 5 種餵資料方式。</p>
+        </header>
+
+        <!-- 四種改寫技巧 -->
+        <h2 class="text-2xl font-bold mb-6 text-center text-slate-300">四種改寫技巧 · Before / After</h2>
+
+        <div class="space-y-5 mb-12">
+
+            <!-- 1. Scope the task -->
+            <div class="pair p-6 rounded-2xl bg-slate-800/50 border border-slate-700">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="chip bg-blue-500/20 text-blue-300">① 劃範圍</span>
+                    <h3 class="font-bold text-slate-200">指定檔案、情境、測試偏好</h3>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-[1fr_40px_1fr] gap-3 items-center">
+                    <div class="bg-red-950/30 border border-red-900/50 rounded-lg p-4 font-mono text-xs text-red-200">
+                        <p class="text-red-400 text-[10px] mb-1">❌ 改寫前</p>
+                        幫 foo.py 加測試
+                    </div>
+                    <div class="arrow text-center text-2xl text-emerald-400 hidden md:block">→</div>
+                    <div class="good bg-emerald-950/30 border border-emerald-700/50 rounded-lg p-4 font-mono text-xs text-emerald-200">
+                        <p class="text-emerald-400 text-[10px] mb-1">✅ 改寫後</p>
+                        幫 <span class="text-amber-300">foo.py</span> 寫一條測試，涵蓋<span class="text-amber-300">使用者已登出</span>的邊界情況。<span class="text-amber-300">不要用 mock</span>。
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Point to sources -->
+            <div class="pair p-6 rounded-2xl bg-slate-800/50 border border-slate-700">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="chip bg-purple-500/20 text-purple-300">② 指向來源</span>
+                    <h3 class="font-bold text-slate-200">直接指明能回答問題的資料源</h3>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-[1fr_40px_1fr] gap-3 items-center">
+                    <div class="bg-red-950/30 border border-red-900/50 rounded-lg p-4 font-mono text-xs text-red-200">
+                        <p class="text-red-400 text-[10px] mb-1">❌ 改寫前</p>
+                        為什麼 ExecutionFactory 的 API 這麼怪？
+                    </div>
+                    <div class="arrow text-center text-2xl text-emerald-400 hidden md:block">→</div>
+                    <div class="good bg-emerald-950/30 border border-emerald-700/50 rounded-lg p-4 font-mono text-xs text-emerald-200">
+                        <p class="text-emerald-400 text-[10px] mb-1">✅ 改寫後</p>
+                        查 <span class="text-amber-300">ExecutionFactory 的 git history</span>，總結它的 API 是怎麼演變來的
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Reference patterns -->
+            <div class="pair p-6 rounded-2xl bg-slate-800/50 border border-slate-700">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="chip bg-amber-500/20 text-amber-300">③ 引用既有 pattern</span>
+                    <h3 class="font-bold text-slate-200">點名專案中已存在的範例</h3>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-[1fr_40px_1fr] gap-3 items-center">
+                    <div class="bg-red-950/30 border border-red-900/50 rounded-lg p-4 font-mono text-xs text-red-200">
+                        <p class="text-red-400 text-[10px] mb-1">❌ 改寫前</p>
+                        加一個 calendar widget
+                    </div>
+                    <div class="arrow text-center text-2xl text-emerald-400 hidden md:block">→</div>
+                    <div class="good bg-emerald-950/30 border border-emerald-700/50 rounded-lg p-4 font-mono text-xs text-emerald-200">
+                        <p class="text-emerald-400 text-[10px] mb-1">✅ 改寫後</p>
+                        先看 <span class="text-amber-300">HotDogWidget.php</span> 理解專案的 widget 寫法，再依同樣風格做一個 calendar widget。<span class="text-amber-300">從零寫起，不要引入新套件</span>。
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Describe the symptom -->
+            <div class="pair p-6 rounded-2xl bg-slate-800/50 border border-slate-700">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="chip bg-rose-500/20 text-rose-300">④ 描述症狀</span>
+                    <h3 class="font-bold text-slate-200">給症狀 + 可能位置 + 修好的樣子</h3>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-[1fr_40px_1fr] gap-3 items-center">
+                    <div class="bg-red-950/30 border border-red-900/50 rounded-lg p-4 font-mono text-xs text-red-200">
+                        <p class="text-red-400 text-[10px] mb-1">❌ 改寫前</p>
+                        修一下 login bug
+                    </div>
+                    <div class="arrow text-center text-2xl text-emerald-400 hidden md:block">→</div>
+                    <div class="good bg-emerald-950/30 border border-emerald-700/50 rounded-lg p-4 font-mono text-xs text-emerald-200">
+                        <p class="text-emerald-400 text-[10px] mb-1">✅ 改寫後</p>
+                        使用者反映 <span class="text-amber-300">session timeout 後登入失敗</span>。檢查 <span class="text-amber-300">src/auth/</span>，特別是 token refresh。<span class="text-amber-300">先寫一條會失敗的測試重現問題，再修掉</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 餵資料的五種方式 -->
+        <h2 class="text-2xl font-bold mb-2 text-center text-slate-300">餵 Claude 資料的五種方式</h2>
+        <p class="text-center text-sm text-slate-400 mb-6">不要用「描述」，能直接給的就直接給。</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
+
+            <div class="rich-tag rounded-xl p-5 bg-slate-800/60 border border-slate-700">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-2xl">📎</span>
+                    <span class="font-mono text-amber-300 font-bold">@檔名</span>
+                </div>
+                <p class="text-sm text-slate-300">直接用 <span class="font-mono text-amber-300">@src/foo.ts</span> 引用檔案，比「描述 code 在哪」可靠。</p>
+            </div>
+
+            <div class="rich-tag rounded-xl p-5 bg-slate-800/60 border border-slate-700">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-2xl">🖼️</span>
+                    <span class="font-mono text-amber-300 font-bold">貼圖片</span>
+                </div>
+                <p class="text-sm text-slate-300">UI bug、截圖 error 訊息、設計圖直接複製貼上或拖進去。</p>
+            </div>
+
+            <div class="rich-tag rounded-xl p-5 bg-slate-800/60 border border-slate-700">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-2xl">🔗</span>
+                    <span class="font-mono text-amber-300 font-bold">給 URL</span>
+                </div>
+                <p class="text-sm text-slate-300">文件、API 參考直接給網址；常用網域用 <span class="font-mono text-emerald-300">/permissions</span> 加入 allowlist。</p>
+            </div>
+
+            <div class="rich-tag rounded-xl p-5 bg-slate-800/60 border border-slate-700">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-2xl">🚰</span>
+                    <span class="font-mono text-amber-300 font-bold">pipe data</span>
+                </div>
+                <p class="text-sm text-slate-300">
+                    <span class="font-mono text-emerald-300">cat error.log | claude</span> 直接把檔案內容餵進來。
+                </p>
+            </div>
+
+            <div class="rich-tag rounded-xl p-5 bg-slate-800/60 border border-slate-700 md:col-span-2">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-2xl">🛠️</span>
+                    <span class="font-mono text-amber-300 font-bold">讓 Claude 自己抓</span>
+                </div>
+                <p class="text-sm text-slate-300">叫它用 Bash / MCP / 讀檔自己去取所需 context — 不用每件事都你貼。</p>
+            </div>
+
+        </div>
+
+        <!-- 何時可以「模糊」 -->
+        <section class="rounded-2xl bg-amber-950/20 border border-amber-700/40 p-6 mb-8">
+            <p class="chip bg-amber-500/20 text-amber-300 mb-3">💡 例外：模糊也有用的時候</p>
+            <p class="text-sm text-slate-300 mb-2">當你還在 <span class="text-amber-300 font-bold">探索階段</span>、可以承受 AI 自由發揮時，模糊 prompt 反而有用。</p>
+            <div class="font-mono text-xs bg-slate-950/50 rounded p-3 text-slate-300">
+                <p class="text-amber-300">$ 這個檔案還有哪些地方可以改進？</p>
+                <p class="text-slate-500 mt-1"># 你會看到原本想不到的角度</p>
+            </div>
+        </section>
+
+        <!-- 心法 -->
+        <section class="rounded-2xl bg-slate-900 border border-slate-700 p-6 font-mono text-sm">
+            <p class="text-slate-500 mb-3"># 一句話心法</p>
+            <p class="text-green-400 cursor-blink">「Claude 能推論意圖，但不能讀你的心」— 精確度直接決定修正次數</p>
+        </section>
+
+        <footer class="mt-12 text-center text-sm text-slate-500">
+            <p>Section 4 · Supplement #10 · Provide Specific Context</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>

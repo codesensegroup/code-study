@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>重點 #3 · CLAUDE.md 核心武器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: linear-gradient(180deg, #0F172A 0%, #1E293B 100%);
+            color: #E2E8F0;
+            min-height: 100vh;
+        }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #60A5FA, #A78BFA, #F472B6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .chip {
+            display: inline-block; padding: 3px 12px; border-radius: 999px;
+            font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+        }
+
+        /* 知識卡片飛入 CLAUDE.md */
+        .knowledge {
+            opacity: 0;
+            animation: flyIn 6s linear infinite;
+        }
+        @keyframes flyIn {
+            0%   { opacity: 0; transform: translateX(-200px) scale(0.6); }
+            15%  { opacity: 1; transform: translateX(0) scale(1); }
+            55%  { opacity: 1; transform: translateX(120px) scale(0.85); }
+            70%  { opacity: 0; transform: translateX(180px) scale(0.5); }
+            100% { opacity: 0; }
+        }
+        .k1 { animation-delay: 0s; }
+        .k2 { animation-delay: 1s; }
+        .k3 { animation-delay: 2s; }
+        .k4 { animation-delay: 3s; }
+        .k5 { animation-delay: 4s; }
+
+        /* CLAUDE.md 檔案發光 */
+        .claude-file {
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 30px rgba(167, 139, 250, 0.4); }
+            50%      { box-shadow: 0 0 60px rgba(167, 139, 250, 0.8); }
+        }
+
+        /* AI 腦袋亮起 */
+        .ai-brain {
+            animation: brainGlow 6s linear infinite;
+        }
+        @keyframes brainGlow {
+            0%, 60% { filter: drop-shadow(0 0 0 transparent); }
+            70%     { filter: drop-shadow(0 0 20px #34D399); transform: scale(1.1); }
+            85%     { filter: drop-shadow(0 0 30px #34D399); }
+            100%    { filter: drop-shadow(0 0 0 transparent); transform: scale(1); }
+        }
+
+        .cursor-blink::after { content: '▍'; animation: blink 1s step-end infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .compare-card { transition: transform 0.3s ease; }
+        .compare-card:hover { transform: translateY(-4px); }
+    </style>
+</head>
+<body class="px-6 py-12">
+
+    <div class="max-w-5xl mx-auto">
+
+        <header class="text-center mb-12">
+            <p class="chip bg-purple-500/20 text-purple-300 mb-3">重點 #3 · 核心武器</p>
+            <h1 class="text-5xl font-bold gradient-text mb-4">CLAUDE.md</h1>
+            <p class="text-slate-400">把專案規則永久寫進去，不要每次都重講一次。</p>
+        </header>
+
+        <!-- 主動畫：知識飛入 CLAUDE.md -->
+        <section class="mb-12 p-8 rounded-2xl bg-slate-800/50 border border-slate-700">
+            <div class="grid grid-cols-[1fr_140px_1fr] gap-4 items-center min-h-[320px]">
+
+                <!-- 左：知識來源 -->
+                <div class="space-y-2">
+                    <p class="text-xs text-slate-500 mb-3 font-mono"># 團隊知識</p>
+                    <div class="knowledge k1 bg-blue-500/20 border border-blue-500/40 rounded px-3 py-2 text-sm">📐 專案架構</div>
+                    <div class="knowledge k2 bg-emerald-500/20 border border-emerald-500/40 rounded px-3 py-2 text-sm">✨ Coding style</div>
+                    <div class="knowledge k3 bg-amber-500/20 border border-amber-500/40 rounded px-3 py-2 text-sm">🧪 Lint / test 規則</div>
+                    <div class="knowledge k4 bg-pink-500/20 border border-pink-500/40 rounded px-3 py-2 text-sm">📋 PR 規範</div>
+                    <div class="knowledge k5 bg-red-500/20 border border-red-500/40 rounded px-3 py-2 text-sm">🚫 禁止事項</div>
+                </div>
+
+                <!-- 中：CLAUDE.md 檔 -->
+                <div class="text-center">
+                    <div class="claude-file inline-block bg-gradient-to-br from-purple-600/30 to-blue-600/30 border-2 border-purple-400 rounded-xl p-4">
+                        <div class="text-4xl mb-1">📜</div>
+                        <p class="font-mono text-xs font-bold text-purple-200">CLAUDE.md</p>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-2 font-mono">永久</p>
+                </div>
+
+                <!-- 右：AI 腦袋 -->
+                <div class="text-center">
+                    <p class="text-xs text-slate-500 mb-3 font-mono"># AI 啟動 = 自動載入</p>
+                    <div class="ai-brain inline-block text-7xl">🤖</div>
+                    <p class="text-xs text-emerald-300 mt-3 font-mono">✓ 已知道規則</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 對比 -->
+        <h2 class="text-2xl font-bold mb-4 text-center text-slate-300">沒有 vs 有 CLAUDE.md</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+
+            <div class="compare-card rounded-xl p-6 bg-red-950/30 border border-red-900/50">
+                <p class="chip bg-red-500/30 text-red-300 mb-3">❌ 沒有</p>
+                <h3 class="font-bold mb-3 text-red-200">每次都要重講</h3>
+                <div class="font-mono text-xs space-y-1 bg-slate-950/50 rounded p-3 text-slate-400">
+                    <p>$ 我們用 pnpm 不用 npm</p>
+                    <p>$ commit 訊息要 conventional</p>
+                    <p>$ src/legacy 不要動</p>
+                    <p>$ 測試要跑 vitest 不是 jest</p>
+                    <p class="text-red-300">... 然後下一輪 /clear 又要重講</p>
+                </div>
+            </div>
+
+            <div class="compare-card rounded-xl p-6 bg-emerald-950/30 border border-emerald-900/50">
+                <p class="chip bg-emerald-500/30 text-emerald-300 mb-3">✅ 有</p>
+                <h3 class="font-bold mb-3 text-emerald-200">啟動就自動知道</h3>
+                <div class="font-mono text-xs space-y-1 bg-slate-950/50 rounded p-3 text-slate-300">
+                    <p class="text-purple-300"># CLAUDE.md</p>
+                    <p>- Package manager: pnpm</p>
+                    <p>- Commit: conventional</p>
+                    <p>- Off-limits: src/legacy/</p>
+                    <p>- Test: vitest</p>
+                    <p class="text-emerald-300">→ 每次啟動 = 自動套用</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 該寫什麼進去 -->
+        <section class="rounded-2xl bg-slate-900 border border-slate-700 p-6 mb-8">
+            <p class="chip bg-purple-500/20 text-purple-300 mb-3">CLAUDE.md 內容建議</p>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+                <div class="bg-slate-800/50 rounded px-3 py-2">📐 專案架構</div>
+                <div class="bg-slate-800/50 rounded px-3 py-2">✨ Coding style</div>
+                <div class="bg-slate-800/50 rounded px-3 py-2">🔧 常用 command</div>
+                <div class="bg-slate-800/50 rounded px-3 py-2">🧪 Lint / test 規則</div>
+                <div class="bg-slate-800/50 rounded px-3 py-2">📋 PR 規範</div>
+                <div class="bg-slate-800/50 rounded px-3 py-2">🚫 禁止事項</div>
+            </div>
+        </section>
+
+        <!-- 範例：真實 CLAUDE.md 長什麼樣 -->
+        <h2 class="text-2xl font-bold mb-4 text-center text-slate-300">📂 範例：一個小型 Nuxt 3 電商專案的 <span class="font-mono text-purple-300">CLAUDE.md</span></h2>
+        <section class="rounded-2xl bg-slate-950 border border-slate-700 overflow-hidden mb-8">
+            <!-- 檔案列 -->
+            <div class="flex items-center gap-2 px-4 py-2 bg-slate-900 border-b border-slate-700">
+                <span class="dot w-3 h-3 rounded-full bg-red-500"></span>
+                <span class="dot w-3 h-3 rounded-full bg-yellow-500"></span>
+                <span class="dot w-3 h-3 rounded-full bg-green-500"></span>
+                <span class="ml-2 font-mono text-xs text-slate-400">~/my-shop / CLAUDE.md</span>
+            </div>
+
+            <div class="p-6 font-mono text-sm space-y-5 leading-relaxed">
+
+                <!-- 區塊 1 -->
+                <div>
+                    <p class="text-purple-300 font-bold"># 專案架構</p>
+                    <p class="text-slate-300 ml-2">- Nuxt 3 + Pinia + Tailwind</p>
+                    <p class="text-slate-300 ml-2">- API: <span class="text-blue-300">/server/api/</span> · UI: <span class="text-blue-300">/pages/</span>、<span class="text-blue-300">/components/</span></p>
+                    <p class="text-slate-500 ml-2">...</p>
+                </div>
+
+                <!-- 區塊 2 -->
+                <div>
+                    <p class="text-purple-300 font-bold"># Coding Style</p>
+                    <p class="text-slate-300 ml-2">- Composition API + <span class="text-amber-300">&lt;script setup&gt;</span>，禁止 Options API</p>
+                    <p class="text-slate-300 ml-2">- 元件用 PascalCase，composable 用 <span class="text-amber-300">useXxx()</span></p>
+                    <p class="text-slate-500 ml-2">...</p>
+                </div>
+
+                <!-- 區塊 3 -->
+                <div>
+                    <p class="text-purple-300 font-bold"># 常用指令</p>
+                    <p class="text-slate-300 ml-2">- <span class="text-emerald-300">pnpm dev</span> · <span class="text-emerald-300">pnpm test</span> · <span class="text-emerald-300">pnpm lint</span></p>
+                    <p class="text-slate-300 ml-2">- ⚠️ 不要用 npm / yarn，<span class="text-emerald-300">pnpm</span> only</p>
+                    <p class="text-slate-500 ml-2">...</p>
+                </div>
+
+                <!-- 區塊 4 -->
+                <div>
+                    <p class="text-purple-300 font-bold"># Lint / Test 規則</p>
+                    <p class="text-slate-300 ml-2">- 提交前一定要過 <span class="text-amber-300">vitest</span> + <span class="text-amber-300">eslint</span></p>
+                    <p class="text-slate-300 ml-2">- 新增 API 必須有對應 test</p>
+                    <p class="text-slate-500 ml-2">...</p>
+                </div>
+
+                <!-- 區塊 5 -->
+                <div>
+                    <p class="text-purple-300 font-bold"># PR 規範</p>
+                    <p class="text-slate-300 ml-2">- Conventional Commits：<span class="text-pink-300">feat:</span> / <span class="text-pink-300">fix:</span> / <span class="text-pink-300">chore:</span></p>
+                    <p class="text-slate-300 ml-2">- 一個 PR &lt; 300 行，超過要拆</p>
+                    <p class="text-slate-500 ml-2">...</p>
+                </div>
+
+                <!-- 區塊 6 -->
+                <div>
+                    <p class="text-red-300 font-bold"># 🚫 禁止事項</p>
+                    <p class="text-slate-300 ml-2">- 不要動 <span class="text-red-300">src/legacy/</span> 底下任何檔案</p>
+                    <p class="text-slate-300 ml-2">- 不要直接改 <span class="text-red-300">.env</span>、不要把 token hardcode</p>
+                    <p class="text-slate-500 ml-2">...</p>
+                </div>
+
+            </div>
+        </section>
+
+        <p class="text-center text-xs text-slate-500 mb-12">
+            💡 每個專案的 <span class="font-mono text-purple-300">CLAUDE.md</span> 只要寫「<span class="text-amber-300">你最常需要重講的事</span>」就夠了，不必塞滿
+        </p>
+
+        <!-- 心法 -->
+        <section class="rounded-2xl bg-slate-900 border border-slate-700 p-6 font-mono text-sm">
+            <p class="text-slate-500 mb-3"># 一句話心法</p>
+            <p class="text-green-400 cursor-blink">把團隊知識「永久灌進 AI」，而不是每次對話重講一次</p>
+        </section>
+
+        <footer class="mt-12 text-center text-sm text-slate-500">
+            <p>Section 4 · Best Practice #3</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>

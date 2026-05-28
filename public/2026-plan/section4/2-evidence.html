@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>重點 #2 · 證據 &gt; AI 自信</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: linear-gradient(180deg, #0F172A 0%, #1E293B 100%);
+            color: #E2E8F0;
+            min-height: 100vh;
+        }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #60A5FA, #A78BFA, #F472B6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .chip {
+            display: inline-block; padding: 3px 12px; border-radius: 999px;
+            font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+        }
+
+        /* AI 自信講話 → 紅色 fail 跳出 */
+        .ai-bubble {
+            opacity: 0;
+            transform: translateY(10px);
+            animation: bubbleIn 6s linear infinite;
+        }
+        @keyframes bubbleIn {
+            0%       { opacity: 0; transform: translateY(10px); }
+            10%, 40% { opacity: 1; transform: translateY(0); }
+            45%, 100%{ opacity: 0; transform: translateY(-10px); }
+        }
+
+        .fail-evidence {
+            opacity: 0;
+            animation: failPop 6s linear infinite;
+        }
+        @keyframes failPop {
+            0%, 45%   { opacity: 0; transform: scale(0.8); }
+            50%       { opacity: 1; transform: scale(1.1); background-color: rgba(239, 68, 68, 0.3); }
+            55%, 95%  { opacity: 1; transform: scale(1); background-color: rgba(239, 68, 68, 0.15); }
+            100%      { opacity: 0; }
+        }
+
+        /* 證據 checklist 逐項打勾 */
+        .evidence-item {
+            opacity: 0.4;
+            animation: evidenceCheck 6s linear infinite;
+        }
+        @keyframes evidenceCheck {
+            0%, 30%   { opacity: 0.4; }
+            40%, 95%  { opacity: 1; color: #6EE7B7; }
+            100%      { opacity: 0.4; }
+        }
+        .ev1 { animation-delay: 0.3s; }
+        .ev2 { animation-delay: 0.8s; }
+        .ev3 { animation-delay: 1.3s; }
+        .ev4 { animation-delay: 1.8s; }
+
+        .cursor-blink::after { content: '▍'; animation: blink 1s step-end infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .compare-card { transition: transform 0.3s ease; }
+        .compare-card:hover { transform: translateY(-4px); }
+    </style>
+</head>
+<body class="px-6 py-12">
+
+    <div class="max-w-5xl mx-auto">
+
+        <header class="text-center mb-12">
+            <p class="chip bg-rose-500/20 text-rose-300 mb-3">重點 #2 · 最高槓桿 (Official: highest-leverage)</p>
+            <h1 class="text-5xl font-bold gradient-text mb-4">證據 &gt; AI 自信</h1>
+            <p class="text-slate-400">"This should work" 是最危險的一句話。要看實際輸出，不要相信表情。</p>
+        </header>
+
+        <!-- 主動畫：AI 自信 vs 實際 test fail -->
+        <section class="mb-12 p-8 rounded-2xl bg-slate-800/50 border border-slate-700">
+
+            <!-- AI 自信講話 -->
+            <div class="bg-slate-900 rounded-lg border border-slate-700 p-5 mb-4">
+                <div class="flex items-start gap-3">
+                    <div class="text-3xl">🤖</div>
+                    <div class="flex-1">
+                        <p class="text-xs text-slate-500 font-mono mb-2">Claude 說：</p>
+                        <p class="ai-bubble bg-slate-800 rounded-lg px-4 py-3 text-amber-300 font-mono text-sm">
+                            ✨ 「應該可以了，我已經更新了 auth 邏輯，所有邊界情況應該都處理好了。」
+                        </p>
+                        <p class="text-xs text-slate-600 font-mono mt-2">注意：「應該」「我相信」「看起來」都是警訊詞</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 實際跑測試 -->
+            <div class="bg-slate-900 rounded-lg border border-slate-700 p-5">
+                <p class="text-xs text-slate-500 font-mono mb-3">$ npm test</p>
+                <div class="fail-evidence rounded-lg p-4 border border-red-500/50">
+                    <p class="font-mono text-sm text-red-300 font-bold">✗ FAIL  auth.test.ts</p>
+                    <p class="font-mono text-xs text-red-200 ml-4 mt-1">● should reject expired token</p>
+                    <p class="font-mono text-xs text-slate-400 ml-8">expected: 401</p>
+                    <p class="font-mono text-xs text-slate-400 ml-8">received: 200</p>
+                    <p class="font-mono text-xs text-red-300 mt-2">Tests: 3 failed, 18 passed</p>
+                </div>
+                <p class="text-xs text-slate-400 mt-3">→ 證據打臉「should work」</p>
+            </div>
+        </section>
+
+        <!-- 該要求什麼證據 -->
+        <h2 class="text-2xl font-bold mb-4 text-center text-slate-300">該要求看的證據</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div class="evidence-item ev1 compare-card rounded-xl p-5 bg-slate-800/60 border border-slate-700 text-center">
+                <div class="text-3xl mb-2">🏗️</div>
+                <p class="font-bold text-sm">Build output</p>
+                <p class="text-xs text-slate-400 mt-1">真的編過嗎？</p>
+            </div>
+            <div class="evidence-item ev2 compare-card rounded-xl p-5 bg-slate-800/60 border border-slate-700 text-center">
+                <div class="text-3xl mb-2">🧪</div>
+                <p class="font-bold text-sm">Test output</p>
+                <p class="text-xs text-slate-400 mt-1">幾條 pass / fail？</p>
+            </div>
+            <div class="evidence-item ev3 compare-card rounded-xl p-5 bg-slate-800/60 border border-slate-700 text-center">
+                <div class="text-3xl mb-2">📸</div>
+                <p class="font-bold text-sm">Screenshot</p>
+                <p class="text-xs text-slate-400 mt-1">畫面真的對嗎？</p>
+            </div>
+            <div class="evidence-item ev4 compare-card rounded-xl p-5 bg-slate-800/60 border border-slate-700 text-center">
+                <div class="text-3xl mb-2">📜</div>
+                <p class="font-bold text-sm">Actual logs</p>
+                <p class="text-xs text-slate-400 mt-1">真的有跑到嗎？</p>
+            </div>
+        </div>
+
+        <!-- 警訊詞清單 -->
+        <section class="rounded-2xl bg-slate-900 border border-slate-700 p-6 mb-8">
+            <p class="chip bg-amber-500/20 text-amber-300 mb-3">⚠️ AI 警訊詞</p>
+            <p class="text-sm text-slate-400 mb-3">看到這些字 → 你要主動要求看「真的證據」：</p>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-2 font-mono text-xs">
+                <div class="bg-slate-800/50 rounded px-3 py-2 text-amber-300">"should work"</div>
+                <div class="bg-slate-800/50 rounded px-3 py-2 text-amber-300">"I believe"</div>
+                <div class="bg-slate-800/50 rounded px-3 py-2 text-amber-300">"probably"</div>
+                <div class="bg-slate-800/50 rounded px-3 py-2 text-amber-300">"in theory"</div>
+                <div class="bg-slate-800/50 rounded px-3 py-2 text-amber-300">"this is the fix"</div>
+                <div class="bg-slate-800/50 rounded px-3 py-2 text-amber-300">"看起來沒問題"</div>
+            </div>
+        </section>
+
+        <!-- 情境範例 -->
+        <h2 class="text-2xl font-bold mb-2 text-center text-slate-300">🎬 情境範例</h2>
+        <p class="text-center text-sm text-slate-400 mb-6">任務：修 login bug — 密碼含特殊字元（<span class="font-mono text-amber-300">!#$</span>）的使用者登入失敗</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+
+            <!-- 相信自信派 -->
+            <div class="compare-card rounded-xl p-6 bg-red-950/30 border border-red-900/50">
+                <p class="chip bg-red-500/30 text-red-300 mb-3">❌ 相信 AI 表情</p>
+                <h3 class="font-bold mb-3 text-red-200">「看起來沒問題就 merge」</h3>
+
+                <div class="font-mono text-xs bg-slate-950/50 rounded p-3 space-y-1 mb-3">
+                    <p class="text-slate-400">🤖 我改好了 regex，<span class="text-amber-300">should work now</span></p>
+                    <p class="text-slate-400">🤖 邏輯看起來正確，邊界 case 也處理了</p>
+                    <p class="text-emerald-300">$ git merge ✓</p>
+                    <p class="text-emerald-300">$ deploy to prod ✓</p>
+                </div>
+
+                <div class="text-xs text-slate-400 mt-3 bg-slate-950/30 rounded p-3 border-l-2 border-red-500">
+                    <p class="text-red-300 font-bold">⏰ 隔天早上 9:00</p>
+                    <p class="mt-1">📞 客服：50 位用戶反映登入失敗</p>
+                    <p>📊 監控：login error rate 從 0.2% → 17%</p>
+                    <p class="text-red-300 mt-1">💣 regex 是改了，但 <span class="font-mono">!#$</span> 還是被擋</p>
+                    <p>原來 AI 從來沒實際跑過那條測試</p>
+                </div>
+            </div>
+
+            <!-- 要證據派 -->
+            <div class="compare-card rounded-xl p-6 bg-emerald-950/30 border border-emerald-900/50">
+                <p class="chip bg-emerald-500/30 text-emerald-300 mb-3">✅ 要求證據</p>
+                <h3 class="font-bold mb-3 text-emerald-200">「跑給我看」</h3>
+
+                <div class="font-mono text-xs bg-slate-950/50 rounded p-3 space-y-1 mb-3">
+                    <p class="text-emerald-300">$ 改完，<span class="text-amber-300">把 auth.test.ts 跑起來貼完整輸出</span></p>
+                    <p class="text-slate-400">→ Tests: <span class="text-red-300">2 failed</span>, 18 passed</p>
+                    <p class="text-red-300">  ✗ should accept password with !#$</p>
+                    <p class="text-red-300">  ✗ should accept password with spaces</p>
+                    <p class="text-emerald-300">$ 修這兩個 case，再跑一次</p>
+                    <p class="text-slate-400">→ Tests: <span class="text-green-400">20 passed ✓</span></p>
+                </div>
+
+                <div class="text-xs text-slate-400 mt-3 bg-slate-950/30 rounded p-3 border-l-2 border-emerald-500">
+                    <p class="text-emerald-300 font-bold">⏰ merge 前發現問題</p>
+                    <p class="mt-1">📸 還要求：實際用 <span class="font-mono">test!#$user</span> 登入截圖</p>
+                    <p>📜 staging log 看 auth flow 確實 200 OK</p>
+                    <p class="text-emerald-300 mt-1">✓ 確認 3 種證據後才 merge</p>
+                    <p>隔天客服 0 通電話</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 該怎麼問 -->
+        <section class="rounded-2xl bg-slate-900 border border-slate-700 p-5 mb-8">
+            <p class="chip bg-blue-500/20 text-blue-300 mb-3">💬 改變問法</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div>
+                    <p class="text-red-300 font-bold mb-1">❌ 不要問</p>
+                    <p class="text-slate-300 font-mono text-xs bg-slate-950/50 rounded p-2">"修好了嗎？"</p>
+                </div>
+                <div>
+                    <p class="text-emerald-300 font-bold mb-1">✅ 改成問</p>
+                    <p class="text-slate-300 font-mono text-xs bg-slate-950/50 rounded p-2">"跑 test，貼完整 output 給我看"</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 心法 -->
+        <section class="rounded-2xl bg-slate-900 border border-slate-700 p-6 font-mono text-sm">
+            <p class="text-slate-500 mb-3"># 一句話心法</p>
+            <p class="text-green-400 cursor-blink">不要相信 AI 的表情 — 要看 test output、build log、screenshot</p>
+        </section>
+
+        <footer class="mt-12 text-center text-sm text-slate-500">
+            <p>Section 4 · Best Practice #2 · Verify its work</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>

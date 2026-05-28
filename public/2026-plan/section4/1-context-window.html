@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>重點 #1 · Context 越滿越容易失準</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: linear-gradient(180deg, #0F172A 0%, #1E293B 100%);
+            color: #E2E8F0;
+            min-height: 100vh;
+        }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #60A5FA, #A78BFA, #F472B6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Context window 進度條 */
+        .ctx-bar-fill {
+            width: 5%;
+            animation: fillUp 8s ease-in-out infinite;
+        }
+        @keyframes fillUp {
+            0%, 100%  { width: 5%;  background: #10B981; }
+            25%       { width: 50%; background: #FBBF24; }
+            50%, 95%  { width: 95%; background: #EF4444; }
+        }
+
+        .quality-indicator {
+            animation: qualityDrop 8s ease-in-out infinite;
+        }
+        @keyframes qualityDrop {
+            0%, 100%  { transform: translateY(0);    color: #10B981; }
+            25%       { transform: translateY(28px); color: #FBBF24; }
+            50%, 95%  { transform: translateY(60px); color: #EF4444; }
+        }
+
+        /* 對話泡泡漸進累積 — 全部用同一 8s 週期、不同 keyframe 出現點，與進度條 100% 同步重設 */
+        .chat-bubble {
+            opacity: 0;
+            transform: translateX(-8px);
+            animation-duration: 8s;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+        }
+        .chat-bubble:nth-of-type(1) { animation-name: bubble1; }  /* 🟢 早期 */
+        .chat-bubble:nth-of-type(2) { animation-name: bubble2; }  /* 🟢 → 🟡 */
+        .chat-bubble:nth-of-type(3) { animation-name: bubble3; }  /* 🟡 */
+        .chat-bubble:nth-of-type(4) { animation-name: bubble4; }  /* 🔴 邊緣 */
+        .chat-bubble:nth-of-type(5) { animation-name: bubble5; }  /* 🔴 警告 */
+
+        @keyframes bubble1 {
+            0%, 5%, 95%, 100% { opacity: 0; transform: translateX(-8px); }
+            10%, 90%          { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes bubble2 {
+            0%, 18%, 95%, 100% { opacity: 0; transform: translateX(-8px); }
+            22%, 90%           { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes bubble3 {
+            0%, 30%, 95%, 100% { opacity: 0; transform: translateX(-8px); }
+            34%, 90%           { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes bubble4 {
+            0%, 42%, 95%, 100% { opacity: 0; transform: translateX(-8px); }
+            46%, 90%           { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes bubble5 {
+            0%, 55%, 95%, 100% { opacity: 0; transform: translateX(-8px); }
+            60%, 90%           { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Token 計數三段 fade，與進度條同步（綠 0-25% / 黃 25-50% / 紅 50-90%） */
+        .token-stage {
+            position: absolute;
+            right: 0;
+            top: 0;
+            opacity: 0;
+            animation-duration: 8s;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+        }
+        .token-stage.s1 { color: #10B981; animation-name: token1; }
+        .token-stage.s2 { color: #FBBF24; animation-name: token2; }
+        .token-stage.s3 { color: #EF4444; animation-name: token3; }
+        @keyframes token1 {
+            0%, 22%, 100% { opacity: 0; }
+            3%, 18%       { opacity: 1; }
+        }
+        @keyframes token2 {
+            0%, 22%, 47%, 100% { opacity: 0; }
+            27%, 43%           { opacity: 1; }
+        }
+        @keyframes token3 {
+            0%, 47%, 95%, 100% { opacity: 0; }
+            52%, 90%           { opacity: 1; }
+        }
+
+        .cursor-blink::after {
+            content: '▍';
+            animation: blink 1s step-end infinite;
+            margin-left: 2px;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .chip {
+            display: inline-block; padding: 3px 12px; border-radius: 999px;
+            font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+        }
+
+        /* solution 卡片 hover */
+        .sol-card {
+            transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+        .sol-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(96, 165, 250, 0.6);
+            box-shadow: 0 12px 30px -10px rgba(96, 165, 250, 0.4);
+        }
+    </style>
+</head>
+<body class="px-6 py-12">
+
+    <div class="max-w-5xl mx-auto">
+
+        <header class="text-center mb-12">
+            <p class="chip bg-red-500/20 text-red-300 mb-3">重點 #1 · 最重要</p>
+            <h1 class="text-5xl font-bold gradient-text mb-4">Context 越滿越容易失準</h1>
+            <p class="text-slate-400">所有對話、檔案、命令輸出都塞同一個窗。越接近滿載、無關噪音越多，AI 越容易失準。</p>
+            <p class="text-xs text-amber-300/80 mt-2">💡 重點是避免<strong>無關噪音</strong>，不是永遠清空 — 深陷複雜問題時，累積的脈絡反而有價值</p>
+        </header>
+
+        <!-- 主動畫：進度條 + 品質 + 對話流 -->
+        <section class="mb-12 p-8 rounded-2xl bg-slate-800/50 border border-slate-700">
+            <div class="grid grid-cols-1 lg:grid-cols-[1fr_160px] gap-6 items-start">
+                <!-- 左：進度條 + 對話流 -->
+                <div>
+                    <div class="flex justify-between text-xs font-mono text-slate-500 mb-2">
+                        <span>Context Window 使用率</span>
+                        <span class="relative inline-block w-32 h-4 text-right">
+                            <span class="token-stage s1">10K / 200K tokens</span>
+                            <span class="token-stage s2">100K / 200K tokens</span>
+                            <span class="token-stage s3">190K / 200K tokens</span>
+                        </span>
+                    </div>
+                    <div class="h-8 bg-slate-900 rounded-lg overflow-hidden border border-slate-700 mb-2">
+                        <div class="ctx-bar-fill h-full rounded-lg"></div>
+                    </div>
+                    <div class="grid grid-cols-3 text-xs font-mono text-slate-500 mb-6">
+                        <span>🟢 清爽</span>
+                        <span class="text-center">🟡 變慢</span>
+                        <span class="text-right">🔴 失準</span>
+                    </div>
+
+                    <!-- 模擬對話一直堆 -->
+                    <div class="bg-slate-900 rounded-lg p-4 border border-slate-700 space-y-2 h-44 overflow-hidden relative">
+                        <p class="text-xs font-mono text-slate-500 mb-2"># 對話一直堆積...</p>
+                        <div class="chat-bubble text-sm font-mono text-blue-300">→ 讀 src/auth.ts (3200 tokens)</div>
+                        <div class="chat-bubble text-sm font-mono text-blue-300">→ 讀 src/api.ts (5800 tokens)</div>
+                        <div class="chat-bubble text-sm font-mono text-amber-300">→ 又貼整個 stack trace (12k tokens)</div>
+                        <div class="chat-bubble text-sm font-mono text-amber-300">→ 又問十個無關問題</div>
+                        <div class="chat-bubble text-sm font-mono text-red-300">→ ⚠️ AI 開始忘記第一輪需求</div>
+                    </div>
+                </div>
+
+                <!-- 右：品質指標 -->
+                <div class="bg-slate-900 rounded-lg p-4 border border-slate-700 text-center">
+                    <p class="text-xs text-slate-500 mb-2">回答品質</p>
+                    <div class="text-6xl quality-indicator">●</div>
+                    <p class="text-xs font-mono text-slate-500 mt-6">越塞越糊</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 對策三件套 -->
+        <h2 class="text-2xl font-bold mb-4 text-center text-slate-300">三個對策</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
+            <div class="sol-card rounded-xl p-6 bg-slate-800/60 border border-slate-700">
+                <div class="text-3xl mb-2">🧹</div>
+                <p class="chip bg-emerald-500/20 text-emerald-300 mb-3">/clear</p>
+                <h3 class="font-bold mb-1">直接重開一輪</h3>
+                <p class="text-sm text-slate-400">換主題、改 bug 完了，<strong class="text-slate-200">直接清空</strong>不要拖。</p>
+            </div>
+            <div class="sol-card rounded-xl p-6 bg-slate-800/60 border border-slate-700">
+                <div class="text-3xl mb-2">🗜️</div>
+                <p class="chip bg-blue-500/20 text-blue-300 mb-3">/compact</p>
+                <h3 class="font-bold mb-1">壓縮重點摘要</h3>
+                <p class="text-sm text-slate-400">想保留脈絡但又塞太滿，<strong class="text-slate-200">壓縮</strong>完繼續。</p>
+            </div>
+            <div class="sol-card rounded-xl p-6 bg-slate-800/60 border border-slate-700">
+                <div class="text-3xl mb-2">📜</div>
+                <p class="chip bg-purple-500/20 text-purple-300 mb-3">CLAUDE.md</p>
+                <h3 class="font-bold mb-1">長期知識永久寫進去</h3>
+                <p class="text-sm text-slate-400">每次都要講的事，<strong class="text-slate-200">寫進檔案</strong>別丟對話。</p>
+            </div>
+        </div>
+
+        <!-- 進階 context 管理工具 -->
+        <h2 class="text-2xl font-bold mb-3 text-center text-slate-300">進階管理工具</h2>
+        <p class="text-center text-sm text-slate-400 mb-6">基本三招（<code class="font-mono text-slate-300">/clear</code> · <code class="font-mono text-slate-300">/compact</code> · CLAUDE.md）之外，官方還有這些細節：</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
+
+            <div class="sol-card rounded-xl p-5 bg-slate-800/60 border border-slate-700">
+                <p class="chip bg-amber-500/20 text-amber-300 mb-2">Auto Compaction</p>
+                <p class="text-sm text-slate-300 mb-1">接近 context 上限時 Claude Code <span class="text-amber-300">自動觸發</span>壓縮</p>
+                <p class="text-xs text-slate-500">→ 保留程式碼、檔案狀態、關鍵決策；壓掉聊天瑣事。</p>
+            </div>
+
+            <div class="sol-card rounded-xl p-5 bg-slate-800/60 border border-slate-700">
+                <p class="chip bg-blue-500/20 text-blue-300 mb-2"><code class="font-mono">/compact &lt;指示&gt;</code></p>
+                <p class="text-sm text-slate-300 mb-1">帶<span class="text-blue-300">指示</span>壓縮，告訴它要保留什麼</p>
+                <div class="font-mono text-xs bg-slate-950/50 rounded p-2 mt-2 text-slate-300">
+                    <p class="text-amber-300">/compact Focus on the API changes</p>
+                </div>
+            </div>
+
+            <div class="sol-card rounded-xl p-5 bg-slate-800/60 border border-slate-700">
+                <p class="chip bg-purple-500/20 text-purple-300 mb-2"><kbd class="font-mono bg-slate-700 px-1 rounded text-[10px]">Esc Esc</kbd> / <code class="font-mono">/rewind</code></p>
+                <p class="text-sm text-slate-300 mb-1"><span class="text-purple-300">部分摘要</span> — 選中某個 checkpoint</p>
+                <p class="text-xs text-slate-500">→ 「Summarize from here」(往後壓) 或「Summarize up to here」(往前壓)</p>
+            </div>
+
+            <div class="sol-card rounded-xl p-5 bg-slate-800/60 border border-slate-700">
+                <p class="chip bg-emerald-500/20 text-emerald-300 mb-2">CLAUDE.md 壓縮規則</p>
+                <p class="text-sm text-slate-300 mb-1">在 <code class="font-mono text-emerald-300">CLAUDE.md</code> 指定壓縮時<span class="text-emerald-300">要保留什麼</span></p>
+                <div class="font-mono text-xs bg-slate-950/50 rounded p-2 mt-2 text-slate-300">
+                    <p class="text-slate-500"># CLAUDE.md</p>
+                    <p>When compacting, always preserve</p>
+                    <p>modified files list and test commands</p>
+                </div>
+            </div>
+
+            <div class="sol-card rounded-xl p-5 bg-slate-800/60 border border-slate-700 md:col-span-2">
+                <p class="chip bg-rose-500/20 text-rose-300 mb-2"><code class="font-mono">/btw</code></p>
+                <p class="text-sm text-slate-300 mb-1"><span class="text-rose-300">不入歷史</span>的快問快答</p>
+                <p class="text-xs text-slate-500">→ 想查個小東西但不想污染對話歷史，用 <code class="font-mono">/btw</code>。答案顯示在 overlay 但不會加進 context。</p>
+            </div>
+
+        </div>
+
+        <!-- 最終 prompt 範例 -->
+        <section class="rounded-2xl bg-slate-900 border border-slate-700 p-6 font-mono text-sm">
+            <p class="text-slate-500 mb-3"># 一句話心法</p>
+            <p class="text-green-400 cursor-blink">把 Claude 當有限工作記憶的工程師，幫他減負擔，不是塞滿他</p>
+        </section>
+
+        <footer class="mt-12 text-center text-sm text-slate-500">
+            <p>Section 4 · Best Practice #1</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>
